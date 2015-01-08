@@ -86,16 +86,6 @@ void GameCtl::gameUpdate(){
 }
 
 void GameCtl::gameRun(){
-    std::vector<AStarNode> path = _pFinder->searchPath(151, 460);
-    for (auto it = path.begin(); it != path.end(); ++it) {
-        std::cout << (*it) << endl;
-    }
-    std::cout << endl;
-    path = _pFinder->searchPath(452, 4);
-    for (auto it = path.begin(); it != path.end(); ++it) {
-        std::cout << (*it) << endl;
-    }
-
     al_register_event_source(_eventQueue, al_get_timer_event_source(_timer));
 	al_register_event_source(_eventQueue, al_get_keyboard_event_source());
     al_register_event_source(_eventQueue, al_get_mouse_event_source());

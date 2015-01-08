@@ -100,7 +100,10 @@ bool GameMap::tileIsFree(unsigned mapID) const {
 }
 
 bool GameMap::tileIsFree(unsigned tileX, unsigned tileY) const {
-    return tileIsFree(tileY * _colmax + tileX);
+    bool retval = false;
+    if(tileX < _colmax && tileY < _rowmax)
+        retval = tileIsFree(tileY * _colmax + tileX);
+    return retval;
 }
 
 weak_ptr<GameObject> GameMap::getObject(unsigned tileX, unsigned tileY) const{
