@@ -1,40 +1,46 @@
 #include "timer.h"
 
-TTimer::TTimer(){
+TaskTimer::TaskTimer(){
     _ticks = 0;
 }
 
-TTimer::TTimer(unsigned maxTicks){
-    _maxTicks = maxTicks;
-    _ticks = 0;
+TaskTimer::TaskTimer(unsigned maxTicks){
+	_ticks = _maxTicks = maxTicks;
 }
 
-TTimer::~TTimer(){
+TaskTimer::~TaskTimer(){
 
 }
 
-/* TTimer::check() function to check the timer in control loop
+/* TaskTimer::check() function to check the timer in control loop
  * decrements the counter
  * returns true if timer is finished
 */
-bool TTimer::check(){
+bool TaskTimer::check(){
     if(_ticks != 0)
         _ticks--;
     return !_ticks;
 }
 
-void TTimer::relaunch(){
+void TaskTimer::relaunch(){
     _ticks = _maxTicks;
 }
 
-bool TTimer::isActive(){
+bool TaskTimer::isActive(){
     return _ticks;
 }
 
-unsigned TTimer::getTicks(){
+unsigned TaskTimer::getTicks(){
     return _ticks;
 }
 
-void TTimer::setTicks(unsigned ticks){
+void TaskTimer::setTicks(unsigned ticks){
     _ticks = ticks;
+}
+
+void TaskTimer::adjust(unsigned newMaximum){
+	_maxTicks = newMaximum;
+	if (_ticks > _maxTicks) {
+		_ticks = _maxTicks;
+	}
 }
