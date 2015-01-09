@@ -2,7 +2,9 @@ bin
 res
 Debug
 Release
+allegro.log
 *.sdf
+*.opensdf
 *.sln
 *.suo
 *.vcxproj*
