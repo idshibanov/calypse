@@ -1,1 +1,8 @@
 bin
+res
+Debug
+Release
+*.sdf
+*.sln
+*.suo
+*.vcxproj*

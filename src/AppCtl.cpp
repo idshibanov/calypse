@@ -1,46 +1,23 @@
 #include <vector>
 #include <string>
-#include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <stdio.h>
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
 
+#include "AppCtl.h"
 #include "timer.h"
-using namespace std;
 
-#define CLOCK_SPEED 1000
-#define ANIMATION_TICKS 50
+int XtoISO(int x, int y) {
+	return x - y;
+}
 
-int main(int argc, char **argv)
-{
-	ALLEGRO_DISPLAY *display = NULL;
+int YtoISO(int x, int y) {
+	return (x + y) / 2;
+}
 
-	if (!al_init()) {
-		fprintf(stderr, "failed to initialize allegro!\n");
-		return -1;
-	}
+AppCtl::AppCtl() {
+	_display = al_create_display(800, 600);
 
-	if (!al_install_keyboard()) {
-		fprintf(stderr, "failed to initialize keyboard!\n");
-		return -1;
-	}
-
-	al_init_image_addon();
-	al_init_font_addon();
-	al_init_ttf_addon();
-	display = al_create_display(800, 600);
-	if (!display) {
-		fprintf(stderr, "failed to create display!\n");
-		return -1;
-	}
-
-	al_clear_to_color(al_map_rgb(0, 0, 0));
-
-	vector<ALLEGRO_BITMAP*> _sprites;
+	
 	for (int i = 0; i < 21; i++) {
 		ostringstream ss;
 		ss << setw(4) << setfill('0') << i;
@@ -50,28 +27,18 @@ int main(int argc, char **argv)
 
 		if (!_texture) {
 			printf("failed to load sprite %d! %s\n", i, res_path.c_str());
-		} else {
+		}
+		else {
 			_sprites.push_back(_texture);
 		}
 	}
 
-	ALLEGRO_FONT* _font = al_load_font("res/arialbd.ttf", 12, 2);	
+	_font = al_load_font("res/arialbd.ttf", 12, 2);
 
-	ALLEGRO_TIMER* _timer;
-	ALLEGRO_EVENT_QUEUE* _eventQueue;
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);
 	al_register_event_source(_eventQueue, al_get_timer_event_source(_timer));
 	al_register_event_source(_eventQueue, al_get_keyboard_event_source());
-
-	bool _isRunning;
-	bool _render;
-	float _gameTime;
-	int _render_frames;
-	int _animation_frame;
-	int _cycles;
-	int _CPS;
-	int _FPS;
 
 	_isRunning = true;
 	_render = false;
@@ -82,15 +49,39 @@ int main(int argc, char **argv)
 
 	_FPS = 0;
 	_CPS = 0;
+}
 
+AppCtl::~AppCtl() {
+	for (auto it = _sprites.begin(); it != _sprites.end(); ++it) {
+		al_destroy_bitmap(*it);
+	}
+
+	if (_font)
+		al_destroy_font(_font);
+
+	al_destroy_timer(_timer);
+	al_destroy_event_queue(_eventQueue);
+	al_destroy_display(_display);
+}
+
+void AppCtl::render() {
+
+}
+
+void AppCtl::update() {
+
+}
+
+void AppCtl::controlLoop() {
 	al_start_timer(_timer);
 	_gameTime = al_current_time();
 	auto current_frame = _sprites.begin();
 	current_frame++;
-	
+
 	double animation_speed = 100;
 	TaskTimer frame_t(ANIMATION_TICKS);
 	TaskTimer render_t(CLOCK_SPEED / 60);
+	Sprite grass(0, "res/grass.png");
 
 	while (_isRunning) {
 		ALLEGRO_EVENT ev;
@@ -115,10 +106,11 @@ int main(int argc, char **argv)
 				}
 				break;
 			}
-		} else if (ev.type == ALLEGRO_EVENT_TIMER) {
+		}
+		else if (ev.type == ALLEGRO_EVENT_TIMER) {
 			_cycles++;
 
-			if(al_current_time() - _gameTime >= 1) {
+			if (al_current_time() - _gameTime >= 1) {
 				_gameTime = al_current_time();
 				_CPS = _cycles;
 				_FPS = _render_frames;
@@ -150,6 +142,13 @@ int main(int argc, char **argv)
 		if (_render && al_is_event_queue_empty(_eventQueue)) {
 			_render = false;
 
+
+			int xOffset = 368;
+			for (int i = 0; i < 20; i++) {
+				for (int j = 0; j < 20; j++) {
+					grass.draw(xOffset + XtoISO(i * 32, j * 32), YtoISO(i * 32, j * 32));
+				}
+			}
 			al_draw_bitmap(*current_frame, 0, 0, 0);
 
 			string timeSTR("Game time: " + to_string(static_cast<long long>(_gameTime)));
@@ -168,17 +167,27 @@ int main(int argc, char **argv)
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}
 	}
+}
 
-	for (auto it = _sprites.begin(); it != _sprites.end(); ++it) {
-		al_destroy_bitmap(*it);
+
+int main(int argc, char **argv) {
+
+	if (!al_init()) {
+		cout << "failed to initialize allegro!" << endl;
+		return -1;
 	}
 
-	if (_font)
-		al_destroy_font(_font);
+	if (!al_install_keyboard()) {
+		cout << "failed to initialize keyboard!" << endl;
+		return -1;
+	}
 
-	al_destroy_timer(_timer);
-	al_destroy_event_queue(_eventQueue);
-	al_destroy_display(display);
+	al_init_image_addon();
+	al_init_font_addon();
+	al_init_ttf_addon();
+
+	AppCtl app;
+	app.controlLoop();
 
 	return 0;
 }
