@@ -7,7 +7,6 @@
 #include "ScreenCtl.h"
 
 #define CLOCK_SPEED 1000
-#define ANIMATION_TICKS 50
 
 enum KEYS{
 	UP,
@@ -20,7 +19,7 @@ enum KEYS{
 };
 
 class AppCtl {
-	ALLEGRO_DISPLAY* _display;
+	ScreenCtl _screen;
 	ALLEGRO_EVENT_QUEUE* _eventQueue;
 	ALLEGRO_TIMER* _timer;
 
@@ -33,9 +32,6 @@ class AppCtl {
 	int _CPS;
 	int _FPS;
 	bool* _keys;
-
-	vector<ALLEGRO_BITMAP*> _sprites;
-	ALLEGRO_FONT* _font;
 
 	AppCtl(const AppCtl&);
 	AppCtl& operator=(const AppCtl&);
