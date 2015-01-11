@@ -77,6 +77,8 @@ void AppCtl::controlLoop() {
 				_render = true;
 				render_t.relaunch();
 			}
+
+			_screen.updateTimers();
 		}
 
 		//==============================================
@@ -88,7 +90,7 @@ void AppCtl::controlLoop() {
 			stats._CPS = _CPS;
 			stats._FPS = _FPS;
 			stats._gameTime = _gameTime;
-			_screen.draw(&stats);
+			_screen.draw(stats);
 
 			//FLIP BUFFERS========================
 			al_flip_display();
