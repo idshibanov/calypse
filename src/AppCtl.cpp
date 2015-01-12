@@ -73,7 +73,6 @@ void AppCtl::controlLoop() {
 			}
 
 			if (render_t.check()) {
-				_render_frames++;
 				_render = true;
 				render_t.relaunch();
 			}
@@ -85,6 +84,7 @@ void AppCtl::controlLoop() {
 		//RENDER
 		//==============================================
 		if (_render && al_is_event_queue_empty(_eventQueue)) {
+			_render_frames++;
 			_render = false;
 
 			stats._CPS = _CPS;

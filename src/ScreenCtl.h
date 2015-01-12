@@ -18,7 +18,7 @@ class ScreenCtl {
 	vector<ALLEGRO_BITMAP*> _sprites;
 	vector<ALLEGRO_BITMAP*>::iterator _current_frame;
 	ALLEGRO_FONT* _font;
-	Sprite _grass;
+	Sprite* _grass;
 
 	double _animation_speed;
 	int _animation_frame;

@@ -3,9 +3,7 @@
 
 #include "ScreenCtl.h"
 
-ScreenCtl::ScreenCtl() 
-    : _grass(0, "res/grass.png"),
-	frame_t(ANIMATION_TICKS) {
+ScreenCtl::ScreenCtl() : frame_t(ANIMATION_TICKS) {
 	_display = al_create_display(800, 600);
 
 	for (int i = 0; i < 21; i++) {
@@ -25,6 +23,8 @@ ScreenCtl::ScreenCtl()
 
 	_font = al_load_font("res/arialbd.ttf", 12, 2);
 
+	_grass = new Sprite(0, "res/grass.png");
+
 	_current_frame = _sprites.begin();
 	_current_frame++;
 	_animation_speed = 100;
@@ -39,14 +39,16 @@ ScreenCtl::~ScreenCtl() {
 	if (_font)
 		al_destroy_font(_font);
 
+	delete _grass;
+
 	al_destroy_display(_display);
 }
 
 void ScreenCtl::draw(AppStats& stat) {
 	int xOffset = 368;
-	for (int i = 0; i < 20; i++) {
-		for (int j = 0; j < 20; j++) {
-			_grass.draw(xOffset + XtoISO(i * 32, j * 32), YtoISO(i * 32, j * 32));
+	for (int i = 0; i < 30; i++) {
+		for (int j = 0; j < 30; j++) {
+			_grass->draw(xOffset + XtoISO(i * 32, j * 32), YtoISO(i * 32, j * 32));
 		}
 	}
 	al_draw_bitmap(*_current_frame, 0, 0, 0);
