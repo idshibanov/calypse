@@ -3,8 +3,11 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
-#include "main.h"
+
+#include "Main.h"
 #include "ScreenCtl.h"
+#include "Map.h"
+#include "Pathfinder.h"
 
 #define CLOCK_SPEED 1000
 
@@ -22,6 +25,9 @@ class AppCtl {
 	ScreenCtl _screen;
 	ALLEGRO_EVENT_QUEUE* _eventQueue;
 	ALLEGRO_TIMER* _timer;
+
+	shared_ptr<LocalMap> _map;
+	shared_ptr<AStarSearch> _pFinder;
 
 	bool _isRunning;
 	bool _render;

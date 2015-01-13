@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
-#include "main.h"
-#include "sprite.h"
-#include "timer.h"
+#include "Main.h"
+#include "Sprite.h"
+#include "Timer.h"
 
 #define ISO_TILE_SIZE 32
 #define ANIMATION_TICKS 50

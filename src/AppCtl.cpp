@@ -2,9 +2,13 @@
 #include <string>
 
 #include "AppCtl.h"
-#include "timer.h"
+#include "Timer.h"
 
 AppCtl::AppCtl() {
+	_map = make_shared<LocalMap>();
+	_pFinder = make_shared<AStarSearch>(_map);
+	_map->generate(_pFinder);
+
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);
 	al_register_event_source(_eventQueue, al_get_timer_event_source(_timer));
