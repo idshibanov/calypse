@@ -172,3 +172,47 @@ void SpriteText::draw(const char* str, int x, int y, ALLEGRO_COLOR color){
 void SpriteText::draw(string& str, int x, int y, ALLEGRO_COLOR color){
 	draw(str.c_str(), x, y, color);
 }
+
+
+// RawSprite class
+// Useful for drawing parts of unformatted images
+RawSprite::RawSprite(unsigned id, const char* filename, unsigned xpos, unsigned ypos,
+	unsigned xsize, unsigned ysize) : Sprite(id, filename) {
+	_xsize = xsize;
+	_ysize = ysize;
+	_xpos = xpos;
+	_ypos = ypos;
+}
+
+RawSprite::RawSprite(const RawSprite& rhs) : Sprite(rhs) {
+	_xsize = rhs._xsize;
+	_ysize = rhs._ysize;
+	_xpos = rhs._xpos;
+	_ypos = rhs._ypos;
+}
+
+RawSprite& RawSprite::operator=(const RawSprite& rhs){
+	Sprite::operator=(rhs);
+	_xsize = rhs._xsize;
+	_ysize = rhs._ysize;
+	_xpos = rhs._xpos;
+	_ypos = rhs._ypos;
+	return *this;
+}
+
+void RawSprite::draw(int x, int y){
+	if (_texture != NULL){
+		al_draw_bitmap_region(_texture, _xpos, _ypos, _xsize, _ysize, x, y, 0);
+	}
+}
+
+void RawSprite::drawScaled(int x, int y, float zoom){
+	if (_texture != NULL){
+		if (zoom == 1.0) {
+			al_draw_bitmap_region(_texture, _xpos, _ypos, _xsize, _ysize, x, y, 0);
+		}
+		else {
+			al_draw_scaled_bitmap(_texture, _xpos, _ypos, _xsize, _ysize, x, y, _xsize*zoom, _ysize*zoom, 0);
+		}
+	}
+}

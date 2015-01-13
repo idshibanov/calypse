@@ -7,9 +7,9 @@ class Camera{
 	int _xmax;
 	int _ymax;
 public:
-	Camera(unsigned xmax, unsigned ymax) {
-		_xpos = TD_DISPLAY_WIDTH / 2;
-		_ypos = TD_DISPLAY_HEIGHT / 2;
+	Camera(int xpos, int ypos, unsigned xmax, unsigned ymax) {
+		_xpos = xpos;
+		_ypos = ypos;
 		_xmax = xmax;
 		_ymax = ymax;
 	}

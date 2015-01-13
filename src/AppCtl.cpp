@@ -9,6 +9,9 @@ AppCtl::AppCtl() {
 	_pFinder = make_shared<AStarSearch>(_map);
 	_map->generate(_pFinder);
 
+	_camera = make_shared<Camera>(TD_DISPLAY_WIDTH / 2, TD_DISPLAY_HEIGHT / 2, TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
+	_screen = new ScreenCtl(_map, _camera);
+
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);
 	al_register_event_source(_eventQueue, al_get_timer_event_source(_timer));
@@ -28,6 +31,7 @@ AppCtl::AppCtl() {
 AppCtl::~AppCtl() {
 	al_destroy_timer(_timer);
 	al_destroy_event_queue(_eventQueue);
+	delete _screen;
 }
 
 void AppCtl::render() {
@@ -59,10 +63,10 @@ void AppCtl::controlLoop() {
 			case ALLEGRO_KEY_RIGHT:
 				break;
 			case ALLEGRO_KEY_UP:
-				_screen.increaseSpeed();
+				_screen->increaseSpeed();
 				break;
 			case ALLEGRO_KEY_DOWN:
-				_screen.decreaseSpeed();
+				_screen->decreaseSpeed();
 				break;
 			}
 		}
@@ -81,7 +85,7 @@ void AppCtl::controlLoop() {
 				render_t.relaunch();
 			}
 
-			_screen.updateTimers();
+			_screen->updateTimers();
 		}
 
 		//==============================================
@@ -94,7 +98,7 @@ void AppCtl::controlLoop() {
 			stats._CPS = _CPS;
 			stats._FPS = _FPS;
 			stats._gameTime = _gameTime;
-			_screen.draw(stats);
+			_screen->draw(stats);
 
 			//FLIP BUFFERS========================
 			al_flip_display();

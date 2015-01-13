@@ -49,3 +49,20 @@ public:
 	void draw(const char* str, int x, int y, ALLEGRO_COLOR color);
 	void draw(string& str, int x, int y, ALLEGRO_COLOR color);
 };
+
+class RawSprite : public Sprite {
+	unsigned int _xsize;
+	unsigned int _ysize;
+	unsigned int _xpos;
+	unsigned int _ypos;
+public:
+	RawSprite(unsigned id, const char* filename, unsigned xpos,
+		unsigned ypos, unsigned xsize, unsigned ysize);
+	~RawSprite() { }
+	RawSprite(const RawSprite&);
+	RawSprite& operator= (const RawSprite&);
+	unsigned int getSpriteXSize() { return _xsize; };
+	unsigned int getSpriteYSize() { return _xsize; };
+	void draw(int x, int y);
+	void drawScaled(int x, int y, float zoom);
+};

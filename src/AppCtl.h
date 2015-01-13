@@ -6,6 +6,7 @@
 
 #include "Main.h"
 #include "ScreenCtl.h"
+#include "Camera.h"
 #include "Map.h"
 #include "Pathfinder.h"
 
@@ -22,12 +23,13 @@ enum KEYS{
 };
 
 class AppCtl {
-	ScreenCtl _screen;
+	ScreenCtl* _screen;
 	ALLEGRO_EVENT_QUEUE* _eventQueue;
 	ALLEGRO_TIMER* _timer;
 
 	shared_ptr<LocalMap> _map;
 	shared_ptr<AStarSearch> _pFinder;
+	shared_ptr<Camera> _camera;
 
 	bool _isRunning;
 	bool _render;
