@@ -9,7 +9,7 @@ AppCtl::AppCtl() {
 	_pFinder = make_shared<AStarSearch>(_map);
 	_map->generate(_pFinder);
 
-	_camera = make_shared<Camera>(TD_DISPLAY_WIDTH / 2, TD_DISPLAY_HEIGHT / 2, TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
+	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 	_screen = new ScreenCtl(_map, _camera);
 
 	_eventQueue = al_create_event_queue();

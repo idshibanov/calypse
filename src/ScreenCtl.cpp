@@ -62,15 +62,15 @@ void ScreenCtl::draw(AppStats& stat) {
 	unsigned rowmax = _map->getRowMax();
 	unsigned colmax = _map->getColMax();
 	// camera position
-	unsigned camX = _cam->getXPos();
-	unsigned camY = _cam->getYPos();
+	unsigned camX = 0;// _cam->getXPos();
+	unsigned camY = 640;// _cam->getYPos();
 	// first tile to render - coords and array id
 	int firstTileX = 0, firstTileY = 0;
 	unsigned maxTileCol = 0, maxTileRow = 0;
 	_tileCol = 0;
 	_tileRow = 0;
 	// display coords to start rendering
-	_renderX = 0;
+	_renderX = _screenWidth / 2 - _tileWidth;
 	_renderY = 0;
 
 
@@ -104,6 +104,7 @@ void ScreenCtl::draw(AppStats& stat) {
 		}
 	}
 
+
 	// +3 tiles to handle the camera movement
 	maxTileCol = _tileCol + ((_renderX + _screenWidth) / _tileWidth) + 3;
 	if (colmax < maxTileCol) maxTileCol = colmax;
@@ -113,9 +114,11 @@ void ScreenCtl::draw(AppStats& stat) {
 	// Map tiles
 	for (unsigned row = _tileRow; row < maxTileRow; row++){
 		for (unsigned col = _tileCol; col < maxTileCol; col++){
-			_grass->drawScaled(_renderX + ((col - _tileCol) * _tileWidth),
-				_renderY + ((row - _tileRow) * _tileHeight),
-				_map->getTileType(row*colmax + col), _zoom);
+			int x_coord = XtoISO((col - _tileCol) * _tileWidth, (row - _tileRow) * _tileHeight);
+			int y_coord = YtoISO((col - _tileCol) * _tileWidth, (row - _tileRow) * _tileHeight);
+			_grass->drawScaled(_renderX + x_coord,
+				_renderY + y_coord,
+				64, 32);
 		}
 	}
 	/*
