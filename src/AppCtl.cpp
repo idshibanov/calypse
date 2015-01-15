@@ -59,14 +59,18 @@ void AppCtl::controlLoop() {
 				_isRunning = false;
 				break;
 			case ALLEGRO_KEY_LEFT:
+				_camera->move(1, 10);
 				break;
 			case ALLEGRO_KEY_RIGHT:
+				_camera->move(2, 10);
 				break;
 			case ALLEGRO_KEY_UP:
-				_screen->increaseSpeed();
+				_camera->move(3, 10);
+				//_screen->increaseSpeed();
 				break;
 			case ALLEGRO_KEY_DOWN:
-				_screen->decreaseSpeed();
+				_camera->move(4, 10);
+				//_screen->decreaseSpeed();
 				break;
 			}
 		}

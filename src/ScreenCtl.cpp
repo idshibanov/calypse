@@ -62,15 +62,15 @@ void ScreenCtl::draw(AppStats& stat) {
 	unsigned rowmax = _map->getRowMax();
 	unsigned colmax = _map->getColMax();
 	// camera position
-	unsigned camX = 0;// _cam->getXPos();
-	unsigned camY = 640;// _cam->getYPos();
+	unsigned camX = _cam->getXPos();
+	unsigned camY = _cam->getYPos();
 	// first tile to render - coords and array id
 	int firstTileX = 0, firstTileY = 0;
 	unsigned maxTileCol = 0, maxTileRow = 0;
 	_tileCol = 0;
 	_tileRow = 0;
 	// display coords to start rendering
-	_renderX = _screenWidth / 2 - _tileWidth;
+	_renderX = 0;// _screenWidth / 2 - _tileWidth;
 	_renderY = 0;
 
 
@@ -114,11 +114,9 @@ void ScreenCtl::draw(AppStats& stat) {
 	// Map tiles
 	for (unsigned row = _tileRow; row < maxTileRow; row++){
 		for (unsigned col = _tileCol; col < maxTileCol; col++){
-			int x_coord = XtoISO((col - _tileCol) * _tileWidth, (row - _tileRow) * _tileHeight);
-			int y_coord = YtoISO((col - _tileCol) * _tileWidth, (row - _tileRow) * _tileHeight);
-			_grass->drawScaled(_renderX + x_coord,
-				_renderY + y_coord,
-				64, 32);
+			int x_coord = XtoISO(_renderX + (col - _tileCol) * _tileWidth, _renderY + (row - _tileRow) * _tileHeight);
+			int y_coord = YtoISO(_renderX + (col - _tileCol) * _tileWidth, _renderY + (row - _tileRow) * _tileHeight);
+			_grass->drawScaled(x_coord, y_coord, 64, 32);
 		}
 	}
 	/*
@@ -129,7 +127,7 @@ void ScreenCtl::draw(AppStats& stat) {
 		}
 	}
 	*/
-	al_draw_bitmap(*_current_frame, 0, 0, 0);
+	//al_draw_bitmap(*_current_frame, 0, 0, 0);
 
 	string timeSTR("Game time: " + to_string(static_cast<long long>(stat._gameTime)));
 	string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(stat._CPS)));
