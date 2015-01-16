@@ -26,12 +26,15 @@ AppCtl::AppCtl() {
 
 	_FPS = 0;
 	_CPS = 0;
+	_keys = new bool[7];
+	for (int i = 0; i < 7; i++) _keys[i] = false;
 }
 
 AppCtl::~AppCtl() {
 	al_destroy_timer(_timer);
 	al_destroy_event_queue(_eventQueue);
 	delete _screen;
+	delete _keys;
 }
 
 void AppCtl::render() {
@@ -39,7 +42,19 @@ void AppCtl::render() {
 }
 
 void AppCtl::update() {
+	unsigned dist = 2;
+	if (_keys[SHIFT]) dist *= 10;
 
+	if (_keys[LEFT]) {
+		_camera->move(1, dist);
+	} else if (_keys[RIGHT]) {
+		_camera->move(2, dist);
+	}
+	if (_keys[UP]) {
+		_camera->move(3, dist);
+	} else if (_keys[DOWN]) {
+		_camera->move(4, dist);
+	}
 }
 
 void AppCtl::controlLoop() {
@@ -59,22 +74,38 @@ void AppCtl::controlLoop() {
 				_isRunning = false;
 				break;
 			case ALLEGRO_KEY_LEFT:
-				_camera->move(1, 10);
+				_keys[LEFT] = true;
 				break;
 			case ALLEGRO_KEY_RIGHT:
-				_camera->move(2, 10);
+				_keys[RIGHT] = true;
 				break;
 			case ALLEGRO_KEY_UP:
-				_camera->move(3, 10);
+				_keys[UP] = true;
 				//_screen->increaseSpeed();
 				break;
 			case ALLEGRO_KEY_DOWN:
-				_camera->move(4, 10);
+				_keys[DOWN] = true;
 				//_screen->decreaseSpeed();
 				break;
 			}
-		}
-		else if (ev.type == ALLEGRO_EVENT_TIMER) {
+		} else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
+			switch (ev.keyboard.keycode) {
+			case ALLEGRO_KEY_LEFT:
+				_keys[LEFT] = false;
+				break;
+			case ALLEGRO_KEY_RIGHT:
+				_keys[RIGHT] = false;
+				break;
+			case ALLEGRO_KEY_UP:
+				_keys[UP] = false;
+				//_screen->increaseSpeed();
+				break;
+			case ALLEGRO_KEY_DOWN:
+				_keys[DOWN] = false;
+				//_screen->decreaseSpeed();
+				break;
+			}
+		} else if (ev.type == ALLEGRO_EVENT_TIMER) {
 			_cycles++;
 
 			if (al_current_time() - _gameTime >= 1) {
@@ -86,6 +117,7 @@ void AppCtl::controlLoop() {
 
 			if (render_t.check()) {
 				_render = true;
+				update();
 				render_t.relaunch();
 			}
 

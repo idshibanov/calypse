@@ -57,6 +57,7 @@ ScreenCtl::~ScreenCtl() {
 
 void ScreenCtl::draw(AppStats& stat) {
 	// TODO: calculate offsets only when camera moves, not on every draw
+	ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
 
 	// map size
 	unsigned rowmax = _map->getRowMax();
@@ -73,50 +74,75 @@ void ScreenCtl::draw(AppStats& stat) {
 	_renderX = 0;// _screenWidth / 2 - _tileWidth;
 	_renderY = 0;
 
+	int offsetX = 0, offsetY = 0;
 
+	// TODO: adjust renderX when camera on the edge (scrolling in the wrong side)
+	// adjust maxTile Row/Col
+	// apply calculation and show extra tiles on all sides
+
+	/*
 	if (camX < _screenWidth / 2){
 		// adjust render X position (left border)
-		_renderX = _screenWidth / 2 - camX;
-	}
-	else {
-		// find out first tile to render
+		_renderX = _screenWidth / 2 - _tileWidth;
+		offsetX -= camX;
+	} else {
+		// find out first tile to render 
 		firstTileX = camX - _screenWidth / 2;
 		_tileCol = firstTileX / _tileWidth;
 
 		// adjust render X position if cam X coord is uneven
 		if (firstTileX % _tileWidth){
-			_renderX = -(firstTileX % _tileWidth);
+			offsetX = -(firstTileX % _tileWidth);
 		}
 	}
 
-	if (camY < _screenHeight / 2){
+	if (camY < _screenWidth / 2) {
 		// adjust render Y position (top border)
-		_renderY = _screenHeight / 2 - camY;
-	}
-	else {
+		_renderY = _screenHeight / 2;
+		offsetY -= camY;
+	} else {
+		offsetX += 300;
 		// find out first tile to render
 		firstTileY = camY - _screenHeight / 2;
 		_tileRow = firstTileY / _tileHeight;
 
 		// adjust render Y position if cam Y coord is uneven
 		if (firstTileY % _tileHeight){
-			_renderY = -(firstTileY % _tileHeight);
+			offsetY = -(firstTileY % _tileHeight);
 		}
+	}
+	*/
+	_renderX = _screenWidth / 2 - _tileWidth;
+	offsetX -= camX;
+	_renderY = _screenHeight / 2;
+	offsetY -= camY;
+
+	// maximum offset = (_screenWidth / 2 + _screenHeight) / 2;
+	int maxOffset = (_screenWidth / 2 + _screenHeight) / 2;
+	if (camX > maxOffset) {
+		_tileCol = (camX - maxOffset) / 32 + 1;
 	}
 
 
 	// +3 tiles to handle the camera movement
-	maxTileCol = _tileCol + ((_renderX + _screenWidth) / _tileWidth) + 3;
+	maxTileCol = _tileCol + ((-offsetX + _screenWidth) / _tileWidth) + 10;
 	if (colmax < maxTileCol) maxTileCol = colmax;
-	maxTileRow = _tileRow + ((_renderY + TD_DISPLAY_HEIGHT) / _tileHeight) + 3;
+	maxTileRow = _tileRow + ((-offsetY + TD_DISPLAY_HEIGHT) / _tileHeight) + 10;
 	if (rowmax < maxTileRow) maxTileRow = rowmax;
 
 	// Map tiles
 	for (unsigned row = _tileRow; row < maxTileRow; row++){
 		for (unsigned col = _tileCol; col < maxTileCol; col++){
-			int x_coord = XtoISO(_renderX + (col - _tileCol) * _tileWidth, _renderY + (row - _tileRow) * _tileHeight);
-			int y_coord = YtoISO(_renderX + (col - _tileCol) * _tileWidth, _renderY + (row - _tileRow) * _tileHeight);
+			int x_coord = _renderX + XtoISO(offsetX + (col - _tileCol) * _tileWidth, offsetY + (row - _tileRow) * _tileHeight);
+			int y_coord = _renderY + YtoISO(offsetX + (col - _tileCol) * _tileWidth, offsetY + (row - _tileRow) * _tileHeight);
 			_grass->drawScaled(x_coord, y_coord, 64, 32);
+
+			if (row == _tileRow && col == _tileCol) {
+				//cout << x_coord << "   " << y_coord << endl;
+			}
+			
+			string tileCoords(to_string(col) + ", " + to_string(row));
+			_font->draw(tileCoords, x_coord+24, y_coord+8, color);
 		}
 	}
 	/*
@@ -129,17 +155,21 @@ void ScreenCtl::draw(AppStats& stat) {
 	*/
 	//al_draw_bitmap(*_current_frame, 0, 0, 0);
 
-	string timeSTR("Game time: " + to_string(static_cast<long long>(stat._gameTime)));
-	string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(stat._CPS)));
-	string fpsSTR("Frames per second: " + to_string(static_cast<long long>(stat._FPS)));
-	string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
-	string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
-	ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
+	//string timeSTR("Game time: " + to_string(static_cast<long long>(stat._gameTime)));
+	//string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(stat._CPS)));
+	//string fpsSTR("Frames per second: " + to_string(static_cast<long long>(stat._FPS)));
+	//string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
+	//string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
+	color = al_map_rgb(255, 0, 0);
+	string timeSTR("_tileCol: " + to_string(static_cast<long long>(_tileCol)));
+	string cpsSTR("_tileRow: " + to_string(static_cast<long long>(_tileRow)));
+	string fpsSTR("offsetX: " + to_string(static_cast<long long>(offsetX)));
+	string frameSTR("offsetY: " + to_string(static_cast<long long>(offsetY)));
 	_font->draw(timeSTR, 5, 5, color);
 	_font->draw(cpsSTR, 5, 30, color);
 	_font->draw(fpsSTR, 5, 55, color);
-	_font->draw(spdSTR, 5, 80, color);
-	_font->draw(frameSTR, 5, 105, color);
+	//_font->draw(spdSTR, 5, 80, color);
+	_font->draw(frameSTR, 5, 80, color);
 }
 
 void ScreenCtl::updateTimers() {

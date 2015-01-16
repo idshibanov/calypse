@@ -31,8 +31,8 @@ class ScreenCtl {
 	unsigned _screenHeight;
 	int _tileWidth;
 	int _tileHeight;
-	unsigned _tileCol;
-	unsigned _tileRow;
+	int _tileCol;
+	int _tileRow;
 	int _renderX;
 	int _renderY;
 	double _zoom;

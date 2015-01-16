@@ -4,8 +4,8 @@
 #include "Main.h"
 #include "MapTile.h"
 
-#define TD_MAP_ROWS 100
-#define TD_MAP_COLS 100
+#define TD_MAP_ROWS 40
+#define TD_MAP_COLS 40
 
 class AStarSearch;
 
