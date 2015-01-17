@@ -8,3 +8,5 @@ allegro.log
 *.sln
 *.suo
 *.vcxproj*
+*.psess
+*.vsp

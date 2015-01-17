@@ -20,10 +20,11 @@ struct AppStats {
 
 class ScreenCtl {
 	ALLEGRO_DISPLAY* _display;
-	vector<ALLEGRO_BITMAP*> _sprites;
-	vector<ALLEGRO_BITMAP*>::iterator _current_frame;
+	vector<RawSprite> _sprites;
+	vector<RawSprite>::iterator _current_frame;
 	SpriteText* _font;
 	Sprite* _grass;
+	Sprite* _reet;
 
 	shared_ptr<LocalMap> _map;
 	shared_ptr<Camera> _cam;
