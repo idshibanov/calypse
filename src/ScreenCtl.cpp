@@ -119,8 +119,13 @@ void ScreenCtl::draw(AppStats& stat) {
 
 	// maximum offset = (_screenWidth / 2 + _screenHeight) / 2;
 	int maxOffset = (_screenWidth / 2 + _screenHeight) / 2;
-	if (camX > maxOffset) {
-		_tileCol = (camX - maxOffset) / 32 + 1;
+	if (camX > maxOffset + 32) {
+		_tileCol = (camX - maxOffset) / 32;
+		offsetX += _tileCol * 32;
+	}
+	if (camY > maxOffset + 32) {
+		_tileRow = (camY - maxOffset) / 32;
+		offsetY += _tileRow * 32;
 	}
 
 
