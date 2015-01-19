@@ -16,6 +16,7 @@ AppCtl::AppCtl() {
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);
 	al_register_event_source(_eventQueue, al_get_timer_event_source(_timer));
 	al_register_event_source(_eventQueue, al_get_keyboard_event_source());
+	al_register_event_source(_eventQueue, al_get_mouse_event_source());
 
 	_isRunning = true;
 	_render = false;
@@ -105,6 +106,20 @@ void AppCtl::controlLoop() {
 				//_screen->decreaseSpeed();
 				break;
 			}
+		} else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
+			//_mouse->set(ev.mouse.x, ev.mouse.y);
+			if (ev.mouse.dz < 0) {
+				_screen->zoomOut();
+			} else if (ev.mouse.dz > 0) {
+				_screen->zoomIn();
+			}
+		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+			int absX = ev.mouse.x;
+			int absY = ev.mouse.y;
+			//_mouse->set(absX, absY, ev.mouse.button, true);
+
+		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+			//_mouse->setPressed(false);
 		} else if (ev.type == ALLEGRO_EVENT_TIMER) {
 			_cycles++;
 
@@ -156,6 +171,7 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 
+	al_install_mouse();
 	al_init_image_addon();
 	al_init_font_addon();
 	al_init_ttf_addon();

@@ -10,6 +10,9 @@ Sprite::Sprite(unsigned int id, const char* filename){
 	}
 	else {
 		al_convert_mask_to_alpha(_texture, al_map_rgb(255, 0, 255));
+
+		int sz = al_get_bitmap_height(_texture) * al_get_bitmap_width(_texture);
+		cout << filename << " Bitmap format: " << al_get_bitmap_format(_texture) << " Size: " << sz << endl;
 		//  70, 107, 107
 	}
 }

@@ -20,7 +20,7 @@ ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam) : frame_t
 	_zoom = 1.0;
 
 	_sprites.reserve(8*20);
-	for (int dir = 0; dir < 8; dir++) {
+	for (int dir = 0; dir < 2; dir++) {
 		for (int i = 0; i < 21; i++) {
 			ostringstream ss;
 			ss << setw(4) << setfill('0') << i;
@@ -69,63 +69,24 @@ void ScreenCtl::draw(AppStats& stat) {
 
 	int offsetX = 0, offsetY = 0;
 
-	// TODO: adjust renderX when camera on the edge (scrolling in the wrong side)
-	// adjust maxTile Row/Col
-	// apply calculation and show extra tiles on all sides
-
-	/*
-	if (camX < _screenWidth / 2){
-		// adjust render X position (left border)
-		_renderX = _screenWidth / 2 - _tileWidth;
-		offsetX -= camX;
-	} else {
-		// find out first tile to render 
-		firstTileX = camX - _screenWidth / 2;
-		_tileCol = firstTileX / _tileWidth;
-
-		// adjust render X position if cam X coord is uneven
-		if (firstTileX % _tileWidth){
-			offsetX = -(firstTileX % _tileWidth);
-		}
-	}
-
-	if (camY < _screenWidth / 2) {
-		// adjust render Y position (top border)
-		_renderY = _screenHeight / 2;
-		offsetY -= camY;
-	} else {
-		offsetX += 300;
-		// find out first tile to render
-		firstTileY = camY - _screenHeight / 2;
-		_tileRow = firstTileY / _tileHeight;
-
-		// adjust render Y position if cam Y coord is uneven
-		if (firstTileY % _tileHeight){
-			offsetY = -(firstTileY % _tileHeight);
-		}
-	}
-	*/
 	_renderX = _screenWidth / 2 - _tileWidth;
 	offsetX -= camX;
 	_renderY = _screenHeight / 2;
 	offsetY -= camY;
 
-	// maximum offset = (_screenWidth / 2 + _screenHeight) / 2;
 	int maxOffset = (_screenWidth / 2 + _screenHeight) / 2;
-	if (camX > maxOffset + 32) {
-		_tileCol = (camX - maxOffset) / 32;
-		offsetX += _tileCol * 32;
+	if (camX > maxOffset + _tileWidth) {
+		_tileCol = (camX - maxOffset) / _tileWidth;
+		offsetX += _tileCol * _tileWidth;
 	}
-	if (camY > maxOffset + 32) {
-		_tileRow = (camY - maxOffset) / 32;
-		offsetY += _tileRow * 32;
+	if (camY > maxOffset + _tileHeight) {
+		_tileRow = (camY - maxOffset) / _tileHeight;
+		offsetY += _tileRow * _tileHeight;
 	}
 
-
-	// +3 tiles to handle the camera movement
-	maxTileCol = _tileCol + ((-offsetX + _screenWidth) / _tileWidth) + 10;
+	maxTileCol = _tileCol + ((-offsetX + _screenWidth + maxOffset) / _tileWidth);
 	if (colmax < maxTileCol) maxTileCol = colmax;
-	maxTileRow = _tileRow + ((-offsetY + TD_DISPLAY_HEIGHT) / _tileHeight) + 10;
+	maxTileRow = _tileRow + ((-offsetY + _screenHeight + maxOffset) / _tileHeight);
 	if (rowmax < maxTileRow) maxTileRow = rowmax;
 
 	// Map tiles
@@ -135,7 +96,7 @@ void ScreenCtl::draw(AppStats& stat) {
 			int y_coord = _renderY + YtoISO(offsetX + (col - _tileCol) * _tileWidth, offsetY + (row - _tileRow) * _tileHeight);
 			// loop drawing sub bitmaps must be the same parent
 			//al_hold_bitmap_drawing(true);
-			_grass->drawScaled(x_coord, y_coord, 64, 32);
+			_grass->drawScaled(x_coord, y_coord, _tileWidth*2, _tileHeight);
 			//al_hold_bitmap_drawing(false);
 			
 			//string tileCoords(to_string(col) + ", " + to_string(row));
@@ -145,16 +106,15 @@ void ScreenCtl::draw(AppStats& stat) {
 
 	for (unsigned row = _tileRow; row < maxTileRow; row++) {
 		for (unsigned col = _tileCol; col < maxTileCol; col++) {
-			//if (rand() % 100 < 15) {
 			if (_map->getTileType(row * rowmax + col) == 10) {
 				int x_coord = _renderX + XtoISO(offsetX + (col - _tileCol) * _tileWidth, offsetY + (row - _tileRow) * _tileHeight);
 				int y_coord = _renderY - 60 + YtoISO(offsetX + (col - _tileCol) * _tileWidth, offsetY + (row - _tileRow) * _tileHeight);
-				//_reet->draw(x_coord, y_coord);
+				_reet->drawScaled(x_coord, y_coord, 64*_zoom, 92*_zoom);
 			}
 		}
 	}
 
-	_current_frame->drawScaled(100, 100, 0.5);
+	_current_frame->drawScaled(100, 100, _zoom/2);
 
 	string timeSTR("Game time: " + to_string(static_cast<long long>(stat._gameTime)));
 	string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(stat._CPS)));
@@ -203,5 +163,21 @@ void ScreenCtl::decreaseSpeed() {
 	if (_animation_speed > 10) {
 		_animation_speed -= 10;
 		frame_t.adjust(ANIMATION_TICKS / _animation_speed * 100);
+	}
+}
+
+void ScreenCtl::zoomIn() {
+	if (_zoom < 2.0) {
+		_zoom += 0.1;
+		_tileWidth = TD_TILESIZE_X * _zoom;
+		_tileHeight = TD_TILESIZE_Y * _zoom;
+	}
+}
+
+void ScreenCtl::zoomOut() {
+	if (_zoom > 0.5) {
+		_zoom -= 0.1;
+		_tileWidth = TD_TILESIZE_X * _zoom;
+		_tileHeight = TD_TILESIZE_Y * _zoom;
 	}
 }

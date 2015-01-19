@@ -50,4 +50,6 @@ public:
 	int YtoISO(int, int);
 	void increaseSpeed();
 	void decreaseSpeed();
+	void zoomIn();
+	void zoomOut();
 };
