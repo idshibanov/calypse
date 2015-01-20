@@ -30,6 +30,7 @@ class AppCtl {
 	shared_ptr<LocalMap> _map;
 	shared_ptr<AStarSearch> _pFinder;
 	shared_ptr<Camera> _camera;
+	shared_ptr<AppStats> _stats;
 
 	bool _isRunning;
 	bool _render;

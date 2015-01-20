@@ -9,8 +9,9 @@ AppCtl::AppCtl() {
 	_pFinder = make_shared<AStarSearch>(_map);
 	_map->generate(_pFinder);
 
+	_stats = make_shared<AppStats>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
-	_screen = new ScreenCtl(_map, _camera);
+	_screen = new ScreenCtl(_map, _camera, _stats);
 
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);
@@ -25,8 +26,8 @@ AppCtl::AppCtl() {
 	_render_frames = 0;
 	_animation_frame = 0;
 
-	_FPS = 0;
-	_CPS = 0;
+	_stats->_FPS = 0;
+	_stats->_CPS = 0;
 	_keys = new bool[7];
 	for (int i = 0; i < 7; i++) _keys[i] = false;
 }
@@ -56,15 +57,18 @@ void AppCtl::update() {
 	} else if (_keys[DOWN]) {
 		_camera->move(4, dist);
 	}
+
+	if (_camera->isUpdated()) {
+		_screen->redraw(true);
+	}
 }
 
 void AppCtl::controlLoop() {
 	al_start_timer(_timer);
-	_gameTime = al_current_time();
+	_stats->_gameTime = al_current_time();
 
 	double animation_speed = 100;
 	TaskTimer render_t(CLOCK_SPEED / 60);
-	AppStats stats;
 
 	while (_isRunning) {
 		ALLEGRO_EVENT ev;
@@ -123,10 +127,10 @@ void AppCtl::controlLoop() {
 		} else if (ev.type == ALLEGRO_EVENT_TIMER) {
 			_cycles++;
 
-			if (al_current_time() - _gameTime >= 1) {
-				_gameTime = al_current_time();
-				_CPS = _cycles;
-				_FPS = _render_frames;
+			if (al_current_time() - _stats->_gameTime >= 1) {
+				_stats->_gameTime = al_current_time();
+				_stats->_CPS = _cycles;
+				_stats->_FPS = _render_frames;
 				_cycles = _render_frames = 0;
 			}
 
@@ -139,21 +143,14 @@ void AppCtl::controlLoop() {
 			_screen->updateTimers();
 		}
 
-		//==============================================
-		//RENDER
-		//==============================================
 		if (_render && al_is_event_queue_empty(_eventQueue)) {
 			_render_frames++;
 			_render = false;
 
-			stats._CPS = _CPS;
-			stats._FPS = _FPS;
-			stats._gameTime = _gameTime;
-			_screen->draw(stats);
-
-			//FLIP BUFFERS========================
-			al_flip_display();
-			al_clear_to_color(al_map_rgb(0, 0, 0));
+			if (_screen->draw()) {
+				al_flip_display();
+				al_clear_to_color(al_map_rgb(0, 0, 0));
+			}
 		}
 	}
 }

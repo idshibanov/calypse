@@ -28,6 +28,11 @@ class ScreenCtl {
 
 	shared_ptr<LocalMap> _map;
 	shared_ptr<Camera> _cam;
+	shared_ptr<AppStats> _stats;
+
+	bool _render;
+	int _lastTimestamp;
+
 	unsigned _screenWidth;
 	unsigned _screenHeight;
 	int _tileWidth;
@@ -36,15 +41,20 @@ class ScreenCtl {
 	int _tileRow;
 	int _renderX;
 	int _renderY;
+	int _offsetX;
+	int _offsetY;
+	int _maxOffset;
 	double _zoom;
 
 	double _animation_speed;
 	int _animation_frame;
 	TaskTimer frame_t;
 public:
-	ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam);
+	ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_ptr<AppStats> stats);
 	~ScreenCtl();
-	void draw(AppStats& stat);
+	bool draw();
+	void redraw(bool cameraMoved);
+	void update();
 	void updateTimers();
 	int XtoISO(int, int);
 	int YtoISO(int, int);
