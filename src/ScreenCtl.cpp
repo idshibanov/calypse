@@ -198,6 +198,7 @@ void ScreenCtl::zoomIn() {
 		_zoom += 0.1;
 		_tileWidth = TD_TILESIZE_X * _zoom;
 		_tileHeight = TD_TILESIZE_Y * _zoom;
+		_render = true;
 	}
 }
 
@@ -206,5 +207,6 @@ void ScreenCtl::zoomOut() {
 		_zoom -= 0.1;
 		_tileWidth = TD_TILESIZE_X * _zoom;
 		_tileHeight = TD_TILESIZE_Y * _zoom;
+		_render = true;
 	}
 }
