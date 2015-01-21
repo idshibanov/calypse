@@ -11,6 +11,7 @@ AppCtl::AppCtl() {
 
 	_stats = make_shared<AppStats>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
+	_mouse = make_shared<Mouse>();
 	_screen = new ScreenCtl(_map, _camera, _stats);
 
 	_eventQueue = al_create_event_queue();
@@ -86,11 +87,9 @@ void AppCtl::controlLoop() {
 				break;
 			case ALLEGRO_KEY_UP:
 				_keys[UP] = true;
-				//_screen->increaseSpeed();
 				break;
 			case ALLEGRO_KEY_DOWN:
 				_keys[DOWN] = true;
-				//_screen->decreaseSpeed();
 				break;
 			}
 		} else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
@@ -103,15 +102,13 @@ void AppCtl::controlLoop() {
 				break;
 			case ALLEGRO_KEY_UP:
 				_keys[UP] = false;
-				//_screen->increaseSpeed();
 				break;
 			case ALLEGRO_KEY_DOWN:
 				_keys[DOWN] = false;
-				//_screen->decreaseSpeed();
 				break;
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
-			//_mouse->set(ev.mouse.x, ev.mouse.y);
+			_mouse->set(ev.mouse.x, ev.mouse.y);
 			if (ev.mouse.dz < 0) {
 				_screen->zoomOut();
 			} else if (ev.mouse.dz > 0) {
@@ -120,10 +117,10 @@ void AppCtl::controlLoop() {
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
 			int absX = ev.mouse.x;
 			int absY = ev.mouse.y;
-			//_mouse->set(absX, absY, ev.mouse.button, true);
+			_mouse->set(absX, absY, ev.mouse.button, true);
 
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-			//_mouse->setPressed(false);
+			_mouse->setPressed(false);
 		} else if (ev.type == ALLEGRO_EVENT_TIMER) {
 			_cycles++;
 

@@ -7,6 +7,7 @@
 #include "Main.h"
 #include "ScreenCtl.h"
 #include "Camera.h"
+#include "Mouse.h"
 #include "Map.h"
 #include "Pathfinder.h"
 
@@ -30,6 +31,7 @@ class AppCtl {
 	shared_ptr<LocalMap> _map;
 	shared_ptr<AStarSearch> _pFinder;
 	shared_ptr<Camera> _camera;
+	shared_ptr<Mouse> _mouse;
 	shared_ptr<AppStats> _stats;
 
 	bool _isRunning;

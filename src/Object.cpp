@@ -1,0 +1,42 @@
+#include "object.h"
+
+MapObject::MapObject(int xpos, int ypos, short type) 
+                     : _xpos(xpos), _ypos(ypos), _type(type) {
+    _deleted = false;
+}
+
+MapObject::MapObject(MapObject& rhs){
+    *this = rhs;
+}
+
+MapObject& MapObject::operator=(MapObject& rhs){
+    _xpos = rhs._xpos;
+    _ypos = rhs._ypos;
+    _type = rhs._type;
+    _deleted = rhs._deleted;
+    return *this;
+}
+
+MapObject::~MapObject(){
+
+}
+
+int MapObject::getXPos(){
+    return _xpos;
+}
+
+int MapObject::getYPos(){
+    return _ypos;
+}
+
+int MapObject::getType(){
+    return _type;
+}
+
+bool MapObject::isDeleted(){
+    return _deleted;
+}
+
+void MapObject::deleteObject(){
+    _deleted = true;
+}
