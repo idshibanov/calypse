@@ -4,7 +4,7 @@
 #include "Pathfinder.h"
 
 LocalMap::LocalMap() {
-
+	_obj = make_shared<MapObject>(0,0,0);
 }
 
 LocalMap::~LocalMap(){
@@ -78,6 +78,10 @@ unsigned int LocalMap::convertIDToX(unsigned mapID) const {
 
 unsigned int LocalMap::convertIDToY(unsigned mapID) const {
 	return mapID / _colmax;
+}
+
+shared_ptr<MapObject> LocalMap::getActor() {
+	return _obj;
 }
 
 bool LocalMap::tileExists(unsigned mapID) const {

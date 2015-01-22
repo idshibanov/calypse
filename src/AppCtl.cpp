@@ -12,7 +12,7 @@ AppCtl::AppCtl() {
 	_stats = make_shared<AppStats>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 	_mouse = make_shared<Mouse>();
-	_screen = new ScreenCtl(_map, _camera, _stats);
+	_screen = new ScreenCtl(_map, _camera, _mouse, _stats);
 
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);
@@ -108,7 +108,10 @@ void AppCtl::controlLoop() {
 				break;
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
-			_mouse->set(ev.mouse.x, ev.mouse.y);
+			if (_mouse->set(ev.mouse.x, ev.mouse.y)) {
+				_screen->redraw();
+			}
+
 			if (ev.mouse.dz < 0) {
 				_screen->zoomOut();
 			} else if (ev.mouse.dz > 0) {
@@ -118,7 +121,9 @@ void AppCtl::controlLoop() {
 			int absX = ev.mouse.x;
 			int absY = ev.mouse.y;
 			_mouse->set(absX, absY, ev.mouse.button, true);
-
+			int tileX = _screen->convertScreenX(absX, absY);
+			int tileY = _screen->convertScreenY(absX, absY);
+			cout << tileX << "," << tileY << endl;
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 			_mouse->setPressed(false);
 		} else if (ev.type == ALLEGRO_EVENT_TIMER) {

@@ -4,6 +4,7 @@
 #include "Sprite.h"
 #include "Timer.h"
 #include "Camera.h"
+#include "Mouse.h"
 #include "Map.h"
 
 #define TD_DISPLAY_WIDTH 800
@@ -25,9 +26,11 @@ class ScreenCtl {
 	SpriteText* _font;
 	Sprite* _grass;
 	Sprite* _reet;
+	Sprite* _cursor;
 
 	shared_ptr<LocalMap> _map;
 	shared_ptr<Camera> _cam;
+	shared_ptr<Mouse> _mouse;
 	shared_ptr<AppStats> _stats;
 
 	bool _render;
@@ -50,14 +53,18 @@ class ScreenCtl {
 	int _animation_frame;
 	TaskTimer frame_t;
 public:
-	ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_ptr<AppStats> stats);
+	ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_ptr<Mouse> mouse, shared_ptr<AppStats> stats);
 	~ScreenCtl();
 	bool draw();
-	void redraw(bool cameraMoved);
+	void redraw(bool cameraMoved = false);
 	void update();
 	void updateTimers();
 	int XtoISO(int, int);
 	int YtoISO(int, int);
+	int isoXtoMap(int, int);
+	int isoYtoMap(int, int);
+	int convertScreenX(int, int);
+	int convertScreenY(int, int);
 	void increaseSpeed();
 	void decreaseSpeed();
 	void zoomIn();

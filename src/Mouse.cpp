@@ -14,8 +14,13 @@ Mouse::Mouse() {
 Mouse::~Mouse(){
 
 }
-void Mouse::set(int absX, int absY, int button, bool pressed, int frameid, 
+
+bool Mouse::set(int absX, int absY, int button, bool pressed, int frameid, 
                   int frameX, int frameY, int elementID) {
+	bool retval = false;
+	if (absX != _xpos || absY != _ypos) {
+		retval = true;
+	}
     _xpos = absX;
     _ypos = absY;
     _button = button;
@@ -24,6 +29,7 @@ void Mouse::set(int absX, int absY, int button, bool pressed, int frameid,
     _framex = frameX;
     _framey = frameY;
     _elementid = elementID;
+	return retval;
 }
 
 void Mouse::setFrame(int frameid, int frameX, int frameY, int elementID) {

@@ -17,7 +17,7 @@ class Mouse {
 public:
     Mouse();
     ~Mouse();
-    void set(int absX, int absY, int button = 0, bool pressed = false, int frameid = -1, 
+    bool set(int absX, int absY, int button = 0, bool pressed = false, int frameid = -1, 
              int frameX = 0, int frameY = 0, int elementID = -1);
     void setFrame(int frameid, int frameX, int frameY, int elementID = -1);
     int getXPos();
