@@ -124,6 +124,11 @@ void AppCtl::controlLoop() {
 			int tileX = _screen->convertScreenX(absX, absY);
 			int tileY = _screen->convertScreenY(absX, absY);
 			cout << tileX << "," << tileY << endl;
+			auto actor = _map->getActor();
+			if (tileX > 0 && tileY > 0) {
+				actor->setXPos(tileX);
+				actor->setYPos(tileY);
+			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 			_mouse->setPressed(false);
 		} else if (ev.type == ALLEGRO_EVENT_TIMER) {

@@ -27,6 +27,7 @@ ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_pt
 	_tileRow = 0;
 	_zoom = 1.0;
 
+	/*
 	_sprites.reserve(10*20);
 	for (int dir = 0; dir < 1; dir++) {
 		for (int i = 0; i < 21; i++) {
@@ -36,6 +37,7 @@ ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_pt
 			_sprites.emplace_back(dir * 20 + i, res_path.c_str(), 298, 235, 125, 185);
 		}
 	}
+	*/
 
 	_font = new SpriteText("res/arialbd.ttf", 12);
 
@@ -43,8 +45,11 @@ ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_pt
 	_reet = new Sprite(1, "res/reet.png");
 	_cursor = new Sprite(1, "res/cursor.png");
 
-	_current_frame = _sprites.begin();
-	_current_frame++;
+	// 44x69, 11-0-11, 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
+	_walk = new SpriteSheet(0, "res/f2_walk.png", 48, 8, 44, 69);
+
+	//_current_frame = _sprites.begin();
+	//_current_frame++;
 	_animation_speed = 100;
 	_animation_frame = 0;
 }
@@ -54,6 +59,7 @@ ScreenCtl::~ScreenCtl() {
 	delete _grass;
 	delete _reet;
 	delete _cursor;
+	delete _walk;
 
 	al_destroy_display(_display);
 }
@@ -83,8 +89,8 @@ bool ScreenCtl::draw() {
 				_grass->drawScaled(x_coord, y_coord, _tileWidth * 2, _tileHeight);
 				//al_hold_bitmap_drawing(false);
 
-				string tileCoords(to_string(col) + ", " + to_string(row));
-				_font->draw(tileCoords, x_coord + 24, y_coord + 8, color);
+				//string tileCoords(to_string(col) + ", " + to_string(row));
+				//_font->draw(tileCoords, x_coord + 24, y_coord + 8, color);
 			}
 		}
 
@@ -99,20 +105,16 @@ bool ScreenCtl::draw() {
 		}
 
 		shared_ptr<MapObject> _actor = _map->getActor();
-		int x_coord = _renderX + XtoISO(_offsetX + _actor->getXPos() * _tileWidth, _offsetY + _actor->getYPos() * _tileHeight);
-		int y_coord = _renderY - (60 * _zoom) + YtoISO(_offsetX + _actor->getXPos() * _tileWidth, _offsetY + _actor->getYPos() * _tileHeight);
+		int x_coord = _renderX + (10 * _zoom) + XtoISO(_offsetX + _actor->getXPos() * _tileWidth, _offsetY + _actor->getYPos() * _tileHeight);
+		int y_coord = _renderY - (45 * _zoom) + YtoISO(_offsetX + _actor->getXPos() * _tileWidth, _offsetY + _actor->getYPos() * _tileHeight);
 		//_current_frame->drawScaled(x_coord, y_coord, _zoom / 2);
+		_walk->drawScaled(x_coord, y_coord, _animation_frame, _zoom);
 
-		//string timeSTR("Game time: " + to_string(static_cast<long long>(_stats->_gameTime)));
-		//string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(_stats->_CPS)));
-		//string fpsSTR("Frames per second: " + to_string(static_cast<long long>(_stats->_FPS)));
-		//string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
-		//string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
-		string timeSTR("_tileCol: " + to_string(_tileCol));
-		string cpsSTR("_tileRow: " + to_string(_tileRow));
-		string fpsSTR("_offsetX: " + to_string(_offsetX));
-		string spdSTR("_offsetY: " + to_string(_offsetY));
-		string frameSTR("_zoom: " + to_string(_zoom));
+		string timeSTR("Game time: " + to_string(static_cast<long long>(_stats->_gameTime)));
+		string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(_stats->_CPS)));
+		string fpsSTR("Frames per second: " + to_string(static_cast<long long>(_stats->_FPS)));
+		string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
+		string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
 		_font->draw(timeSTR, 5, 5, color);
 		_font->draw(cpsSTR, 5, 30, color);
 		_font->draw(fpsSTR, 5, 55, color);
@@ -173,13 +175,15 @@ void ScreenCtl::updateTimers() {
 	if (frame_t.check()) {
 		_render = true;
 		_animation_frame++;
-		if (_animation_frame > 20) _animation_frame = 0;
+		if (_animation_frame > 47) _animation_frame = 0;
 
+		/*
 		_current_frame++;
 		if (_current_frame == _sprites.end()) {
 			_current_frame = _sprites.begin();
 			_current_frame++;
 		}
+		*/
 		frame_t.relaunch();
 	}
 }
@@ -201,13 +205,13 @@ int ScreenCtl::isoYtoMap(int x, int y) {
 }
 
 int ScreenCtl::convertScreenX(int x, int y) {
-	int trueX = isoXtoMap(x - _renderX - 32, y - _renderY) - _offsetX;
+	int trueX = isoXtoMap(x - _renderX - _tileWidth, y - _renderY) - _offsetX;
 
 	return trueX / _tileWidth + _tileCol;
 }
 
 int ScreenCtl::convertScreenY(int x, int y) {
-	int trueY = isoYtoMap(x - _renderX - 32, y - _renderY) - _offsetY;
+	int trueY = isoYtoMap(x - _renderX - _tileWidth, y - _renderY) - _offsetY;
 
 	return trueY / _tileHeight + _tileRow;
 }

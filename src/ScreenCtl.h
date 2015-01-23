@@ -11,7 +11,7 @@
 #define TD_DISPLAY_HEIGHT 600
 
 #define ISO_TILE_SIZE 32
-#define ANIMATION_TICKS 50
+#define ANIMATION_TICKS 125
 
 struct AppStats {
 	int _gameTime;
@@ -27,6 +27,7 @@ class ScreenCtl {
 	Sprite* _grass;
 	Sprite* _reet;
 	Sprite* _cursor;
+	SpriteSheet* _walk;
 
 	shared_ptr<LocalMap> _map;
 	shared_ptr<Camera> _cam;

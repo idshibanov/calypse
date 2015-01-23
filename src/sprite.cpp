@@ -9,7 +9,8 @@ Sprite::Sprite(unsigned int id, const char* filename){
 		cout << "Warning: sprite " << _id << " is not loaded! (" << filename << ")" << endl;
 	}
 	else {
-		al_convert_mask_to_alpha(_texture, al_map_rgb(255, 0, 255));
+		//al_convert_mask_to_alpha(_texture, al_map_rgb(255, 0, 255));
+		al_convert_mask_to_alpha(_texture, al_map_rgb(11, 0, 11));
 
 		int sz = al_get_bitmap_height(_texture) * al_get_bitmap_width(_texture);
 		cout << filename << " Bitmap format: " << al_get_bitmap_format(_texture) << " Size: " << sz << endl;

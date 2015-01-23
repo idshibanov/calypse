@@ -4,7 +4,7 @@
 #include "Pathfinder.h"
 
 LocalMap::LocalMap() {
-	_obj = make_shared<MapObject>(0,0,0);
+	_obj = make_shared<Actor>(0,0,0,24);
 }
 
 LocalMap::~LocalMap(){
@@ -80,7 +80,7 @@ unsigned int LocalMap::convertIDToY(unsigned mapID) const {
 	return mapID / _colmax;
 }
 
-shared_ptr<MapObject> LocalMap::getActor() {
+shared_ptr<Actor> LocalMap::getActor() {
 	return _obj;
 }
 

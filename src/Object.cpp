@@ -40,3 +40,33 @@ bool MapObject::isDeleted(){
 void MapObject::deleteObject(){
     _deleted = true;
 }
+
+
+
+Actor::Actor(int xpos, int ypos, short type, int defaultSprite)
+	: MapObject(xpos, ypos, type) {
+	_default = defaultSprite;
+	_static = true;
+}
+
+Actor::Actor(Actor& rhs) : MapObject(rhs) {
+}
+
+Actor& Actor::operator=(Actor& rhs) {
+	MapObject::operator=(rhs);
+	_default = rhs._default;
+	_static = rhs._static;
+	return *this;
+}
+
+Actor::~Actor() {
+
+}
+
+void Actor::setXPos(int x) {
+	_xpos = x;
+}
+
+void Actor::setYPos(int y) {
+	_ypos = y;
+}
