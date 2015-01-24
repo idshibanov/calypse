@@ -2,9 +2,10 @@
 #include <ctime>
 #include "Map.h"
 #include "Pathfinder.h"
+#include "Object.h"
 
 LocalMap::LocalMap() {
-	_obj = make_shared<Actor>(0,0,0,24);
+	_obj = make_shared<Actor>(0, 0, 0, 24, _pFinder);
 }
 
 LocalMap::~LocalMap(){

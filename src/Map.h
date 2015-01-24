@@ -3,7 +3,8 @@
 #include <bitset>
 #include "Main.h"
 #include "MapTile.h"
-#include "Object.h"
+
+class Actor;
 
 #define TILE_MASK 10
 #define SUBTILE_STEPS 5

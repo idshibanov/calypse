@@ -3,6 +3,7 @@
 
 #include "AppCtl.h"
 #include "Timer.h"
+#include "Object.h"
 
 AppCtl::AppCtl() {
 	_map = make_shared<LocalMap>();

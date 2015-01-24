@@ -43,10 +43,14 @@ void MapObject::deleteObject(){
 
 
 
-Actor::Actor(int xpos, int ypos, short type, int defaultSprite)
+Actor::Actor(int xpos, int ypos, short type, int defaultSprite, weak_ptr<AStarSearch> pf)
 	: MapObject(xpos, ypos, type) {
-	_default = defaultSprite;
+	_spriteID = defaultSprite;
+	_dir = 1;
 	_static = true;
+	_pathFinder = pf;
+	_destX = 0;
+	_destY = 0;
 }
 
 Actor::Actor(Actor& rhs) : MapObject(rhs) {
@@ -54,8 +58,12 @@ Actor::Actor(Actor& rhs) : MapObject(rhs) {
 
 Actor& Actor::operator=(Actor& rhs) {
 	MapObject::operator=(rhs);
-	_default = rhs._default;
+	_spriteID = rhs._spriteID;
+	_dir = rhs._dir;
 	_static = rhs._static;
+	_destX = rhs._destX;
+	_destY = rhs._destY;
+	_pathFinder = rhs._pathFinder;
 	return *this;
 }
 
@@ -69,4 +77,17 @@ void Actor::setXPos(int x) {
 
 void Actor::setYPos(int y) {
 	_ypos = y;
+}
+
+int Actor::getSprite() {
+	return _spriteID;
+}
+
+void Actor::setDestination(int x, int y) {
+	_xpos = x;
+	_ypos = y;
+}
+
+void Actor::update() {
+
 }

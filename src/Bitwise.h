@@ -1,4 +1,4 @@
-
+#pragma once
 
 void setBit(uint32_t& x, unsigned bit) {
 	x |= 1 << bit;

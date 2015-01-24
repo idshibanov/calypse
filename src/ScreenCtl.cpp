@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "ScreenCtl.h"
+#include "Object.h"
 
 ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_ptr<Mouse> mouse, shared_ptr<AppStats> stats)
 	: frame_t(ANIMATION_TICKS) {
@@ -104,11 +105,11 @@ bool ScreenCtl::draw() {
 			}
 		}
 
-		shared_ptr<MapObject> _actor = _map->getActor();
+		shared_ptr<Actor> _actor = _map->getActor();
 		int x_coord = _renderX + (10 * _zoom) + XtoISO(_offsetX + _actor->getXPos() * _tileWidth, _offsetY + _actor->getYPos() * _tileHeight);
 		int y_coord = _renderY - (45 * _zoom) + YtoISO(_offsetX + _actor->getXPos() * _tileWidth, _offsetY + _actor->getYPos() * _tileHeight);
 		//_current_frame->drawScaled(x_coord, y_coord, _zoom / 2);
-		_walk->drawScaled(x_coord, y_coord, _animation_frame, _zoom);
+		_walk->drawScaled(x_coord, y_coord, _actor->getSprite(), _zoom);
 
 		string timeSTR("Game time: " + to_string(static_cast<long long>(_stats->_gameTime)));
 		string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(_stats->_CPS)));
