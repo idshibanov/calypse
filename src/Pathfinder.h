@@ -3,6 +3,7 @@
 #include "Map.h"
 
 #define PATHFINDING_MOVE_COST 10
+#define PATHFINDING_DIAGONAL_COST 14
 
 class GameMap;
 

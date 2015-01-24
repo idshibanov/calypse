@@ -84,10 +84,24 @@ int Actor::getSprite() {
 }
 
 void Actor::setDestination(int x, int y) {
-	_xpos = x;
-	_ypos = y;
+	_timer = 0;
+	_destX = x;
+	_destY = y;
+	_path = _pathFinder.lock()->searchPath(_xpos, _ypos, _destX, _destY);
+	for (auto it = _path.begin(); it != _path.end(); ++it) {
+		std::cout << (*it) << endl;
+	}
+	std::cout << endl;
 }
 
 void Actor::update() {
-
+	if (!_path.empty()) {
+		_timer++;
+		if (_timer % 25 == 0) {
+			AStarNode& nextNode = _path.front();
+			_xpos = nextNode._mapX;
+			_ypos = nextNode._mapY;
+			_path.erase(_path.begin());
+		}
+	}
 }

@@ -63,6 +63,7 @@ void AppCtl::update() {
 	if (_camera->isUpdated()) {
 		_screen->redraw(true);
 	}
+	_map->update();
 }
 
 void AppCtl::controlLoop() {
@@ -127,8 +128,7 @@ void AppCtl::controlLoop() {
 			cout << tileX << "," << tileY << endl;
 			auto actor = _map->getActor();
 			if (tileX > 0 && tileY > 0) {
-				actor->setXPos(tileX);
-				actor->setYPos(tileY);
+				actor->setDestination(tileX, tileY);
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 			_mouse->setPressed(false);

@@ -5,7 +5,7 @@
 #include "Object.h"
 
 LocalMap::LocalMap() {
-	_obj = make_shared<Actor>(0, 0, 0, 24, _pFinder);
+
 }
 
 LocalMap::~LocalMap(){
@@ -14,6 +14,7 @@ LocalMap::~LocalMap(){
 
 void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 	_pFinder = pf;
+	_obj = make_shared<Actor>(0, 0, 0, 24, _pFinder);
 	srand((unsigned)time(NULL));
 	_rowmax = TD_MAP_ROWS;
 	_colmax = TD_MAP_COLS;
@@ -118,4 +119,5 @@ void LocalMap::processAction(int x, int y, int id) {
 }
 
 void LocalMap::update() {
+	_obj->update();
 }
