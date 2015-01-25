@@ -106,8 +106,10 @@ bool ScreenCtl::draw() {
 		}
 
 		shared_ptr<Actor> _actor = _map->getActor();
-		int x_coord = _renderX + (10 * _zoom) + XtoISO(_offsetX + _actor->getXPos() * _tileWidth, _offsetY + _actor->getYPos() * _tileHeight);
-		int y_coord = _renderY - (45 * _zoom) + YtoISO(_offsetX + _actor->getXPos() * _tileWidth, _offsetY + _actor->getYPos() * _tileHeight);
+		int a_x = _actor->getXPos() / TILE_MASK;
+		int a_y = _actor->getYPos() / TILE_MASK;
+		int x_coord = _renderX + (10 * _zoom) + XtoISO(_offsetX + a_x * _tileWidth, _offsetY + a_y *_tileHeight);
+		int y_coord = _renderY - (45 * _zoom) + YtoISO(_offsetX + a_x * _tileWidth, _offsetY + a_y * _tileHeight);
 		//_current_frame->drawScaled(x_coord, y_coord, _zoom / 2);
 		_walk->drawScaled(x_coord, y_coord, _actor->getSprite(), _zoom);
 

@@ -87,7 +87,7 @@ void Actor::setDestination(int x, int y) {
 	_timer = 0;
 	_destX = x;
 	_destY = y;
-	_path = _pathFinder.lock()->searchPath(_xpos, _ypos, _destX, _destY);
+	_path = _pathFinder.lock()->searchPath(_xpos / TILE_MASK, _ypos / TILE_MASK, _destX, _destY);
 	for (auto it = _path.begin(); it != _path.end(); ++it) {
 		std::cout << (*it) << endl;
 	}
@@ -97,10 +97,10 @@ void Actor::setDestination(int x, int y) {
 void Actor::update() {
 	if (!_path.empty()) {
 		_timer++;
-		if (_timer % 25 == 0) {
+		if (_timer % 20 == 0) {
 			AStarNode& nextNode = _path.front();
-			_xpos = nextNode._mapX;
-			_ypos = nextNode._mapY;
+			_xpos = nextNode._mapX*10;
+			_ypos = nextNode._mapY*10;
 			_path.erase(_path.begin());
 		}
 	}
