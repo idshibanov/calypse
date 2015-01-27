@@ -100,7 +100,7 @@ bool ScreenCtl::draw() {
 				if (_map->getTileType(row * rowmax + col) == 10) {
 					int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
 					int y_coord = _renderY - (60*_zoom) + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
-					//_reet->drawScaled(x_coord, y_coord, 64 * _zoom, 92 * _zoom);
+					_reet->drawScaled(x_coord, y_coord, 64 * _zoom, 92 * _zoom);
 				}
 			}
 		}

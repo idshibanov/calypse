@@ -99,32 +99,48 @@ void Actor::setDestination(int x, int y) {
 void Actor::update() {
 	if (!_path.empty()) {
 		_timer++;
-		if (_timer % 6 == 0) {
+		if (_timer % 8 == 0) {
 			AStarNode& nextNode = _path.front();
 			int modX = (nextNode._mapX - _xpos / TILE_MASK) * SUBTILE_MASK;
 			int modY = (nextNode._mapY - _ypos / TILE_MASK) * SUBTILE_MASK;
+			int dir = getDirection(modX, modY);
 
-			switch (getDirection(modX, modY)) {
-			// 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
-			case 0:
+			_spriteID++;
+			switch (dir) {
+			// 6 dirs, 8 frames
+			// T, TR, R-DR, D, DL, L-TL
+			// 6, 7,  4-2,  1, 0,  3-5
 			case 1:
-				_spriteID = 3 * 8;
+				if (_spriteID / 8 != 4) {
+					_spriteID = 4 * 8;
+				}
 				break;
 			case 2:
-				_spriteID = 2 * 8;
+				if (_spriteID / 8 != 3) {
+					_spriteID = 3 * 8;
+				}
 				break;
 			case 3:
-				_spriteID = 4 * 8;
+			case 6:
+				if (_spriteID / 8 != 2) {
+					_spriteID = 2 * 8;
+				}
 				break;
 			case 4:
-				_spriteID = 1 * 8;
-				break;
-			case 5:
-				_spriteID = 5 * 8;
-				break;
-			case 6:
 			case 7:
-				_spriteID = 0;
+				if (_spriteID / 8 != 5) {
+					_spriteID = 5 * 8;
+				}
+				break;
+			case 8:
+				if (_spriteID / 8 != 0) {
+					_spriteID = 0 * 8;
+				}
+				break;
+			case 9:
+				if (_spriteID / 8 != 1) {
+					_spriteID = 1 * 8;
+				}
 				break;
 			}
 
@@ -137,27 +153,24 @@ void Actor::update() {
 	}
 }
 
-// 7 8 9      6 7 8     -1, 1
-// 4   6   => 3 4 5  => -1, 0
-// 1 2 3      0 1 2     -1,-1
 
 int Actor::getDirection(int x, int y) {
 	if (x < 0 && y < 0) {
-		return 0;
-	} else if (x < 0 && y == 0) {
-		return 1;
-	} else if (x < 0 && y > 0) {
-		return 2;
+		return 7;
 	} else if (x == 0 && y < 0) {
-		return 3;
-	} else if (x == 0 && y > 0) {
-		return 4;
+		return 8;
 	} else if (x > 0 && y < 0) {
-		return 5;
+		return 9;
+	} else if (x < 0 && y == 0) {
+		return 4;
 	} else if (x > 0 && y == 0) {
 		return 6;
+	} else if (x < 0 && y > 0) {
+		return 1;
+	} else if (x == 0 && y > 0) {
+		return 2;
 	} else if (x > 0 && y > 0) {
-		return 7;
+		return 3;
 	}
-	return -1;
+	return 5;
 }
