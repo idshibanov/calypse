@@ -42,4 +42,5 @@ public:
 	int getSprite();
 	void setDestination(int, int);
 	void update();
+	int getDirection(int x, int y);
 };

@@ -106,18 +106,20 @@ bool ScreenCtl::draw() {
 		}
 
 		shared_ptr<Actor> _actor = _map->getActor();
-		int a_x = _actor->getXPos() / TILE_MASK;
-		int a_y = _actor->getYPos() / TILE_MASK;
-		int x_coord = _renderX + (10 * _zoom) + XtoISO(_offsetX + a_x * _tileWidth, _offsetY + a_y *_tileHeight);
-		int y_coord = _renderY - (45 * _zoom) + YtoISO(_offsetX + a_x * _tileWidth, _offsetY + a_y * _tileHeight);
+		int a_x = (_actor->getXPos() * _tileWidth) / TILE_MASK + _offsetX;
+		int a_y = (_actor->getYPos() * _tileHeight) / TILE_MASK + _offsetY;
+		int x_coord = _renderX + (10 * _zoom) + XtoISO(a_x, a_y);
+		int y_coord = _renderY - (45 * _zoom) + YtoISO(a_x, a_y);
 		//_current_frame->drawScaled(x_coord, y_coord, _zoom / 2);
 		_walk->drawScaled(x_coord, y_coord, _actor->getSprite(), _zoom);
 
-		string timeSTR("Game time: " + to_string(static_cast<long long>(_stats->_gameTime)));
+		string timeSTR("App time: " + to_string(static_cast<long long>(_stats->_gameTime)));
 		string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(_stats->_CPS)));
 		string fpsSTR("Frames per second: " + to_string(static_cast<long long>(_stats->_FPS)));
-		string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
-		string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
+		//string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
+		//string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
+		string spdSTR("Actor X: " + to_string(static_cast<long long>(_actor->getXPos())));
+		string frameSTR("Actor Y: " + to_string(static_cast<long long>(_actor->getYPos())));
 		_font->draw(timeSTR, 5, 5, color);
 		_font->draw(cpsSTR, 5, 30, color);
 		_font->draw(fpsSTR, 5, 55, color);
@@ -148,11 +150,9 @@ void ScreenCtl::update() {
 	unsigned camX = _cam->getXPos();
 	unsigned camY = _cam->getYPos();
 	// first tile to render - coords and array id
-	int firstTileX = 0, firstTileY = 0;
 	_tileCol = 0;
 	_tileRow = 0;
 	// display coords to start rendering
-
 	_offsetX = 0, _offsetY = 0;
 
 	_renderX = _screenWidth / 2 - _tileWidth;
@@ -210,13 +210,13 @@ int ScreenCtl::isoYtoMap(int x, int y) {
 int ScreenCtl::convertScreenX(int x, int y) {
 	int trueX = isoXtoMap(x - _renderX - _tileWidth, y - _renderY) - _offsetX;
 
-	return trueX / _tileWidth + _tileCol;
+	return (trueX*TILE_MASK) / _tileWidth + _tileCol;
 }
 
 int ScreenCtl::convertScreenY(int x, int y) {
 	int trueY = isoYtoMap(x - _renderX - _tileWidth, y - _renderY) - _offsetY;
 
-	return trueY / _tileHeight + _tileRow;
+	return (trueY*TILE_MASK) / _tileHeight + _tileRow;
 }
 
 void ScreenCtl::increaseSpeed() {

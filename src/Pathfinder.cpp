@@ -134,8 +134,8 @@ std::vector<AStarNode> AStarSearch::searchPath(size_t startX, size_t startY, siz
 	// ensure we're not messing with previous data
 	clearData();
 
-	AStarNode startNode(startX, startY);
-	AStarNode goalNode(goalX, goalY);
+	AStarNode startNode(startX / TILE_MASK, startY / TILE_MASK);
+	AStarNode goalNode(goalX / TILE_MASK, goalY / TILE_MASK);
 	_openSet.push(startNode);
 
 	while (!_openSet.empty()) {
