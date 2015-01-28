@@ -123,12 +123,11 @@ void AppCtl::controlLoop() {
 			int absX = ev.mouse.x;
 			int absY = ev.mouse.y;
 			_mouse->set(absX, absY, ev.mouse.button, true);
-			int tileX = _screen->convertScreenX(absX, absY);
-			int tileY = _screen->convertScreenY(absX, absY);
-			cout << tileX << "," << tileY << endl;
+			Point tile = _screen->convertCoords(absX, absY);
+			cout << tile._x << "," << tile._y << endl;
 			auto actor = _map->getActor();
-			if (tileX > 0 && tileY > 0) {
-				actor->setDestination(tileX, tileY);
+			if (tile._x > 0 && tile._y > 0) {
+				actor->setDestination(tile);
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 			_mouse->setPressed(false);

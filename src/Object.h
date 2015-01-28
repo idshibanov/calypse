@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Main.h"
+#include "Point.h"
 #include "Pathfinder.h"
 #include "Timer.h"
 
@@ -40,7 +41,7 @@ public:
 	void setXPos(int);
 	void setYPos(int);
 	int getSprite();
-	void setDestination(int, int);
+	void setDestination(const Point&);
 	void update();
-	int getDirection(int x, int y);
+	int getDirection(const Point&);
 };

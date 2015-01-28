@@ -13,6 +13,7 @@ ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_pt
 	_screenHeight = TD_DISPLAY_HEIGHT;
 	_tileWidth = TD_TILESIZE_X;
 	_tileHeight = TD_TILESIZE_Y;
+	_tileSize.set(_tileWidth, _tileHeight);
 
 	_map = map;
 	_cam = cam;
@@ -22,10 +23,6 @@ ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_pt
 	_render = true;
 	_lastTimestamp = _stats->_gameTime;
 
-	_renderX = 0;
-	_renderY = 0;
-	_tileCol = 0;
-	_tileRow = 0;
 	_zoom = 1.0;
 
 	/*
@@ -72,22 +69,18 @@ bool ScreenCtl::draw() {
 		// map size
 		unsigned rowmax = _map->getRowMax();
 		unsigned colmax = _map->getColMax();
-		unsigned maxTileCol = 0, maxTileRow = 0;
-
-
-		maxTileCol = _tileCol + ((-_offsetX + _screenWidth + _maxOffset) / _tileWidth);
-		if (colmax < maxTileCol) maxTileCol = colmax;
-		maxTileRow = _tileRow + ((-_offsetY + _screenHeight + _maxOffset) / _tileHeight);
-		if (rowmax < maxTileRow) maxTileRow = rowmax;
 
 		// Map tiles
-		for (unsigned row = _tileRow; row < maxTileRow; row++) {
-			for (unsigned col = _tileCol; col < maxTileCol; col++) {
-				int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
-				int y_coord = _renderY + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
+		for (unsigned row = _firstTile._y; row < _lastTile._y; row++) {
+			for (unsigned col = _firstTile._x; col < _lastTile._x; col++) {
+				Point coord(col, row);
+				coord = (coord - _firstTile) * _tileSize + _offset;
+				coord = coord.toIso() + _screenOffset;
+				//int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
+				//int y_coord = _renderY + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
 				// loop drawing sub bitmaps must be the same parent
 				//al_hold_bitmap_drawing(true);
-				_grass->drawScaled(x_coord, y_coord, _tileWidth * 2, _tileHeight);
+				_grass->drawScaled(coord._x, coord._y, _tileWidth * 2, _tileHeight);
 				//al_hold_bitmap_drawing(false);
 
 				//string tileCoords(to_string(col) + ", " + to_string(row));
@@ -95,31 +88,37 @@ bool ScreenCtl::draw() {
 			}
 		}
 
-		for (unsigned row = _tileRow; row < maxTileRow; row++) {
-			for (unsigned col = _tileCol; col < maxTileCol; col++) {
+		for (unsigned row = _firstTile._y; row < _lastTile._y; row++) {
+			for (unsigned col = _firstTile._x; col < _lastTile._x; col++) {
 				if (_map->getTileType(row * rowmax + col) == 10) {
-					int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
-					int y_coord = _renderY - (60*_zoom) + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
-					_reet->drawScaled(x_coord, y_coord, 64 * _zoom, 92 * _zoom);
+					Point coord(col, row);
+					coord = (coord - _firstTile) * _tileSize + _offset;
+					coord = coord.toIso() + _screenOffset;
+					coord.sub(0, 60 * _zoom);
+					//int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
+					//int y_coord = _renderY - (60*_zoom) + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
+					_reet->drawScaled(coord._x, coord._y, 64 * _zoom, 92 * _zoom);
 				}
 			}
 		}
 
 		shared_ptr<Actor> _actor = _map->getActor();
-		int a_x = (_actor->getXPos() * _tileWidth) / TILE_MASK + _offsetX;
-		int a_y = (_actor->getYPos() * _tileHeight) / TILE_MASK + _offsetY;
-		int x_coord = _renderX + (10 * _zoom) + XtoISO(a_x, a_y);
-		int y_coord = _renderY - (45 * _zoom) + YtoISO(a_x, a_y);
-		//_current_frame->drawScaled(x_coord, y_coord, _zoom / 2);
-		_walk->drawScaled(x_coord, y_coord, _actor->getSprite(), _zoom);
+		//int a_x = (_actor->getXPos() * _tileWidth) / TILE_MASK + _offsetX - _tileCol*_tileWidth;
+		//int a_y = (_actor->getYPos() * _tileHeight) / TILE_MASK + _offsetY - _tileRow*_tileHeight;
+		//int x_coord = _renderX + (10 * _zoom) + XtoISO(a_x, a_y);
+		//int y_coord = _renderY - (45 * _zoom) + YtoISO(a_x, a_y);
+
+		Point coord(_actor->getXPos(), _actor->getYPos());
+		coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
+		coord = coord.toIso() + _screenOffset;
+		coord.add(10 * _zoom, -(45 * _zoom));
+		_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
 
 		string timeSTR("App time: " + to_string(static_cast<long long>(_stats->_gameTime)));
 		string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(_stats->_CPS)));
 		string fpsSTR("Frames per second: " + to_string(static_cast<long long>(_stats->_FPS)));
-		//string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
-		//string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
-		string spdSTR("Actor X: " + to_string(static_cast<long long>(_actor->getXPos())));
-		string frameSTR("Actor Y: " + to_string(static_cast<long long>(_actor->getYPos())));
+		string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
+		string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
 		_font->draw(timeSTR, 5, 5, color);
 		_font->draw(cpsSTR, 5, 30, color);
 		_font->draw(fpsSTR, 5, 55, color);
@@ -147,28 +146,34 @@ void ScreenCtl::redraw(bool cameraMoved) {
 
 void ScreenCtl::update() {
 	// camera position
-	unsigned camX = _cam->getXPos();
-	unsigned camY = _cam->getYPos();
-	// first tile to render - coords and array id
-	_tileCol = 0;
-	_tileRow = 0;
-	// display coords to start rendering
-	_offsetX = 0, _offsetY = 0;
+	Point camPos = _cam->getPos();
+	// map rendering offset, based on camera position
+	_offset.set(0, 0);
 
-	_renderX = _screenWidth / 2 - _tileWidth;
-	_offsetX -= camX;
-	_renderY = _screenHeight / 2;
-	_offsetY -= camY;
+	// offset after which we shift the tiles
+	int maxOffset = (_screenWidth / 2 + _screenHeight) / 2;
 
-	_maxOffset = (_screenWidth / 2 + _screenHeight) / 2;
-	if (camX > _maxOffset + _tileWidth) {
-		_tileCol = (camX - _maxOffset) / _tileWidth;
-		_offsetX += _tileCol * _tileWidth;
+	_screenOffset.set(_screenWidth / 2 - _tileWidth, _screenHeight / 2);
+	_tileSize.set(_tileWidth, _tileHeight);
+	_offset -= camPos;
+
+	if (camPos._x > maxOffset + _tileSize._x) {
+		_firstTile._x = (camPos._x - maxOffset) / _tileSize._x;
 	}
-	if (camY > _maxOffset + _tileHeight) {
-		_tileRow = (camY - _maxOffset) / _tileHeight;
-		_offsetY += _tileRow * _tileHeight;
+	if (camPos._y > maxOffset + _tileSize._y) {
+		_firstTile._y = (camPos._y - maxOffset) / _tileSize._y;
 	}
+	_offset += (_firstTile * _tileSize);
+
+	unsigned rowmax = _map->getRowMax();
+	unsigned colmax = _map->getColMax();
+
+	// calculate last tile to render, based on current offset
+	_lastTile = _offset;
+	_lastTile.inv().add(_screenWidth + maxOffset, _screenHeight + maxOffset);
+	_lastTile = _firstTile + (_lastTile / _tileSize);
+	if (colmax < _lastTile._x) _lastTile._x = colmax;
+	if (rowmax < _lastTile._y) _lastTile._y = rowmax;
 
 	_render = true;
 }
@@ -208,15 +213,17 @@ int ScreenCtl::isoYtoMap(int x, int y) {
 }
 
 int ScreenCtl::convertScreenX(int x, int y) {
-	int trueX = isoXtoMap(x - _renderX - _tileWidth, y - _renderY) - _offsetX;
-
-	return (trueX*TILE_MASK) / _tileWidth + _tileCol;
+	return convertCoords(x, y)._x;
 }
 
 int ScreenCtl::convertScreenY(int x, int y) {
-	int trueY = isoYtoMap(x - _renderX - _tileWidth, y - _renderY) - _offsetY;
+	return convertCoords(x, y)._y;
+}
 
-	return (trueY*TILE_MASK) / _tileHeight + _tileRow;
+Point ScreenCtl::convertCoords(int x, int y) {
+	Point coord(x - _tileSize._x, y);
+	coord -= _screenOffset;
+	return ((coord.toMap() - _offset) * TILE_MASK) / _tileSize + _firstTile;
 }
 
 void ScreenCtl::increaseSpeed() {

@@ -83,12 +83,12 @@ int Actor::getSprite() {
 	return _spriteID;
 }
 
-void Actor::setDestination(int x, int y) {
+void Actor::setDestination(const Point& mod) {
 	_timer = 0;
-	_destX = x;
-	_destY = y;
+	_destX = mod._x;
+	_destY = mod._y;
 
-	cout << "Dest: " << x << "," << y << endl;
+	cout << "Dest: " << mod._x << "," << mod._y << endl;
 	_path = _pathFinder.lock()->searchPath(_xpos, _ypos, _destX, _destY);
 	for (auto it = _path.begin(); it != _path.end(); ++it) {
 		std::cout << (*it) << endl;
@@ -101,9 +101,9 @@ void Actor::update() {
 		_timer++;
 		if (_timer % 8 == 0) {
 			AStarNode& nextNode = _path.front();
-			int modX = (nextNode._mapX - _xpos / TILE_MASK) * SUBTILE_MASK;
-			int modY = (nextNode._mapY - _ypos / TILE_MASK) * SUBTILE_MASK;
-			int dir = getDirection(modX, modY);
+			Point mod(nextNode._mapX, nextNode._mapY);
+			mod = mod.sub(_xpos / TILE_MASK, _ypos / TILE_MASK) * SUBTILE_MASK;
+			int dir = getDirection(mod);
 
 			_spriteID++;
 			switch (dir) {
@@ -144,8 +144,8 @@ void Actor::update() {
 				break;
 			}
 
-			_xpos += modX;
-			_ypos += modY;
+			_xpos += mod._x;
+			_ypos += mod._y;
 			if (_xpos / TILE_MASK == nextNode._mapX && _ypos / TILE_MASK == nextNode._mapY) {
 				_path.erase(_path.begin());
 			}
@@ -154,22 +154,22 @@ void Actor::update() {
 }
 
 
-int Actor::getDirection(int x, int y) {
-	if (x < 0 && y < 0) {
+int Actor::getDirection(const Point& mod) {
+	if (mod._x < 0 && mod._y < 0) {
 		return 7;
-	} else if (x == 0 && y < 0) {
+	} else if (mod._x == 0 && mod._y < 0) {
 		return 8;
-	} else if (x > 0 && y < 0) {
+	} else if (mod._x > 0 && mod._y < 0) {
 		return 9;
-	} else if (x < 0 && y == 0) {
+	} else if (mod._x < 0 && mod._y == 0) {
 		return 4;
-	} else if (x > 0 && y == 0) {
+	} else if (mod._x > 0 && mod._y == 0) {
 		return 6;
-	} else if (x < 0 && y > 0) {
+	} else if (mod._x < 0 && mod._y > 0) {
 		return 1;
-	} else if (x == 0 && y > 0) {
+	} else if (mod._x == 0 && mod._y > 0) {
 		return 2;
-	} else if (x > 0 && y > 0) {
+	} else if (mod._x > 0 && mod._y > 0) {
 		return 3;
 	}
 	return 5;

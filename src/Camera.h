@@ -1,5 +1,6 @@
 #pragma once
 #include "Main.h"
+#include "Point.h"
 
 class Camera{
 	int _xpos;
@@ -17,6 +18,7 @@ public:
 	~Camera() { }
 	int getXPos() { return _xpos; }
 	int getYPos() { return _ypos; }
+	Point getPos() { return Point(_xpos, _ypos); }
 	void move(unsigned dir, unsigned dist = 4) {
 		switch (dir){
 		case 1:

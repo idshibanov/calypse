@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Main.h"
+#include "Point.h"
 #include "Sprite.h"
 #include "Timer.h"
 #include "Camera.h"
@@ -41,13 +42,11 @@ class ScreenCtl {
 	unsigned _screenHeight;
 	int _tileWidth;
 	int _tileHeight;
-	int _tileCol;
-	int _tileRow;
-	int _renderX;
-	int _renderY;
-	int _offsetX;
-	int _offsetY;
-	int _maxOffset;
+	Point _screenOffset;
+	Point _offset;
+	Point _firstTile;
+	Point _lastTile;
+	Point _tileSize;
 	double _zoom;
 
 	double _animation_speed;
@@ -66,6 +65,7 @@ public:
 	int isoYtoMap(int, int);
 	int convertScreenX(int, int);
 	int convertScreenY(int, int);
+	Point convertCoords(int, int);
 	void increaseSpeed();
 	void decreaseSpeed();
 	void zoomIn();
