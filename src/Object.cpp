@@ -1,7 +1,7 @@
 #include "object.h"
 
-MapObject::MapObject(int xpos, int ypos, short type) 
-                     : _xpos(xpos), _ypos(ypos), _type(type) {
+MapObject::MapObject(Point pos, Point size, short type)
+	                : _pos(pos), _size(size), _type(type) {
     _deleted = false;
 }
 
@@ -10,8 +10,8 @@ MapObject::MapObject(MapObject& rhs){
 }
 
 MapObject& MapObject::operator=(MapObject& rhs){
-    _xpos = rhs._xpos;
-    _ypos = rhs._ypos;
+    _pos = rhs._pos;
+	_size = rhs._size;
     _type = rhs._type;
     _deleted = rhs._deleted;
     return *this;
@@ -22,11 +22,19 @@ MapObject::~MapObject(){
 }
 
 int MapObject::getXPos(){
-    return _xpos;
+	return _pos._x;
 }
 
 int MapObject::getYPos(){
-    return _ypos;
+    return _pos._y;
+}
+
+Point MapObject::getPos() {
+	return _pos;
+}
+
+Point MapObject::getSize() {
+	return _size;
 }
 
 int MapObject::getType(){
@@ -43,8 +51,8 @@ void MapObject::deleteObject(){
 
 
 
-Actor::Actor(int xpos, int ypos, short type, int defaultSprite, weak_ptr<AStarSearch> pf)
-	: MapObject(xpos, ypos, type) {
+Actor::Actor(Point pos, Point size, short type, int defaultSprite, weak_ptr<AStarSearch> pf)
+	: MapObject(pos, size, type) {
 	_spriteID = defaultSprite;
 	_dir = 1;
 	_static = true;
@@ -72,11 +80,11 @@ Actor::~Actor() {
 }
 
 void Actor::setXPos(int x) {
-	_xpos = x;
+	_pos._x = x;
 }
 
 void Actor::setYPos(int y) {
-	_ypos = y;
+	_pos._y = y;
 }
 
 int Actor::getSprite() {
@@ -89,7 +97,7 @@ void Actor::setDestination(const Point& mod) {
 	_destY = mod._y;
 
 	cout << "Dest: " << mod._x << "," << mod._y << endl;
-	_path = _pathFinder.lock()->searchPath(_xpos, _ypos, _destX, _destY);
+	_path = _pathFinder.lock()->searchPath(_pos._x, _pos._y, _destX, _destY);
 	for (auto it = _path.begin(); it != _path.end(); ++it) {
 		std::cout << (*it) << endl;
 	}
@@ -102,7 +110,7 @@ void Actor::update() {
 		if (_timer % 8 == 0) {
 			AStarNode& nextNode = _path.front();
 			Point mod(nextNode._mapX, nextNode._mapY);
-			mod = mod.sub(_xpos / TILE_MASK, _ypos / TILE_MASK) * SUBTILE_MASK;
+			mod = (mod - (_pos / TILE_MASK)) * SUBTILE_MASK;
 			int dir = getDirection(mod);
 
 			_spriteID++;
@@ -144,9 +152,8 @@ void Actor::update() {
 				break;
 			}
 
-			_xpos += mod._x;
-			_ypos += mod._y;
-			if (_xpos / TILE_MASK == nextNode._mapX && _ypos / TILE_MASK == nextNode._mapY) {
+			_pos += mod;
+			if (_pos._x / TILE_MASK == nextNode._mapX && _pos._y / TILE_MASK == nextNode._mapY) {
 				_path.erase(_path.begin());
 			}
 		}

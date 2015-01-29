@@ -10,15 +10,17 @@ class MapObject {
     short _type;
     bool _deleted;
 protected:
-	int _xpos;
-	int _ypos;
+	Point _pos;
+	Point _size;
 public:
-    MapObject(int xpos, int ypos, short type);
+    MapObject(Point pos, Point size, short type);
     MapObject(MapObject& rhs);
     MapObject& operator=(MapObject& rhs);
     ~MapObject();
     int getXPos();
     int getYPos();
+	Point getPos();
+	Point getSize();
 	int getType();
     bool isDeleted();
     void deleteObject();
@@ -34,7 +36,7 @@ class Actor : public MapObject {
 	weak_ptr<AStarSearch> _pathFinder;
 	std::vector<AStarNode> _path;
 public:
-	Actor(int xpos, int ypos, short type, int defaultSprite, weak_ptr<AStarSearch> pf);
+	Actor(Point pos, Point size, short type, int defaultSprite, weak_ptr<AStarSearch> pf);
 	Actor(Actor& rhs);
 	Actor& operator=(Actor& rhs);
 	~Actor();
