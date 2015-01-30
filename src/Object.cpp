@@ -51,7 +51,7 @@ void MapObject::deleteObject(){
 
 
 
-Actor::Actor(Point pos, Point size, short type, int defaultSprite, weak_ptr<AStarSearch> pf)
+Actor::Actor(short type, Point pos, Point size, int defaultSprite, weak_ptr<AStarSearch> pf)
 	: MapObject(pos, size, type) {
 	_spriteID = defaultSprite;
 	_dir = 1;

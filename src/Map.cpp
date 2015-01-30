@@ -14,7 +14,7 @@ LocalMap::~LocalMap(){
 
 void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 	_pFinder = pf;
-	_obj = make_shared<Actor>(Point(40, 64), Point(44, 69), 0, 24, _pFinder);
+	_actor = make_shared<Actor>(0, Point(40, 64), Point(44, 69), 24, _pFinder);
 	srand((unsigned)time(NULL));
 	_rowmax = TD_MAP_ROWS;
 	_colmax = TD_MAP_COLS;
@@ -83,7 +83,7 @@ unsigned int LocalMap::convertIDToY(unsigned mapID) const {
 }
 
 shared_ptr<Actor> LocalMap::getActor() {
-	return _obj;
+	return _actor;
 }
 
 bool LocalMap::tileExists(unsigned mapID) const {
@@ -119,5 +119,5 @@ void LocalMap::processAction(int x, int y, int id) {
 }
 
 void LocalMap::update() {
-	_obj->update();
+	_actor->update();
 }

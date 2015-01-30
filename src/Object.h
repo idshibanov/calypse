@@ -36,7 +36,7 @@ class Actor : public MapObject {
 	weak_ptr<AStarSearch> _pathFinder;
 	std::vector<AStarNode> _path;
 public:
-	Actor(Point pos, Point size, short type, int defaultSprite, weak_ptr<AStarSearch> pf);
+	Actor(short type, Point pos, Point size, int defaultSprite, weak_ptr<AStarSearch> pf);
 	Actor(Actor& rhs);
 	Actor& operator=(Actor& rhs);
 	~Actor();

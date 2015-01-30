@@ -6,6 +6,7 @@
 
 #include "Main.h"
 #include "ScreenCtl.h"
+#include "ResourceCtl.h"
 #include "Camera.h"
 #include "Mouse.h"
 #include "Map.h"
@@ -28,6 +29,7 @@ class AppCtl {
 	ALLEGRO_EVENT_QUEUE* _eventQueue;
 	ALLEGRO_TIMER* _timer;
 
+	shared_ptr<ResourceCtl> _res;
 	shared_ptr<LocalMap> _map;
 	shared_ptr<AStarSearch> _pFinder;
 	shared_ptr<Camera> _camera;

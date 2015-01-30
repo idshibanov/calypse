@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Main.h"
+#include "ResourceCtl.h"
 #include "Point.h"
 #include "Sprite.h"
 #include "Timer.h"
@@ -30,6 +31,7 @@ class ScreenCtl {
 	Sprite* _cursor;
 	SpriteSheet* _walk;
 
+	shared_ptr<ResourceCtl> _res;
 	shared_ptr<LocalMap> _map;
 	shared_ptr<Camera> _cam;
 	shared_ptr<Mouse> _mouse;
@@ -53,7 +55,7 @@ class ScreenCtl {
 	int _animation_frame;
 	TaskTimer frame_t;
 public:
-	ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_ptr<Mouse> mouse, shared_ptr<AppStats> stats);
+	ScreenCtl(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<Camera>, shared_ptr<Mouse>, shared_ptr<AppStats>);
 	~ScreenCtl();
 	bool draw();
 	void redraw(bool cameraMoved = false);

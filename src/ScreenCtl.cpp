@@ -4,8 +4,9 @@
 #include "ScreenCtl.h"
 #include "Object.h"
 
-ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_ptr<Mouse> mouse, shared_ptr<AppStats> stats)
-	: frame_t(ANIMATION_TICKS) {
+ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, shared_ptr<Camera> cam, 
+	                  shared_ptr<Mouse> mouse, shared_ptr<AppStats> stats)
+	                 : frame_t(ANIMATION_TICKS) {
 	_display = al_create_display(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
 	al_hide_mouse_cursor(_display);
 
@@ -15,6 +16,7 @@ ScreenCtl::ScreenCtl(shared_ptr<LocalMap> map, shared_ptr<Camera> cam, shared_pt
 	_tileHeight = TD_TILESIZE_Y;
 	_tileSize.set(_tileWidth, _tileHeight);
 
+	_res = res;
 	_map = map;
 	_cam = cam;
 	_mouse = mouse;

@@ -13,7 +13,7 @@ AppCtl::AppCtl() {
 	_stats = make_shared<AppStats>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 	_mouse = make_shared<Mouse>();
-	_screen = new ScreenCtl(_map, _camera, _mouse, _stats);
+	_screen = new ScreenCtl(_res, _map, _camera, _mouse, _stats);
 
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);

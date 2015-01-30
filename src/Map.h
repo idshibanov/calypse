@@ -18,7 +18,7 @@ class AStarSearch;
 class LocalMap {
 	weak_ptr<AStarSearch> _pFinder;
 	vector<MapTile> _tiles;
-	shared_ptr<Actor> _obj;
+	shared_ptr<Actor> _actor;
 	unsigned int _rowmax;
 	unsigned int _colmax;
 public:
