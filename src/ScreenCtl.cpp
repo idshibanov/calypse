@@ -99,6 +99,7 @@ bool ScreenCtl::draw() {
 					coord.sub(0, 60 * _zoom);
 					//int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
 					//int y_coord = _renderY - (60*_zoom) + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
+					auto info = _res->getObjectInfo(1);
 					_reet->drawScaled(coord._x, coord._y, 64 * _zoom, 92 * _zoom);
 				}
 			}
