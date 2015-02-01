@@ -6,6 +6,7 @@
 #include "Object.h"
 
 AppCtl::AppCtl() {
+	_res = make_shared<ResourceCtl>();
 	_map = make_shared<LocalMap>();
 	_pFinder = make_shared<AStarSearch>(_map);
 	_map->generate(_pFinder);

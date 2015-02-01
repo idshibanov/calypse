@@ -46,7 +46,8 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_cursor = new Sprite(1, "res/cursor.png");
 
 	// 44x69, 11-0-11, 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
-	_walk = new SpriteSheet(0, "res/f2_walk.png", 48, 8, 44, 69);
+	auto walk_size = _res->getObjectInfo(0).lock()->_size;
+	_walk = new SpriteSheet(0, "res/f2_walk.png", 48, 8, walk_size._x, walk_size._y);
 
 	//_current_frame = _sprites.begin();
 	//_current_frame++;
@@ -90,6 +91,8 @@ bool ScreenCtl::draw() {
 			}
 		}
 
+		auto reet_info = _res->getObjectInfo(1);
+		Point reet_size = reet_info.lock()->_size;
 		for (unsigned row = _firstTile._y; row < _lastTile._y; row++) {
 			for (unsigned col = _firstTile._x; col < _lastTile._x; col++) {
 				if (_map->getTileType(row * rowmax + col) == 10) {
@@ -99,8 +102,7 @@ bool ScreenCtl::draw() {
 					coord.sub(0, 60 * _zoom);
 					//int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
 					//int y_coord = _renderY - (60*_zoom) + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
-					auto info = _res->getObjectInfo(1);
-					_reet->drawScaled(coord._x, coord._y, 64 * _zoom, 92 * _zoom);
+					_reet->drawScaled(coord._x, coord._y, reet_size._x * _zoom, reet_size._y * _zoom);
 				}
 			}
 		}
@@ -111,10 +113,12 @@ bool ScreenCtl::draw() {
 		//int x_coord = _renderX + (10 * _zoom) + XtoISO(a_x, a_y);
 		//int y_coord = _renderY - (45 * _zoom) + YtoISO(a_x, a_y);
 
+		auto act_info = _res->getObjectInfo(0);
+		Point act_offset = act_info.lock()->_offset;
 		Point coord(_actor->getXPos(), _actor->getYPos());
+
 		coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
-		coord = coord.toIso() + _screenOffset;
-		coord.add(10 * _zoom, -(45 * _zoom));
+		coord = coord.toIso() + _screenOffset + act_offset;
 		_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
 
 		string timeSTR("App time: " + to_string(static_cast<long long>(_stats->_gameTime)));

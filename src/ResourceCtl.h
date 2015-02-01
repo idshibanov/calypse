@@ -8,10 +8,10 @@
 // Configuration files (XML?) are planned
 
 class ResourceCtl {
-	unordered_map<short, ObjectInfo> _info;
+	unordered_map<short, shared_ptr<ObjectInfo>> _info;
 	vector<shared_ptr<Sprite>> _sprites;
 public:
 	ResourceCtl();
 	~ResourceCtl();
-	unordered_map<short, ObjectInfo>::iterator getObjectInfo(int type);
+	weak_ptr<ObjectInfo> getObjectInfo(short type);
 };
