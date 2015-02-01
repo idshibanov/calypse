@@ -89,11 +89,19 @@ Point Point::operator* (int mod) const {
 	return Point(_x * mod, _y * mod);
 }
 
+Point Point::operator* (double mod) const {
+	return Point(_x * mod, _y * mod);
+}
+
 Point Point::operator/ (const Point& rhs) const {
 	return Point(_x / rhs._x, _y / rhs._y);
 }
 
 Point Point::operator/ (int mod) const {
+	return Point(_x / mod, _y / mod);
+}
+
+Point Point::operator/ (double mod) const {
 	return Point(_x / mod, _y / mod);
 }
 

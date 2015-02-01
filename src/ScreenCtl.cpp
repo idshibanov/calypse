@@ -79,53 +79,46 @@ bool ScreenCtl::draw() {
 				Point coord(col, row);
 				coord = (coord - _firstTile) * _tileSize + _offset;
 				coord = coord.toIso() + _screenOffset;
-				//int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
-				//int y_coord = _renderY + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
+
 				// loop drawing sub bitmaps must be the same parent
 				//al_hold_bitmap_drawing(true);
 				_grass->drawScaled(coord._x, coord._y, _tileWidth * 2, _tileHeight);
 				//al_hold_bitmap_drawing(false);
 
 				//string tileCoords(to_string(col) + ", " + to_string(row));
-				//_font->draw(tileCoords, x_coord + 24, y_coord + 8, color);
+				//_font->draw(tileCoords, coord._x + 24, coord._y + 8, color);
 			}
 		}
 
 		auto reet_info = _res->getObjectInfo(1);
 		Point reet_size = reet_info.lock()->_size;
+		Point reet_offset = reet_info.lock()->_offset * _zoom;
 		for (unsigned row = _firstTile._y; row < _lastTile._y; row++) {
 			for (unsigned col = _firstTile._x; col < _lastTile._x; col++) {
 				if (_map->getTileType(row * rowmax + col) == 10) {
 					Point coord(col, row);
 					coord = (coord - _firstTile) * _tileSize + _offset;
-					coord = coord.toIso() + _screenOffset;
-					coord.sub(0, 60 * _zoom);
-					//int x_coord = _renderX + XtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
-					//int y_coord = _renderY - (60*_zoom) + YtoISO(_offsetX + (col - _tileCol) * _tileWidth, _offsetY + (row - _tileRow) * _tileHeight);
+					coord = coord.toIso() + _screenOffset + reet_offset;
 					_reet->drawScaled(coord._x, coord._y, reet_size._x * _zoom, reet_size._y * _zoom);
 				}
 			}
 		}
 
 		shared_ptr<Actor> _actor = _map->getActor();
-		//int a_x = (_actor->getXPos() * _tileWidth) / TILE_MASK + _offsetX - _tileCol*_tileWidth;
-		//int a_y = (_actor->getYPos() * _tileHeight) / TILE_MASK + _offsetY - _tileRow*_tileHeight;
-		//int x_coord = _renderX + (10 * _zoom) + XtoISO(a_x, a_y);
-		//int y_coord = _renderY - (45 * _zoom) + YtoISO(a_x, a_y);
 
 		auto act_info = _res->getObjectInfo(0);
-		Point act_offset = act_info.lock()->_offset;
+		Point act_offset = act_info.lock()->_offset * _zoom;
 		Point coord(_actor->getXPos(), _actor->getYPos());
 
 		coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
 		coord = coord.toIso() + _screenOffset + act_offset;
 		_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
 
-		string timeSTR("App time: " + to_string(static_cast<long long>(_stats->_gameTime)));
-		string cpsSTR("Cycles per second: " + to_string(static_cast<long long>(_stats->_CPS)));
-		string fpsSTR("Frames per second: " + to_string(static_cast<long long>(_stats->_FPS)));
-		string spdSTR("Animation speed: " + to_string(static_cast<long long>(_animation_speed)) + "%");
-		string frameSTR("Animation frame #" + to_string(static_cast<long long>(_animation_frame)));
+		string timeSTR("App time: " + to_string(_stats->_gameTime));
+		string cpsSTR("Cycles per second: " + to_string(_stats->_CPS));
+		string fpsSTR("Frames per second: " + to_string(_stats->_FPS));
+		string spdSTR("Animation speed: " + to_string(static_cast<int>(_animation_speed)) + "%");
+		string frameSTR("Animation frame #" + to_string(_actor->getSprite()));
 		_font->draw(timeSTR, 5, 5, color);
 		_font->draw(cpsSTR, 5, 30, color);
 		_font->draw(fpsSTR, 5, 55, color);
@@ -230,7 +223,7 @@ int ScreenCtl::convertScreenY(int x, int y) {
 Point ScreenCtl::convertCoords(int x, int y) {
 	Point coord(x - _tileSize._x, y);
 	coord -= _screenOffset;
-	return ((coord.toMap() - _offset) * TILE_MASK) / _tileSize + _firstTile;
+	return ((coord.toMap() - _offset) * TILE_MASK) / _tileSize + _firstTile * TILE_MASK;
 }
 
 void ScreenCtl::increaseSpeed() {
@@ -250,6 +243,7 @@ void ScreenCtl::zoomIn() {
 		_zoom += 0.1;
 		_tileWidth = TD_TILESIZE_X * _zoom;
 		_tileHeight = TD_TILESIZE_Y * _zoom;
+		_tileSize.set(_tileWidth, _tileHeight);
 		_render = true;
 	}
 }
@@ -259,6 +253,7 @@ void ScreenCtl::zoomOut() {
 		_zoom -= 0.1;
 		_tileWidth = TD_TILESIZE_X * _zoom;
 		_tileHeight = TD_TILESIZE_Y * _zoom;
+		_tileSize.set(_tileWidth, _tileHeight);
 		_render = true;
 	}
 }

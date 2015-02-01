@@ -134,51 +134,52 @@ std::vector<AStarNode> AStarSearch::searchPath(size_t startX, size_t startY, siz
 	// ensure we're not messing with previous data
 	clearData();
 
-	AStarNode startNode(startX / TILE_MASK, startY / TILE_MASK);
-	AStarNode goalNode(goalX / TILE_MASK, goalY / TILE_MASK);
-	_openSet.push(startNode);
+	if (_map->tileIsFree(goalX / TILE_MASK, goalY / TILE_MASK)) {
+		AStarNode startNode(startX / TILE_MASK, startY / TILE_MASK);
+		AStarNode goalNode(goalX / TILE_MASK, goalY / TILE_MASK);
+		_openSet.push(startNode);
 
-	while (!_openSet.empty()) {
-		shared_ptr<AStarNode> current = make_shared<AStarNode>(_openSet.top());
+		while (!_openSet.empty()) {
+			shared_ptr<AStarNode> current = make_shared<AStarNode>(_openSet.top());
 
-		if (*current == goalNode) {
-			recursePath(current);
-			return _pathFound;
-		}
-
-		current->_closed = true;
-		_visitedSet.push_back(current);
-		_openSet.pop();
-		std::vector<shared_ptr<AStarNode>>& neighbors = getNeighbors(*current, goalNode);
-
-		for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {
-			shared_ptr<AStarNode> n = (*it);
-			unsigned g = current->_g + PATHFINDING_MOVE_COST;
-			bool beenVisited = false;
-
-			for (auto itVisit = _visitedSet.begin(); !beenVisited && itVisit != _visitedSet.end(); ++itVisit) {
-				if (*n == *(*itVisit)) {
-					beenVisited = true;
-					if ((*itVisit)->_closed) {
-						n->_closed = true;
-					}
-				}
+			if (*current == goalNode) {
+				recursePath(current);
+				return _pathFound;
 			}
 
-			if (!n->_closed && (!beenVisited || g < n->_g)) {
-				n->_parent = current;
-				n->_g = g;
-				if (n->_h == 0)
-					n->_h = heuristicCost(*n, goalNode);
-				n->_f = n->_g + n->_h;
+			current->_closed = true;
+			_visitedSet.push_back(current);
+			_openSet.pop();
+			std::vector<shared_ptr<AStarNode>>& neighbors = getNeighbors(*current, goalNode);
 
-				_visitedSet.push_back(n);
-				bool isOpen = _openSet.contains(*n);
-				if (!isOpen)
-					_openSet.push(*n);
+			for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {
+				shared_ptr<AStarNode> n = (*it);
+				unsigned g = current->_g + PATHFINDING_MOVE_COST;
+				bool beenVisited = false;
+
+				for (auto itVisit = _visitedSet.begin(); !beenVisited && itVisit != _visitedSet.end(); ++itVisit) {
+					if (*n == *(*itVisit)) {
+						beenVisited = true;
+						if ((*itVisit)->_closed) {
+							n->_closed = true;
+						}
+					}
+				}
+
+				if (!n->_closed && (!beenVisited || g < n->_g)) {
+					n->_parent = current;
+					n->_g = g;
+					if (n->_h == 0)
+						n->_h = heuristicCost(*n, goalNode);
+					n->_f = n->_g + n->_h;
+
+					_visitedSet.push_back(n);
+					bool isOpen = _openSet.contains(*n);
+					if (!isOpen)
+						_openSet.push(*n);
+				}
 			}
 		}
 	}
-
 	return _pathFound;
 }

@@ -14,7 +14,7 @@ LocalMap::~LocalMap(){
 
 void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 	_pFinder = pf;
-	_actor = make_shared<Actor>(0, Point(40, 64), Point(44, 69), 24, _pFinder);
+	_actor = make_shared<Actor>(0, Point(54, 54), Point(44, 69), 24, _pFinder);
 	srand((unsigned)time(NULL));
 	_rowmax = TD_MAP_ROWS;
 	_colmax = TD_MAP_COLS;
@@ -49,6 +49,7 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 				tempX = col + (objPos % 10);
 				tempY = row + (objPos / 10);
 				//shared_ptr<GameObject> tempObj(new GameObject(tempX, tempY, 79));
+				//shared_ptr<MapObject> at1;
 				//_objects.push_back(tempObj);
 				//_tiles[tempY * _colmax + tempX].setObject(tempObj);
 			}
@@ -97,8 +98,8 @@ bool LocalMap::tileExists(unsigned tileX, unsigned tileY) const {
 bool LocalMap::tileIsFree(unsigned mapID) const {
 	bool retval = false;
 	if (tileExists(mapID)) {
-		//if(_tiles[mapID].getObject().expired())
-		retval = true;
+		if(_tiles[mapID].getType() != 10)
+			retval = true;
 	}
 	return retval;
 }

@@ -5,6 +5,7 @@
 #include "MapTile.h"
 
 class Actor;
+class MapObject;
 
 #define TILE_MASK 10
 #define SUBTILE_STEPS 5
@@ -18,6 +19,7 @@ class AStarSearch;
 class LocalMap {
 	weak_ptr<AStarSearch> _pFinder;
 	vector<MapTile> _tiles;
+	vector<shared_ptr<MapObject>> _objects;
 	shared_ptr<Actor> _actor;
 	unsigned int _rowmax;
 	unsigned int _colmax;
