@@ -109,6 +109,10 @@ bool Point::operator== (const Point& rhs) const {
 	return _x == rhs._x && _y == rhs._y;
 }
 
+int Point::toID(int xMax) const {
+	return _y * xMax + _x;
+}
+
 Point Point::toIso() const {
 	return Point(_x - _y, (_x + _y) / 2);
 }

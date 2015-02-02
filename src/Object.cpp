@@ -1,19 +1,17 @@
 #include "object.h"
 
-MapObject::MapObject(Point pos, Point size, short type)
-	                : _pos(pos), _size(size), _type(type) {
-    _deleted = false;
+MapObject::MapObject(Point pos, short type)
+	                : _pos(pos),  _type(type) {
 }
 
-MapObject::MapObject(MapObject& rhs){
-    *this = rhs;
+MapObject::MapObject(MapObject& rhs) {
+	_pos = rhs._pos;
+	_type = rhs._type;
 }
 
 MapObject& MapObject::operator=(MapObject& rhs){
     _pos = rhs._pos;
-	_size = rhs._size;
     _type = rhs._type;
-    _deleted = rhs._deleted;
     return *this;
 }
 
@@ -33,32 +31,19 @@ Point MapObject::getPos() {
 	return _pos;
 }
 
-Point MapObject::getSize() {
-	return _size;
-}
-
 int MapObject::getType(){
     return _type;
 }
 
-bool MapObject::isDeleted(){
-    return _deleted;
-}
-
-void MapObject::deleteObject(){
-    _deleted = true;
-}
 
 
-
-Actor::Actor(short type, Point pos, Point size, int defaultSprite, weak_ptr<AStarSearch> pf)
-	: MapObject(pos, size, type) {
+Actor::Actor(short type, Point pos, int defaultSprite, weak_ptr<AStarSearch> pf)
+	: MapObject(pos, type) {
 	_spriteID = defaultSprite;
 	_dir = 1;
 	_static = true;
 	_pathFinder = pf;
-	_destX = 0;
-	_destY = 0;
+	_dest.set(0, 0);
 }
 
 Actor::Actor(Actor& rhs) : MapObject(rhs) {
@@ -69,8 +54,7 @@ Actor& Actor::operator=(Actor& rhs) {
 	_spriteID = rhs._spriteID;
 	_dir = rhs._dir;
 	_static = rhs._static;
-	_destX = rhs._destX;
-	_destY = rhs._destY;
+	_dest = rhs._dest;
 	_pathFinder = rhs._pathFinder;
 	return *this;
 }
@@ -93,11 +77,10 @@ int Actor::getSprite() {
 
 void Actor::setDestination(const Point& mod) {
 	_timer = 0;
-	_destX = mod._x;
-	_destY = mod._y;
+	_dest = mod;
 
 	cout << "Dest: " << mod._x << "," << mod._y << endl;
-	_path = _pathFinder.lock()->searchPath(_pos._x, _pos._y, _destX, _destY);
+	_path = _pathFinder.lock()->searchPath(_pos._x, _pos._y, _dest._x, _dest._y);
 	for (auto it = _path.begin(); it != _path.end(); ++it) {
 		std::cout << (*it) << endl;
 	}

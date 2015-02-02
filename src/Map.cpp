@@ -14,7 +14,7 @@ LocalMap::~LocalMap(){
 
 void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 	_pFinder = pf;
-	_actor = make_shared<Actor>(0, Point(54, 54), Point(44, 69), 24, _pFinder);
+	_actor = make_shared<Actor>(0, Point(54, 54), 24, _pFinder);
 	srand((unsigned)time(NULL));
 	_rowmax = TD_MAP_ROWS;
 	_colmax = TD_MAP_COLS;
@@ -38,25 +38,19 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 
 	// tree generation (sprite 79)
 	int objMaxDensity = 10; // 10% max
-	int objPos = 0;
-	int tempX = 0;
-	int tempY = 0;
+	int randOffset = 0;
+	//_objects.reserve(_rowmax * _colmax / 100);
 
 	for (unsigned row = 0; row < _rowmax; row += 10){
 		for (unsigned col = 0; col < _colmax; col += 10){
 			for (int k = 0; k < objMaxDensity; k++){
-				objPos = rand() % 100;
-				tempX = col + (objPos % 10);
-				tempY = row + (objPos / 10);
-				//shared_ptr<GameObject> tempObj(new GameObject(tempX, tempY, 79));
-				//shared_ptr<MapObject> at1;
-				//_objects.push_back(tempObj);
+				randOffset = rand() % 100;
+				Point objPos((col + (randOffset % 10)) * TILE_MASK, (row + (randOffset / 10) * TILE_MASK));
+				_objects.emplace(objPos.toID(_colmax * TILE_MASK), make_shared<MapObject>(objPos, 1));
 				//_tiles[tempY * _colmax + tempX].setObject(tempObj);
 			}
 		}
 	}
-
-	// Player - temporary
 }
 
 short LocalMap::getTileType(unsigned x, unsigned y) const {
@@ -81,6 +75,39 @@ unsigned int LocalMap::convertIDToX(unsigned mapID) const {
 
 unsigned int LocalMap::convertIDToY(unsigned mapID) const {
 	return mapID / _colmax;
+}
+
+vector<shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
+	vector<shared_ptr<MapObject>> retval;
+	Point size = last - first;
+	Point max = last * TILE_MASK;
+	retval.reserve(size._x * size._y / 100);
+
+	/*
+	for (int y = first._y * TILE_MASK; y < max._y; y++) {
+		for (int x = first._x * TILE_MASK; x < max._x; x++) {
+			if (x == _actor->getXPos() && y == _actor->getYPos()) {
+				retval.push_back(_actor);
+			} else {
+				auto obj = _objects.find(y * _colmax * TILE_MASK + x);
+				if (obj != _objects.end()) {
+					retval.push_back(obj->second);
+				}
+			}
+		}
+	}
+	*/
+	for (auto obj : _objects) {
+		Point pos = obj.second->getPos();
+		if (pos._x > _actor->getXPos() && pos._y > _actor->getYPos()) {
+			retval.push_back(_actor);
+		}
+
+		if (pos._x > first._x && pos._y > first._y) {
+			retval.push_back(obj.second);
+		}
+	}
+	return retval;
 }
 
 shared_ptr<Actor> LocalMap::getActor() {

@@ -90,29 +90,34 @@ bool ScreenCtl::draw() {
 			}
 		}
 
+		shared_ptr<Actor> _actor = _map->getActor();
+		auto act_info = _res->getObjectInfo(0);
+		Point act_offset = act_info.lock()->_offset * _zoom;
+
 		auto reet_info = _res->getObjectInfo(1);
-		Point reet_size = reet_info.lock()->_size;
+		Point reet_size = reet_info.lock()->_size * _zoom;
 		Point reet_offset = reet_info.lock()->_offset * _zoom;
-		for (unsigned row = _firstTile._y; row < _lastTile._y; row++) {
-			for (unsigned col = _firstTile._x; col < _lastTile._x; col++) {
-				if (_map->getTileType(row * rowmax + col) == 10) {
-					Point coord(col, row);
-					coord = (coord - _firstTile) * _tileSize + _offset;
-					coord = coord.toIso() + _screenOffset + reet_offset;
-					_reet->drawScaled(coord._x, coord._y, reet_size._x * _zoom, reet_size._y * _zoom);
-				}
+
+		auto objects = _map->getObjects(_firstTile, _lastTile);
+
+		for (auto obj : objects) {
+			Point coord = obj->getPos();
+			coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
+			coord = coord.toIso() + _screenOffset;
+			if (obj->getType() == 0) {
+				coord += act_offset;
+				_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
+			} else {
+				coord += reet_offset;
+				_reet->drawScaled(coord._x, coord._y, reet_size._x * _zoom, reet_size._y * _zoom);
 			}
 		}
 
-		shared_ptr<Actor> _actor = _map->getActor();
+		//Point coord(_actor->getXPos(), _actor->getYPos());
 
-		auto act_info = _res->getObjectInfo(0);
-		Point act_offset = act_info.lock()->_offset * _zoom;
-		Point coord(_actor->getXPos(), _actor->getYPos());
-
-		coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
-		coord = coord.toIso() + _screenOffset + act_offset;
-		_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
+		//coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
+		//coord = coord.toIso() + _screenOffset + act_offset;
+		//_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
 
 		string timeSTR("App time: " + to_string(_stats->_gameTime));
 		string cpsSTR("Cycles per second: " + to_string(_stats->_CPS));
