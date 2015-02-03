@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <bitset>
 #include "Main.h"
 #include "MapTile.h"
@@ -21,10 +22,11 @@ class AStarSearch;
 class LocalMap {
 	weak_ptr<AStarSearch> _pFinder;
 	vector<MapTile> _tiles;
-	map<int, shared_ptr<MapObject>> _objects;
+	unordered_map<int, shared_ptr<MapObject>> _objects;
 	shared_ptr<Actor> _actor;
 	unsigned int _rowmax;
 	unsigned int _colmax;
+	int _xmax;
 public:
 	LocalMap();
 	~LocalMap();
@@ -36,7 +38,7 @@ public:
 	unsigned int convertIDToX(unsigned mapID) const;
 	unsigned int convertIDToY(unsigned mapID) const;
 	shared_ptr<Actor> getActor();
-	vector<shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
+	map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
 	bool tileExists(unsigned mapID) const;
 	bool tileExists(unsigned tileX, unsigned tileY) const;
 	bool tileIsFree(unsigned mapID) const;

@@ -18,6 +18,7 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 	srand((unsigned)time(NULL));
 	_rowmax = TD_MAP_ROWS;
 	_colmax = TD_MAP_COLS;
+	_xmax = _colmax * TILE_MASK;
 	for (unsigned row = 0; row < _rowmax; row++){
 		for (unsigned col = 0; col < _colmax; col++){
 			_tiles.push_back(MapTile(8 + (rand() % 6)));
@@ -45,8 +46,10 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 		for (unsigned col = 0; col < _colmax; col += 10){
 			for (int k = 0; k < objMaxDensity; k++){
 				randOffset = rand() % 100;
-				Point objPos((col + (randOffset % 10)) * TILE_MASK, (row + (randOffset / 10) * TILE_MASK));
-				_objects.emplace(objPos.toID(_colmax * TILE_MASK), make_shared<MapObject>(objPos, 1));
+				Point objPos((col + (randOffset % 10)) * TILE_MASK, (row + (randOffset / 10)) * TILE_MASK);
+				cout << "OBJ: " << col + (randOffset % 10) << "," << row + (randOffset / 10);
+				cout << "  >> " << objPos._x << "," << objPos._y << " ID: " << objPos.toID(_xmax) << endl;
+				_objects.emplace(objPos.toID(_xmax), make_shared<MapObject>(objPos, 1));
 				//_tiles[tempY * _colmax + tempX].setObject(tempObj);
 			}
 		}
@@ -77,13 +80,14 @@ unsigned int LocalMap::convertIDToY(unsigned mapID) const {
 	return mapID / _colmax;
 }
 
-vector<shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
-	vector<shared_ptr<MapObject>> retval;
+map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
+	//vector<shared_ptr<MapObject>> retval;
+	map<int, shared_ptr<MapObject>> retval;
 	Point size = last - first;
-	Point max = last * TILE_MASK;
-	retval.reserve(size._x * size._y / 100);
 
 	/*
+	retval.reserve(size._x * size._y / 100);
+	Point max = last * TILE_MASK;
 	for (int y = first._y * TILE_MASK; y < max._y; y++) {
 		for (int x = first._x * TILE_MASK; x < max._x; x++) {
 			if (x == _actor->getXPos() && y == _actor->getYPos()) {
@@ -97,16 +101,18 @@ vector<shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Poi
 		}
 	}
 	*/
+
 	for (auto obj : _objects) {
 		Point pos = obj.second->getPos();
-		if (pos._x > _actor->getXPos() && pos._y > _actor->getYPos()) {
-			retval.push_back(_actor);
-		}
 
-		if (pos._x > first._x && pos._y > first._y) {
-			retval.push_back(obj.second);
+		if (pos > first * TILE_MASK && pos < last * TILE_MASK) {
+			retval.insert(obj);
+			//retval.push_back(obj.second);
 		}
 	}
+	pair<int, shared_ptr<MapObject>> act(_actor->getPos().toID(_xmax), _actor);
+	retval.insert(act);
+
 	return retval;
 }
 
@@ -125,7 +131,8 @@ bool LocalMap::tileExists(unsigned tileX, unsigned tileY) const {
 bool LocalMap::tileIsFree(unsigned mapID) const {
 	bool retval = false;
 	if (tileExists(mapID)) {
-		if(_tiles[mapID].getType() != 10)
+		int pos = (mapID / _colmax * TILE_MASK) * _xmax + (mapID % _colmax) * TILE_MASK;
+		if (_objects.find(pos) == _objects.end())
 			retval = true;
 	}
 	return retval;

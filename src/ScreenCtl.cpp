@@ -101,16 +101,18 @@ bool ScreenCtl::draw() {
 		auto objects = _map->getObjects(_firstTile, _lastTile);
 
 		for (auto obj : objects) {
-			Point coord = obj->getPos();
+			Point coord = obj.second->getPos();
 			coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
 			coord = coord.toIso() + _screenOffset;
-			if (obj->getType() == 0) {
+			if (obj.second->getType() == 0) {
 				coord += act_offset;
 				_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
 			} else {
 				coord += reet_offset;
 				_reet->drawScaled(coord._x, coord._y, reet_size._x * _zoom, reet_size._y * _zoom);
 			}
+			//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
+			//_font->draw(tileCoords, coord._x + 12, coord._y + 30, color);
 		}
 
 		//Point coord(_actor->getXPos(), _actor->getYPos());

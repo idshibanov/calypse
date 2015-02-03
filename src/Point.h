@@ -26,6 +26,8 @@ public:
 	Point operator/ (int mod) const;
 	Point operator/ (double mod) const;
 	bool operator== (const Point&) const;
+	bool operator> (const Point&) const;
+	bool operator< (const Point&) const;
 	int toID(int) const;
 	Point toIso() const;
 	Point toMap() const;

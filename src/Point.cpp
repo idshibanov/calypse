@@ -109,6 +109,14 @@ bool Point::operator== (const Point& rhs) const {
 	return _x == rhs._x && _y == rhs._y;
 }
 
+bool Point::operator< (const Point& rhs) const {
+	return _x < rhs._x && _y < rhs._y;
+}
+
+bool Point::operator> (const Point& rhs) const {
+	return _x > rhs._x && _y > rhs._y;
+}
+
 int Point::toID(int xMax) const {
 	return _y * xMax + _x;
 }
