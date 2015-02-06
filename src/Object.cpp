@@ -140,6 +140,10 @@ void Actor::update() {
 				_path.erase(_path.begin());
 			}
 		}
+	} else if (_pos != _dest){
+		Point mod(_pos);
+		mod -= _dest;
+
 	}
 }
 

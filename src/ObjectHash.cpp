@@ -1,7 +1,7 @@
 #include "ObjectHash.h"
 
 ObjectHash::ObjectHash() {
-
+	
 }
 
 ObjectHash::~ObjectHash() {
@@ -12,6 +12,9 @@ bool ObjectHash::setObject(int id, const Point& pos, const Point& size) {
 	bool retval = true;
 
 	Point last = pos + size;
+	[this](const Point& pos) {
+		return isFree(pos);
+	};
 	for (int x = pos._x; x < last._x; x++) {
 		for (int y = pos._y; y < last._y; y++) {
 			if (!isFree(Point(x, y))) {
@@ -20,11 +23,14 @@ bool ObjectHash::setObject(int id, const Point& pos, const Point& size) {
 		}
 	}
 
+	[this, &id](const Point& pos) {
+		_mask.emplace(pos.toID(_size), id);
+	};
 	if (retval) {
 		//_objects.insert();
 		for (int x = pos._x; x < last._x; x++) {
 			for (int y = pos._y; y < last._y; y++) {
-				_mask.insert(y*_size+x,id);
+				_mask.emplace(y*_size+x,id);
 			}
 		}
 	}

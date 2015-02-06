@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 
 class Point {
 public:
@@ -26,6 +27,7 @@ public:
 	Point operator/ (int mod) const;
 	Point operator/ (double mod) const;
 	bool operator== (const Point&) const;
+	bool operator!= (const Point&) const;
 	bool operator> (const Point&) const;
 	bool operator< (const Point&) const;
 	int toID(int) const;
@@ -33,4 +35,11 @@ public:
 	Point toMap() const;
 	void convertToIso();
 	void convertToMap();
+};
+
+class Rect {
+public:
+	Point _pos;
+	Point _size;
+	void iterate(std::function<void(const Point&)>& action);
 };

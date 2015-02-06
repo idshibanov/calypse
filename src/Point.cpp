@@ -109,6 +109,10 @@ bool Point::operator== (const Point& rhs) const {
 	return _x == rhs._x && _y == rhs._y;
 }
 
+bool Point::operator!= (const Point& rhs) const {
+	return _x != rhs._x || _y != rhs._y;
+}
+
 bool Point::operator< (const Point& rhs) const {
 	return _x < rhs._x && _y < rhs._y;
 }
@@ -137,4 +141,8 @@ void Point::convertToIso() {
 void Point::convertToMap() {
 	_x = (2 * _y + _x) / 2;
 	_y = (2 * _y - _x) / 2;
+}
+
+void Rect::iterate(std::function<void(const Point&)>& action) {
+
 }
