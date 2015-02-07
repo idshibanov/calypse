@@ -40,4 +40,5 @@ public:
 	void setDestination(const Point&);
 	void update();
 	int getDirection(const Point&);
+	void move(const Point&);
 };

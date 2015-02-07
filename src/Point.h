@@ -26,6 +26,7 @@ public:
 	Point operator/ (const Point&) const;
 	Point operator/ (int mod) const;
 	Point operator/ (double mod) const;
+	Point operator% (int limit) const;
 	bool operator== (const Point&) const;
 	bool operator!= (const Point&) const;
 	bool operator> (const Point&) const;

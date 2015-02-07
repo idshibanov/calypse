@@ -106,6 +106,10 @@ Point Point::operator/ (double mod) const {
 	return Point(_x / mod, _y / mod);
 }
 
+Point Point::operator% (int limit) const {
+	return Point(_x % limit, _y % limit);
+}
+
 bool Point::operator== (const Point& rhs) const {
 	return _x == rhs._x && _y == rhs._y;
 }
@@ -138,15 +142,15 @@ Point Point::limit(int limit) const {
 	int x, y;
 
 	if (_x < 0) {
-		x = std::min(_x, -limit);
+		x = std::max(_x, -limit);
 	} else {
-		x = std::max(_x, limit);
+		x = std::min(_x, limit);
 	}
 
 	if (_y < 0) {
-		y = std::min(_y, -limit);
+		y = std::max(_y, -limit);
 	} else {
-		y = std::max(_y, limit);
+		y = std::min(_y, limit);
 	}
 
 	return Point(x, y);

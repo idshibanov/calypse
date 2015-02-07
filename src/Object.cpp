@@ -77,9 +77,9 @@ int Actor::getSprite() {
 
 void Actor::setDestination(const Point& mod) {
 	_timer = 0;
-	_dest = mod;
+	_dest = mod - (mod % 2);
 
-	cout << "Dest: " << mod._x << "," << mod._y << endl;
+	cout << "Dest: " << _dest._x << "," << _dest._y << endl;
 	_path = _pathFinder.lock()->searchPath(_pos._x, _pos._y, _dest._x, _dest._y);
 	for (auto it = _path.begin(); it != _path.end(); ++it) {
 		std::cout << (*it) << endl;
@@ -91,64 +91,28 @@ void Actor::update() {
 	if (!_path.empty()) {
 		_timer++;
 		if (_timer % 8 == 0) {
-			AStarNode& nextNode = _path.front();
-			Point next(nextNode._mapX, nextNode._mapY), mod;
-			if ((_pos / TILE_MASK) == next) {
+			bool lastTile = _path.size() == 1;
+			Point mod;
+
+			if (lastTile) {
 				mod = _dest - _pos;
-				mod.limit(SUBTILE_MASK);
+				mod = mod.limit(SUBTILE_MASK);
+				move(mod);
+
+				if (_pos == _dest) {
+					_path.erase(_path.begin());
+				}
 			} else {
+				AStarNode& nextNode = _path.front();
+				Point next(nextNode._mapX, nextNode._mapY);
 				mod = (next - (_pos / TILE_MASK)) * SUBTILE_MASK;
-			}
-			int dir = getDirection(mod);
+				move(mod);
 
-			_spriteID++;
-			switch (dir) {
-			// 6 dirs, 8 frames
-			// T, TR, R-DR, D, DL, L-TL
-			// 6, 7,  4-2,  1, 0,  3-5
-			case 1:
-				if (_spriteID / 8 != 4) {
-					_spriteID = 4 * 8;
+				if (_pos._x / TILE_MASK == nextNode._mapX && _pos._y / TILE_MASK == nextNode._mapY) {
+					_path.erase(_path.begin());
 				}
-				break;
-			case 2:
-				if (_spriteID / 8 != 3) {
-					_spriteID = 3 * 8;
-				}
-				break;
-			case 3:
-			case 6:
-				if (_spriteID / 8 != 2) {
-					_spriteID = 2 * 8;
-				}
-				break;
-			case 4:
-			case 7:
-				if (_spriteID / 8 != 5) {
-					_spriteID = 5 * 8;
-				}
-				break;
-			case 8:
-				if (_spriteID / 8 != 0) {
-					_spriteID = 0 * 8;
-				}
-				break;
-			case 9:
-				if (_spriteID / 8 != 1) {
-					_spriteID = 1 * 8;
-				}
-				break;
-			}
-
-			_pos += mod;
-			if (_pos._x / TILE_MASK == nextNode._mapX && _pos._y / TILE_MASK == nextNode._mapY) {
-				_path.erase(_path.begin());
 			}
 		}
-	} else if (_pos != _dest){
-		Point mod(_pos);
-		mod -= _dest;
-
 	}
 }
 
@@ -172,4 +136,49 @@ int Actor::getDirection(const Point& mod) {
 		return 3;
 	}
 	return 5;
+}
+
+void Actor::move(const Point& mod) {
+	int dir = getDirection(mod);
+
+	_spriteID++;
+	switch (dir) {
+		// 6 dirs, 8 frames
+		// T, TR, R-DR, D, DL, L-TL
+		// 6, 7,  4-2,  1, 0,  3-5
+	case 1:
+		if (_spriteID / 8 != 4) {
+			_spriteID = 4 * 8;
+		}
+		break;
+	case 2:
+		if (_spriteID / 8 != 3) {
+			_spriteID = 3 * 8;
+		}
+		break;
+	case 3:
+	case 6:
+		if (_spriteID / 8 != 2) {
+			_spriteID = 2 * 8;
+		}
+		break;
+	case 4:
+	case 7:
+		if (_spriteID / 8 != 5) {
+			_spriteID = 5 * 8;
+		}
+		break;
+	case 8:
+		if (_spriteID / 8 != 0) {
+			_spriteID = 0 * 8;
+		}
+		break;
+	case 9:
+		if (_spriteID / 8 != 1) {
+			_spriteID = 1 * 8;
+		}
+		break;
+	}
+
+	_pos += mod;
 }
