@@ -33,6 +33,7 @@ public:
 	int toID(int) const;
 	Point toIso() const;
 	Point toMap() const;
+	Point limit(int) const;
 	void convertToIso();
 	void convertToMap();
 };

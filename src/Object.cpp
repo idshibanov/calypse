@@ -92,8 +92,13 @@ void Actor::update() {
 		_timer++;
 		if (_timer % 8 == 0) {
 			AStarNode& nextNode = _path.front();
-			Point mod(nextNode._mapX, nextNode._mapY);
-			mod = (mod - (_pos / TILE_MASK)) * SUBTILE_MASK;
+			Point next(nextNode._mapX, nextNode._mapY), mod;
+			if ((_pos / TILE_MASK) == next) {
+				mod = _dest - _pos;
+				mod.limit(SUBTILE_MASK);
+			} else {
+				mod = (next - (_pos / TILE_MASK)) * SUBTILE_MASK;
+			}
 			int dir = getDirection(mod);
 
 			_spriteID++;

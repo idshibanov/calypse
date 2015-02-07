@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Point.h"
 
 
@@ -131,6 +132,24 @@ Point Point::toIso() const {
 
 Point Point::toMap() const {
 	return Point((2 * _y + _x) / 2, (2 * _y - _x) / 2);
+}
+
+Point Point::limit(int limit) const {
+	int x, y;
+
+	if (_x < 0) {
+		x = std::min(_x, -limit);
+	} else {
+		x = std::max(_x, limit);
+	}
+
+	if (_y < 0) {
+		y = std::min(_y, -limit);
+	} else {
+		y = std::max(_y, limit);
+	}
+
+	return Point(x, y);
 }
 
 void Point::convertToIso() {
