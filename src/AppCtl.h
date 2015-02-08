@@ -5,6 +5,7 @@
 #include <allegro5/allegro_ttf.h>
 
 #include "Main.h"
+#include "AppState.h"
 #include "ScreenCtl.h"
 #include "ResourceCtl.h"
 #include "Camera.h"
@@ -34,7 +35,7 @@ class AppCtl {
 	shared_ptr<AStarSearch> _pFinder;
 	shared_ptr<Camera> _camera;
 	shared_ptr<Mouse> _mouse;
-	shared_ptr<AppStats> _stats;
+	shared_ptr<AppState> _state;
 
 	bool _isRunning;
 	bool _render;

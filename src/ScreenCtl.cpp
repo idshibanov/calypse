@@ -1,11 +1,12 @@
 #include <iomanip>
 #include <sstream>
+#include <allegro5/allegro_primitives.h>
 
 #include "ScreenCtl.h"
 #include "Object.h"
 
 ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, shared_ptr<Camera> cam, 
-	                  shared_ptr<Mouse> mouse, shared_ptr<AppStats> stats)
+	                  shared_ptr<Mouse> mouse, shared_ptr<AppState> stats)
 	                 : frame_t(ANIMATION_TICKS) {
 	_display = al_create_display(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
 	al_hide_mouse_cursor(_display);
@@ -20,10 +21,10 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_map = map;
 	_cam = cam;
 	_mouse = mouse;
-	_stats = stats;
+	_state = stats;
 
 	_render = true;
-	_lastTimestamp = _stats->_gameTime;
+	_lastTimestamp = _state->_appTime;
 
 	_zoom = 1.0;
 
@@ -67,7 +68,7 @@ ScreenCtl::~ScreenCtl() {
 
 bool ScreenCtl::draw() {
 	bool retval = false;
-	if (_render || _lastTimestamp < _stats->_gameTime) {
+	if (_render || _lastTimestamp < _state->_appTime) {
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
 		// map size
 		unsigned rowmax = _map->getRowMax();
@@ -85,8 +86,33 @@ bool ScreenCtl::draw() {
 				_grass->drawScaled(coord._x, coord._y, _tileWidth * 2, _tileHeight);
 				//al_hold_bitmap_drawing(false);
 
-				//string tileCoords(to_string(col) + ", " + to_string(row));
-				//_font->draw(tileCoords, coord._x + 24, coord._y + 8, color);
+				if (_state->_drawCoords) {
+					string tileCoords(to_string(col) + ", " + to_string(row));
+					_font->draw(tileCoords, coord._x + 24, coord._y + 8, color);
+				}
+			}
+
+		}
+
+		if (_state->_drawGrid) {
+			for (int row = _firstTile._y; row < _lastTile._y; row++) {
+				Point lineStart(_firstTile._x, row);
+				Point lineEnd(_lastTile._x, row);
+
+				convertMapCoords(lineStart).add(32,0);
+				convertMapCoords(lineEnd).add(32, 0);
+
+				al_draw_line(lineStart._x, lineStart._y, lineEnd._x, lineEnd._y, color, 1);
+			}
+
+			for (int col = _firstTile._x; col < _lastTile._x; col++) {
+				Point lineStart(col, _firstTile._y);
+				Point lineEnd(col, _lastTile._y);
+
+				convertMapCoords(lineStart).add(32, 0);
+				convertMapCoords(lineEnd).add(32, 0);
+
+				al_draw_line(lineStart._x, lineStart._y, lineEnd._x, lineEnd._y, color, 1);
 			}
 		}
 
@@ -121,9 +147,9 @@ bool ScreenCtl::draw() {
 		//coord = coord.toIso() + _screenOffset + act_offset;
 		//_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
 
-		string timeSTR("App time: " + to_string(_stats->_gameTime));
-		string cpsSTR("Cycles per second: " + to_string(_stats->_CPS));
-		string fpsSTR("Frames per second: " + to_string(_stats->_FPS));
+		string timeSTR("App time: " + to_string(_state->_appTime));
+		string cpsSTR("Cycles per second: " + to_string(_state->_CPS));
+		string fpsSTR("Frames per second: " + to_string(_state->_FPS));
 		string spdSTR("Animation speed: " + to_string(static_cast<int>(_animation_speed)) + "%");
 		string frameSTR("Animation frame #" + to_string(_actor->getSprite()));
 		_font->draw(timeSTR, 5, 5, color);
@@ -135,7 +161,7 @@ bool ScreenCtl::draw() {
 		// Almost last: mouse cursor
 		_cursor->draw(_mouse->getXPos(), _mouse->getYPos());
 
-		_lastTimestamp = _stats->_gameTime;
+		_lastTimestamp = _state->_appTime;
 		_render = false;
 		retval = true;
 	}
@@ -231,6 +257,12 @@ Point ScreenCtl::convertCoords(int x, int y) {
 	Point coord(x - _tileSize._x, y);
 	coord -= _screenOffset;
 	return ((coord.toMap() - _offset) * TILE_MASK) / _tileSize + _firstTile * TILE_MASK;
+}
+
+Point& ScreenCtl::convertMapCoords(Point& coord) {
+	coord = (coord - _firstTile) * _tileSize + _offset;
+	coord = coord.toIso() + _screenOffset;
+	return coord;
 }
 
 void ScreenCtl::increaseSpeed() {

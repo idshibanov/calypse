@@ -1,25 +1,20 @@
 #pragma once
 #include <vector>
+#include "AppState.h"
+#include "Camera.h"
 #include "Main.h"
+#include "Map.h"
+#include "Mouse.h"
 #include "ResourceCtl.h"
 #include "Point.h"
 #include "Sprite.h"
 #include "Timer.h"
-#include "Camera.h"
-#include "Mouse.h"
-#include "Map.h"
 
 #define TD_DISPLAY_WIDTH 800
 #define TD_DISPLAY_HEIGHT 600
 
 #define ISO_TILE_SIZE 32
 #define ANIMATION_TICKS 125
-
-struct AppStats {
-	int _gameTime;
-	int _CPS;
-	int _FPS;
-};
 
 class ScreenCtl {
 	ALLEGRO_DISPLAY* _display;
@@ -35,7 +30,7 @@ class ScreenCtl {
 	shared_ptr<LocalMap> _map;
 	shared_ptr<Camera> _cam;
 	shared_ptr<Mouse> _mouse;
-	shared_ptr<AppStats> _stats;
+	shared_ptr<AppState> _state;
 
 	bool _render;
 	int _lastTimestamp;
@@ -55,7 +50,7 @@ class ScreenCtl {
 	int _animation_frame;
 	TaskTimer frame_t;
 public:
-	ScreenCtl(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<Camera>, shared_ptr<Mouse>, shared_ptr<AppStats>);
+	ScreenCtl(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<Camera>, shared_ptr<Mouse>, shared_ptr<AppState>);
 	~ScreenCtl();
 	bool draw();
 	void redraw(bool cameraMoved = false);
@@ -68,6 +63,7 @@ public:
 	int convertScreenX(int, int);
 	int convertScreenY(int, int);
 	Point convertCoords(int, int);
+	Point& convertMapCoords(Point& coord);
 	void increaseSpeed();
 	void decreaseSpeed();
 	void zoomIn();

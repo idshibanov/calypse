@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <allegro5/allegro_primitives.h>
 
 #include "AppCtl.h"
 #include "Timer.h"
@@ -11,10 +12,10 @@ AppCtl::AppCtl() {
 	_pFinder = make_shared<AStarSearch>(_map);
 	_map->generate(_pFinder);
 
-	_stats = make_shared<AppStats>();
+	_state = make_shared<AppState>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 	_mouse = make_shared<Mouse>();
-	_screen = new ScreenCtl(_res, _map, _camera, _mouse, _stats);
+	_screen = new ScreenCtl(_res, _map, _camera, _mouse, _state);
 
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);
@@ -29,8 +30,10 @@ AppCtl::AppCtl() {
 	_render_frames = 0;
 	_animation_frame = 0;
 
-	_stats->_FPS = 0;
-	_stats->_CPS = 0;
+	_state->_FPS = 0;
+	_state->_CPS = 0;
+	_state->_drawGrid = false;
+	_state->_drawCoords = false;
 	_keys = new bool[7];
 	for (int i = 0; i < 7; i++) _keys[i] = false;
 }
@@ -69,7 +72,7 @@ void AppCtl::update() {
 
 void AppCtl::controlLoop() {
 	al_start_timer(_timer);
-	_stats->_gameTime = al_current_time();
+	_state->_appTime = al_current_time();
 
 	double animation_speed = 100;
 	TaskTimer render_t(CLOCK_SPEED / 60);
@@ -93,6 +96,12 @@ void AppCtl::controlLoop() {
 				break;
 			case ALLEGRO_KEY_DOWN:
 				_keys[DOWN] = true;
+				break;
+			case ALLEGRO_KEY_F9:
+				_state->_drawGrid = !_state->_drawGrid;
+				break;
+			case ALLEGRO_KEY_F10:
+				_state->_drawCoords = !_state->_drawCoords;
 				break;
 			}
 		} else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
@@ -135,10 +144,10 @@ void AppCtl::controlLoop() {
 		} else if (ev.type == ALLEGRO_EVENT_TIMER) {
 			_cycles++;
 
-			if (al_current_time() - _stats->_gameTime >= 1) {
-				_stats->_gameTime = al_current_time();
-				_stats->_CPS = _cycles;
-				_stats->_FPS = _render_frames;
+			if (al_current_time() - _state->_appTime >= 1) {
+				_state->_appTime = al_current_time();
+				_state->_CPS = _cycles;
+				_state->_FPS = _render_frames;
 				_cycles = _render_frames = 0;
 			}
 
@@ -178,6 +187,7 @@ int main(int argc, char **argv) {
 
 	al_install_mouse();
 	al_init_image_addon();
+	al_init_primitives_addon();
 	al_init_font_addon();
 	al_init_ttf_addon();
 
