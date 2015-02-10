@@ -12,7 +12,7 @@ class ObjectHash {
 public:
 	ObjectHash();
 	~ObjectHash();
-	bool setObject(int id, const Point& pos, const Point& size);
+	bool setObject(const Point& pos, const Point& size, shared_ptr<MapObject> obj);
 	bool resetObject(const Point& pos);
 	bool isFree(const Point& pos);
 	shared_ptr<MapObject> getObject(const Point&);

@@ -156,6 +156,14 @@ Point Point::limit(int limit) const {
 	return Point(x, y);
 }
 
+void Point::iterate(int max) {
+	_x++;
+	if (_x >= max) {
+		_y++;
+		_x = 0;
+	}
+}
+
 void Point::convertToIso() {
 	_x -= _y;
 	_y = (_x + _y) / 2;
@@ -166,6 +174,33 @@ void Point::convertToMap() {
 	_y = (2 * _y - _x) / 2;
 }
 
-void Rect::iterate(std::function<void(const Point&)>& action) {
 
+
+Rect::Rect(const Point& pos, const Point& size) {
+	_pos = pos;
+	_size = size;
+}
+
+Rect::~Rect() {
+}
+
+void Rect::iterate(std::function<void(const Point&)>& action) {
+	Point last = _pos + _size, current;
+
+	for (current = _pos; current < last; current.iterate(last._x)) {
+		action(current);
+	}
+}
+
+bool Rect::iterate(std::function<bool(const Point&)>& action, bool defaultVal) {
+	bool retval = defaultVal;
+	Point last = _pos + _size, current;
+
+	for (current = _pos; current < last; current.iterate(last._x)) {
+		if (action(current) != defaultVal) {
+			retval = !retval;
+			break;
+		}
+	}
+	return retval;
 }

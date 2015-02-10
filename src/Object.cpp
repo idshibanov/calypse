@@ -35,6 +35,10 @@ int MapObject::getType(){
     return _type;
 }
 
+int MapObject::getID() {
+	return _id;
+}
+
 
 
 Actor::Actor(short type, Point pos, int defaultSprite, weak_ptr<AStarSearch> pf)

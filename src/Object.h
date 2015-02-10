@@ -10,6 +10,7 @@ class MapObject {
 protected:
 	Point _pos;
     short _type;
+	int _id;
 public:
     MapObject(Point pos, short type);
     MapObject(MapObject& rhs);
@@ -19,6 +20,7 @@ public:
     int getYPos();
 	Point getPos();
 	int getType();
+	int getID();
 };
 
 class Actor : public MapObject {

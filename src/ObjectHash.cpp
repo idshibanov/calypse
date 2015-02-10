@@ -1,3 +1,4 @@
+#include <functional>
 #include "ObjectHash.h"
 
 ObjectHash::ObjectHash() {
@@ -8,32 +9,26 @@ ObjectHash::~ObjectHash() {
 
 }
 
-bool ObjectHash::setObject(int id, const Point& pos, const Point& size) {
-	bool retval = true;
+bool ObjectHash::setObject(const Point& pos, const Point& size, shared_ptr<MapObject> obj) {
+	bool retval = false;
+	Rect area(pos, size);
+	int id = obj->getID();
 
-	Point last = pos + size;
-	[this](const Point& pos) {
+	std::function<bool(const Point&)> search = [this](const Point& pos) {
 		return isFree(pos);
 	};
-	for (int x = pos._x; x < last._x; x++) {
-		for (int y = pos._y; y < last._y; y++) {
-			if (!isFree(Point(x, y))) {
-				retval = false;
-			}
-		}
-	}
 
-	[this, &id](const Point& pos) {
+	std::function<void(const Point&)> setter = [this, &id](const Point& pos) {
 		_mask.emplace(pos.toID(_size), id);
 	};
-	if (retval) {
-		//_objects.insert();
-		for (int x = pos._x; x < last._x; x++) {
-			for (int y = pos._y; y < last._y; y++) {
-				_mask.emplace(y*_size+x,id);
-			}
-		}
+
+	if (area.iterate(search, true)) {
+		_objects.emplace(id, obj);
+
+		area.iterate(setter);
+		retval = true;
 	}
+	
 	return retval;
 }
 

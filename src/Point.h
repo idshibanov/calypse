@@ -35,13 +35,17 @@ public:
 	Point toIso() const;
 	Point toMap() const;
 	Point limit(int) const;
+	void iterate(int);
 	void convertToIso();
 	void convertToMap();
 };
 
 class Rect {
 public:
+	Rect(const Point&, const Point&);
+	~Rect();
 	Point _pos;
 	Point _size;
 	void iterate(std::function<void(const Point&)>& action);
+	bool iterate(std::function<bool(const Point&)>& action, bool defaultVal);
 };
