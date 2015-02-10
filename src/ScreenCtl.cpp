@@ -48,7 +48,7 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	// 44x69, 11-0-11, 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
 	auto walk_size = _res->getObjectInfo(0).lock()->_size;
-	_walk = new SpriteSheet(0, "res/f2_walk.png", 48, 8, walk_size._x, walk_size._y);
+	_walk = new SpriteSheet(0, "res/f2_walk.png", 48, 8, Point(walk_size._x, walk_size._y));
 
 	//_current_frame = _sprites.begin();
 	//_current_frame++;
@@ -73,6 +73,7 @@ bool ScreenCtl::draw() {
 		// map size
 		unsigned rowmax = _map->getRowMax();
 		unsigned colmax = _map->getColMax();
+		Point _isoTileSize(_tileSize._x * 2, _tileSize._y);
 
 		// Map tiles
 		for (unsigned row = _firstTile._y; row < _lastTile._y; row++) {
@@ -83,12 +84,12 @@ bool ScreenCtl::draw() {
 
 				// loop drawing sub bitmaps must be the same parent
 				//al_hold_bitmap_drawing(true);
-				_grass->drawScaled(coord._x, coord._y, _tileWidth * 2, _tileHeight);
+				_grass->drawScaled(coord, _isoTileSize);
 				//al_hold_bitmap_drawing(false);
 
 				if (_state->_drawCoords) {
 					string tileCoords(to_string(col) + ", " + to_string(row));
-					_font->draw(tileCoords, coord._x + 24, coord._y + 8, color);
+					_font->draw(tileCoords, coord.add(24,8), color);
 				}
 			}
 
@@ -132,34 +133,28 @@ bool ScreenCtl::draw() {
 			coord = coord.toIso() + _screenOffset;
 			if (obj.second->getType() == 0) {
 				coord += act_offset;
-				_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
+				_walk->drawScaled(coord, _actor->getSprite(), _zoom);
 			} else {
 				coord += reet_offset;
-				_reet->drawScaled(coord._x, coord._y, reet_size._x * _zoom, reet_size._y * _zoom);
+				_reet->drawScaled(coord, reet_size * _zoom);
 			}
 			//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
-			//_font->draw(tileCoords, coord._x + 12, coord._y + 30, color);
+			//_font->draw(tileCoords, coord.add(12, 30), color);
 		}
-
-		//Point coord(_actor->getXPos(), _actor->getYPos());
-
-		//coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
-		//coord = coord.toIso() + _screenOffset + act_offset;
-		//_walk->drawScaled(coord._x, coord._y, _actor->getSprite(), _zoom);
 
 		string timeSTR("App time: " + to_string(_state->_appTime));
 		string cpsSTR("Cycles per second: " + to_string(_state->_CPS));
 		string fpsSTR("Frames per second: " + to_string(_state->_FPS));
 		string spdSTR("Animation speed: " + to_string(static_cast<int>(_animation_speed)) + "%");
 		string frameSTR("Animation frame #" + to_string(_actor->getSprite()));
-		_font->draw(timeSTR, 5, 5, color);
-		_font->draw(cpsSTR, 5, 30, color);
-		_font->draw(fpsSTR, 5, 55, color);
-		_font->draw(spdSTR, 5, 80, color);
-		_font->draw(frameSTR, 5, 105, color);
+		_font->draw(timeSTR, Point(5, 5), color);
+		_font->draw(cpsSTR, Point(5, 30), color);
+		_font->draw(fpsSTR, Point(5, 55), color);
+		_font->draw(spdSTR, Point(5, 80), color);
+		_font->draw(frameSTR, Point(5, 105), color);
 
 		// Almost last: mouse cursor
-		_cursor->draw(_mouse->getXPos(), _mouse->getYPos());
+		_cursor->draw(_mouse->getPos());
 
 		_lastTimestamp = _state->_appTime;
 		_render = false;
@@ -257,6 +252,10 @@ Point ScreenCtl::convertCoords(int x, int y) {
 	Point coord(x - _tileSize._x, y);
 	coord -= _screenOffset;
 	return ((coord.toMap() - _offset) * TILE_MASK) / _tileSize + _firstTile * TILE_MASK;
+}
+
+Point ScreenCtl::convertCoords(const Point& pos) {
+	return convertCoords(pos._x, pos._y);
 }
 
 Point& ScreenCtl::convertMapCoords(Point& coord) {

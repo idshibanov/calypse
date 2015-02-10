@@ -1,11 +1,7 @@
 #include "mouse.h"
 
 Mouse::Mouse() {
-    _xpos = 0;
-    _ypos = 0;
     _frameid = -1;
-    _framex = 0;
-    _framey = 0;
     _elementid = -1;
     _button = 0;
     _pressed = false;
@@ -15,36 +11,34 @@ Mouse::~Mouse(){
 
 }
 
-bool Mouse::set(int absX, int absY, int button, bool pressed, int frameid, 
-                  int frameX, int frameY, int elementID) {
+bool Mouse::set(const Point& abs, int button, bool pressed, int elementID) {
 	bool retval = false;
-	if (absX != _xpos || absY != _ypos) {
+	if (abs != _pos) {
 		retval = true;
 	}
-    _xpos = absX;
-    _ypos = absY;
+    _pos = abs;
     _button = button;
     _pressed = pressed;
-    _frameid = frameid;
-    _framex = frameX;
-    _framey = frameY;
     _elementid = elementID;
 	return retval;
 }
 
-void Mouse::setFrame(int frameid, int frameX, int frameY, int elementID) {
+void Mouse::setFrame(int frameid, const Point& framePos, int elementID) {
     _frameid = frameid;
-    _framex = frameX;
-    _framey = frameY;
+    _framePos = framePos;
     _elementid = elementID;
 }
 
 int Mouse::getXPos(){
-    return _xpos;
+    return _pos._x;
 }
 
 int Mouse::getYPos(){
-    return _ypos;
+    return _pos._y;
+}
+
+Point Mouse::getPos() {
+	return _pos;
 }
 
 int Mouse::getButton(){
@@ -56,11 +50,15 @@ bool Mouse::isPressed(){
 }
 
 void Mouse::setXPos(int x){
-    _xpos = x;
+    _pos._x = x;
 }
 
 void Mouse::setYPos(int y){
-    _ypos = y;
+    _pos._y = y;
+}
+
+void Mouse::setPos(const Point& pos) {
+	_pos = pos;
 }
 
 void Mouse::setButton(int button){

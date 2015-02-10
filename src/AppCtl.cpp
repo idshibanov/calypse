@@ -120,7 +120,7 @@ void AppCtl::controlLoop() {
 				break;
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
-			if (_mouse->set(ev.mouse.x, ev.mouse.y)) {
+			if (_mouse->set(Point(ev.mouse.x, ev.mouse.y))) {
 				_screen->redraw();
 			}
 
@@ -130,10 +130,9 @@ void AppCtl::controlLoop() {
 				_screen->zoomIn();
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-			int absX = ev.mouse.x;
-			int absY = ev.mouse.y;
-			_mouse->set(absX, absY, ev.mouse.button, true);
-			Point tile = _screen->convertCoords(absX, absY);
+			Point absPos(ev.mouse.x, ev.mouse.y);
+			_mouse->set(absPos, ev.mouse.button, true);
+			Point tile = _screen->convertCoords(absPos);
 			cout << tile._x << "," << tile._y << endl;
 			auto actor = _map->getActor();
 			if (tile._x > 0 && tile._y > 0) {

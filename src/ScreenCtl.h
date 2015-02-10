@@ -63,6 +63,7 @@ public:
 	int convertScreenX(int, int);
 	int convertScreenY(int, int);
 	Point convertCoords(int, int);
+	Point convertCoords(const Point& pos);
 	Point& convertMapCoords(Point& coord);
 	void increaseSpeed();
 	void decreaseSpeed();

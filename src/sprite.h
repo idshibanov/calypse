@@ -4,6 +4,7 @@
 #include <allegro5/allegro_font.h>
 #include <string>
 #include "main.h"
+#include "Point.h"
 
 class Sprite {
 protected:
@@ -14,27 +15,25 @@ public:
 	virtual ~Sprite();
 	Sprite(const Sprite&);
 	Sprite& operator= (const Sprite&);
-	void draw(int x, int y);
-	void drawScaled(int x, int y, int width, int height);
+	void draw(const Point& pos);
+	void drawScaled(const Point& pos, const Point& size);
 };
 
 class SpriteSheet : public Sprite {
+	Point _size;
 	unsigned int _last;
-	unsigned int _xsize;
-	unsigned int _ysize;
 	unsigned int _rowsize;
 public:
 	SpriteSheet(unsigned id, const char* filename, unsigned last,
-		unsigned rowsize, unsigned xsize = 32, unsigned ysize = 32);
+		unsigned rowsize, const Point& pos);
 	~SpriteSheet() { }
 	SpriteSheet(const SpriteSheet&);
 	SpriteSheet& operator= (const SpriteSheet&);
 	unsigned int getLastID() { return _last; };
-	unsigned int getSpriteXSize() { return _xsize; };
-	unsigned int getSpriteYSize() { return _xsize; };
-	void draw(int x, int y, unsigned int sprite_id);
-	void drawScaled(int x, int y, unsigned int sprite_id, float zoom);
-	void drawRandom(int x, int y);
+	Point getSpriteSize() { return _size; };
+	void draw(const Point& pos, unsigned int sprite_id);
+	void drawScaled(const Point& pos, unsigned int sprite_id, float zoom);
+	void drawRandom(const Point& pos);
 };
 
 class SpriteText {
@@ -46,23 +45,20 @@ public:
 	~SpriteText();
 	SpriteText(const SpriteText&);
 	SpriteText& operator= (const SpriteText&);
-	void draw(const char* str, int x, int y, ALLEGRO_COLOR color);
-	void draw(string& str, int x, int y, ALLEGRO_COLOR color);
+	void draw(const char* str, const Point& pos, ALLEGRO_COLOR color);
+	void draw(string& str, const Point& pos, ALLEGRO_COLOR color);
+	void draw(const Point& text, const Point& pos, ALLEGRO_COLOR color);
 };
 
 class RawSprite : public Sprite {
-	unsigned int _xsize;
-	unsigned int _ysize;
-	unsigned int _xpos;
-	unsigned int _ypos;
+	Point _size;
+	Point _pos;
 public:
-	RawSprite(unsigned id, const char* filename, unsigned xpos,
-		unsigned ypos, unsigned xsize, unsigned ysize);
+	RawSprite(unsigned id, const char* filename, const Point& pos, const Point& size);
 	~RawSprite() { }
 	RawSprite(const RawSprite&);
 	RawSprite& operator= (const RawSprite&);
-	unsigned int getSpriteXSize() { return _xsize; };
-	unsigned int getSpriteYSize() { return _xsize; };
-	void draw(int x, int y);
-	void drawScaled(int x, int y, float zoom);
+	Point getSpriteSize() { return _size; };
+	void draw(const Point& pos);
+	void drawScaled(const Point& pos, float zoom);
 };
