@@ -1,8 +1,8 @@
 #include <functional>
 #include "ObjectHash.h"
 
-ObjectHash::ObjectHash() {
-	
+ObjectHash::ObjectHash(int size) {
+	_size = size;
 }
 
 ObjectHash::~ObjectHash() {
@@ -32,11 +32,65 @@ bool ObjectHash::setObject(const Point& pos, const Point& size, shared_ptr<MapOb
 	return retval;
 }
 
-bool ObjectHash::isFree(const Point& pos) {
-	if (_mask.find(pos.toID(_size)) != _mask.end()) {
+bool ObjectHash::resetObject(const Point& pos) {
+	auto obj = getObject(pos);
+	if (obj != nullptr) {
+		Rect area(obj->getPos(), Point(1,1));
+
+		std::function<void(const Point&)> resetter = [this](const Point& pos) {
+			_mask.erase(pos.toID(_size));
+		};
+
+		area.iterate(resetter);
 		return true;
 	}
 	return false;
+}
+
+bool ObjectHash::isFree(const Point& pos) {
+	return checkPos(pos) == OBJECT_NOT_FOUND;
+}
+
+int ObjectHash::checkPos(const Point& pos) {
+	auto it = _mask.find(pos.toID(_size));
+	if(it != _mask.end()) {
+		return it->second;
+	}
+	return OBJECT_NOT_FOUND;
+}
+
+vector<Point> ObjectHash::searchForObject(const Point& pos) {
+	vector<Point> retval;
+	
+	int objID = checkPos(pos);
+	if(objID != OBJECT_NOT_FOUND) {
+		retval.push_back(pos);
+		
+	}	
+	/*
+	private recursive function (pass pos + id), concat return results
+	AB.reserve( A.size() + B.size() ); // preallocate memory
+	AB.insert( AB.end(), A.begin(), A.end() );
+	AB.insert( AB.end(), B.begin(), B.end() );
+	*/
+	return retval;
+}
+
+
+shared_ptr<MapObject> ObjectHash::getObject(int objID) {
+	auto it = _objects.find(objID);
+	if(it != _objects.end()) {
+		return it->second;
+	}
+	return nullptr;
+}
+
+shared_ptr<MapObject> ObjectHash::getObject(const Point& pos) {
+	int objID = checkPos(pos);
+	if(objID != OBJECT_NOT_FOUND) {
+		return getObject(objID);
+	}
+	return nullptr;
 }
 
 map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const Point& last) {
