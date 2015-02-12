@@ -1,3 +1,4 @@
+#include "Map.h"
 #include "Pathfinder.h"
 
 AStarNode::AStarNode(unsigned x, unsigned y) {

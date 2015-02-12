@@ -1,4 +1,5 @@
-#include "object.h"
+#include "Object.h"
+#include "Pathfinder.h"
 
 MapObject::MapObject(Point pos, short type)
 	                : _pos(pos),  _type(type) {

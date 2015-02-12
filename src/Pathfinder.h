@@ -1,11 +1,10 @@
 #pragma once
 #include <queue>
-#include "Map.h"
 
 #define PATHFINDING_MOVE_COST 10
 #define PATHFINDING_DIAGONAL_COST 14
 
-class GameMap;
+class LocalMap;
 
 class AStarNode {
 public:

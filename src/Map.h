@@ -5,14 +5,10 @@
 #include <bitset>
 #include "Main.h"
 #include "MapTile.h"
-#include "Point.h"
+#include "ObjectHash.h"
 
 class Actor;
 class MapObject;
-
-#define TILE_MASK 10
-#define SUBTILE_STEPS 5
-#define SUBTILE_MASK 2 // 10/5 (integer value, MASK / STEPS)
 
 #define TD_MAP_ROWS 40
 #define TD_MAP_COLS 40

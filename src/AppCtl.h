@@ -4,14 +4,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 
-#include "Main.h"
-#include "AppState.h"
 #include "ScreenCtl.h"
-#include "ResourceCtl.h"
-#include "Camera.h"
-#include "Mouse.h"
-#include "Map.h"
-#include "Pathfinder.h"
 
 #define CLOCK_SPEED 1000
 

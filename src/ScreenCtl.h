@@ -1,14 +1,13 @@
 #pragma once
 #include <vector>
+
+#include "Main.h"
 #include "AppState.h"
 #include "Camera.h"
-#include "Main.h"
-#include "Map.h"
 #include "Mouse.h"
+
+#include "Map.h"
 #include "ResourceCtl.h"
-#include "Point.h"
-#include "Sprite.h"
-#include "Timer.h"
 
 #define TD_DISPLAY_WIDTH 800
 #define TD_DISPLAY_HEIGHT 600
