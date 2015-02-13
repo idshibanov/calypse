@@ -47,11 +47,11 @@ bool ObjectHash::resetObject(const Point& pos) {
 	return false;
 }
 
-bool ObjectHash::isFree(const Point& pos) {
+bool ObjectHash::isFree(const Point& pos) const {
 	return checkPos(pos) == OBJECT_NOT_FOUND;
 }
 
-int ObjectHash::checkPos(const Point& pos) {
+int ObjectHash::checkPos(const Point& pos) const {
 	auto it = _mask.find(pos.toID(_size));
 	if(it != _mask.end()) {
 		return it->second;
@@ -93,7 +93,7 @@ shared_ptr<MapObject> ObjectHash::getObject(const Point& pos) {
 	return nullptr;
 }
 
-map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const Point& last) {
+map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const Point& last) const {
 	map<int, shared_ptr<MapObject>> retval;
 	Point size = last - first;
 

@@ -6,6 +6,7 @@
 #include "Main.h"
 #include "MapTile.h"
 #include "ObjectHash.h"
+#include "ResourceCtl.h"
 
 class Actor;
 class MapObject;
@@ -18,7 +19,8 @@ class AStarSearch;
 class LocalMap {
 	weak_ptr<AStarSearch> _pFinder;
 	vector<MapTile> _tiles;
-	unordered_map<int, shared_ptr<MapObject>> _objects;
+	//unordered_map<int, shared_ptr<MapObject>> _objects;
+	ObjectHash _objects;
 	shared_ptr<Actor> _actor;
 	unsigned int _rowmax;
 	unsigned int _colmax;

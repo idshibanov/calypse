@@ -4,7 +4,7 @@
 #include "Pathfinder.h"
 #include "Object.h"
 
-LocalMap::LocalMap() {
+LocalMap::LocalMap() : _objects(TD_MAP_COLS) {
 
 }
 
@@ -49,7 +49,8 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 				Point objPos((col + (randOffset % 10)) * TILE_MASK, (row + (randOffset / 10)) * TILE_MASK);
 				cout << "OBJ: " << col + (randOffset % 10) << "," << row + (randOffset / 10);
 				cout << "  >> " << objPos._x << "," << objPos._y << " ID: " << objPos.toID(_xmax) << endl;
-				_objects.emplace(objPos.toID(_xmax), make_shared<MapObject>(objPos, 1));
+				_objects.setObject(objPos, Point(1, 1), make_shared<MapObject>(objPos, 1));
+				//_objects.emplace(objPos.toID(_xmax), make_shared<MapObject>(objPos, 1));
 				//_tiles[tempY * _colmax + tempX].setObject(tempObj);
 			}
 		}
@@ -82,8 +83,8 @@ unsigned int LocalMap::convertIDToY(unsigned mapID) const {
 
 map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
 	//vector<shared_ptr<MapObject>> retval;
-	map<int, shared_ptr<MapObject>> retval;
-	Point size = last - first;
+	//map<int, shared_ptr<MapObject>> retval;
+	//Point size = last - first;
 
 	/*
 	retval.reserve(size._x * size._y / 100);
@@ -100,7 +101,6 @@ map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const P
 			}
 		}
 	}
-	*/
 
 	for (auto obj : _objects) {
 		Point pos = obj.second->getPos();
@@ -110,9 +110,10 @@ map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const P
 			//retval.push_back(obj.second);
 		}
 	}
+	*/
+	auto retval = _objects.getObjects(first, last);
 	pair<int, shared_ptr<MapObject>> act(_actor->getPos().toID(_xmax), _actor);
 	retval.insert(act);
-
 	return retval;
 }
 
@@ -129,13 +130,14 @@ bool LocalMap::tileExists(unsigned tileX, unsigned tileY) const {
 }
 
 bool LocalMap::tileIsFree(unsigned mapID) const {
-	bool retval = false;
 	if (tileExists(mapID)) {
-		int pos = (mapID / _colmax * TILE_MASK) * _xmax + (mapID % _colmax) * TILE_MASK;
-		if (_objects.find(pos) == _objects.end())
-			retval = true;
+		//int pos = (mapID / _colmax * TILE_MASK) * _xmax + (mapID % _colmax) * TILE_MASK;
+		Point pos((mapID % _colmax) * TILE_MASK, mapID / _colmax * TILE_MASK);
+		if (_objects.isFree(pos)) {
+			return true;
+		}
 	}
-	return retval;
+	return false;
 }
 
 bool LocalMap::tileIsFree(unsigned tileX, unsigned tileY) const {

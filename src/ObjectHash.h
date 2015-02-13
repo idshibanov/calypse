@@ -21,11 +21,11 @@ public:
 	~ObjectHash();
 	bool setObject(const Point& pos, const Point& size, shared_ptr<MapObject> obj);
 	bool resetObject(const Point& pos);
-	bool isFree(const Point& pos);
-	int checkPos(const Point& pos);
+	bool isFree(const Point& pos) const;
+	int checkPos(const Point& pos) const;
 	vector<Point> searchForObject(const Point&);
 	shared_ptr<MapObject> getObject(int);
 	shared_ptr<MapObject> getObject(const Point&);
 	int getObjectID(const Point&);
-	map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
+	map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last) const;
 };

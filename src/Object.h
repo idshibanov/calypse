@@ -5,15 +5,12 @@
 #include "Timer.h"
 #include "Pathfinder.h"
 
-#define TILE_MASK 10
-#define SUBTILE_STEPS 5
-#define SUBTILE_MASK 2 // 10/5 (integer value, MASK / STEPS)
-
 class MapObject {
 protected:
 	Point _pos;
     short _type;
 	int _id;
+	static int lastID;
 public:
     MapObject(Point pos, short type);
     MapObject(MapObject& rhs);

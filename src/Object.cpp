@@ -1,8 +1,11 @@
 #include "Object.h"
 #include "Pathfinder.h"
 
+int MapObject::lastID = 0;
+
 MapObject::MapObject(Point pos, short type)
 	                : _pos(pos),  _type(type) {
+	_id = lastID++;
 }
 
 MapObject::MapObject(MapObject& rhs) {
