@@ -1,4 +1,8 @@
-#pragma once
+#include "Utils.h"
+
+int summation(int n) {
+	return n*(n + 1) / 2;
+}
 
 void setBit(uint32_t& x, unsigned bit) {
 	x |= 1 << bit;
@@ -15,5 +19,3 @@ void toggleBit(uint32_t& x, unsigned bit) {
 bool getBit(const uint32_t& x, unsigned bit) {
 	return x & (1 << bit);
 }
-
-

@@ -101,7 +101,7 @@ map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const
 		Point pos = obj.second->getPos();
 
 		if (pos > first * TILE_MASK && pos < last * TILE_MASK) {
-			retval.insert(obj);
+			retval.emplace(pos.toRenderPriority(), obj.second);
 		}
 	}
 	return retval;

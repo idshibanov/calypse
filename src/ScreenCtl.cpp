@@ -100,8 +100,8 @@ bool ScreenCtl::draw() {
 				Point lineStart(_firstTile._x, row);
 				Point lineEnd(_lastTile._x, row);
 
-				convertMapCoords(lineStart).add(32,0);
-				convertMapCoords(lineEnd).add(32, 0);
+				convertMapCoords(lineStart).add(32 * _zoom, 0);
+				convertMapCoords(lineEnd).add(32 * _zoom, 0);
 
 				al_draw_line(lineStart._x, lineStart._y, lineEnd._x, lineEnd._y, color, 1);
 			}
@@ -110,8 +110,8 @@ bool ScreenCtl::draw() {
 				Point lineStart(col, _firstTile._y);
 				Point lineEnd(col, _lastTile._y);
 
-				convertMapCoords(lineStart).add(32, 0);
-				convertMapCoords(lineEnd).add(32, 0);
+				convertMapCoords(lineStart).add(32 * _zoom, 0);
+				convertMapCoords(lineEnd).add(32 * _zoom, 0);
 
 				al_draw_line(lineStart._x, lineStart._y, lineEnd._x, lineEnd._y, color, 1);
 			}
@@ -125,9 +125,7 @@ bool ScreenCtl::draw() {
 		Point reet_size = reet_info.lock()->_size * _zoom;
 		Point reet_offset = reet_info.lock()->_offset * _zoom;
 
-		auto objects = _map->getObjects(_firstTile, _lastTile);
-
-		for (auto obj : objects) {
+		for (auto obj : _renderedObjects) {
 			Point coord = obj.second->getPos();
 			coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
 			coord = coord.toIso() + _screenOffset;
@@ -136,10 +134,11 @@ bool ScreenCtl::draw() {
 				_walk->drawScaled(coord, _actor->getSprite(), _zoom);
 			} else {
 				coord += reet_offset;
-				_reet->drawScaled(coord, reet_size * _zoom);
+				_reet->drawScaled(coord, reet_size);
 			}
 			//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
 			//_font->draw(tileCoords, coord.add(12, 30), color);
+			//_font->draw(to_string(obj.second->getPos().toRenderPriority()), coord.add(12, 30), color);
 		}
 
 		string timeSTR("App time: " + to_string(_state->_appTime));
@@ -203,6 +202,7 @@ void ScreenCtl::update() {
 	if (colmax < _lastTile._x) _lastTile._x = colmax;
 	if (rowmax < _lastTile._y) _lastTile._y = rowmax;
 
+	_renderedObjects = _map->getObjects(_firstTile, _lastTile);
 	_render = true;
 }
 

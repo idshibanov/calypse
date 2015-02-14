@@ -33,6 +33,7 @@ class ScreenCtl {
 
 	bool _render;
 	int _lastTimestamp;
+	map<int, shared_ptr<MapObject>> _renderedObjects;
 
 	unsigned _screenWidth;
 	unsigned _screenHeight;

@@ -48,7 +48,7 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 				randOffset = rand() % 100;
 				Point objPos((col + (randOffset % 10)) * TILE_MASK, (row + (randOffset / 10)) * TILE_MASK);
 				cout << "OBJ: " << col + (randOffset % 10) << "," << row + (randOffset / 10);
-				cout << "  >> " << objPos._x << "," << objPos._y << " ID: " << objPos.toID(_xmax) << endl;
+				cout << "  >> " << objPos._x << "," << objPos._y << " Prio: " << objPos.toRenderPriority() << endl;
 				_objects.setObject(objPos, Point(1, 1), make_shared<MapObject>(objPos, 1));
 				//_objects.emplace(objPos.toID(_xmax), make_shared<MapObject>(objPos, 1));
 				//_tiles[tempY * _colmax + tempX].setObject(tempObj);
@@ -112,7 +112,7 @@ map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const P
 	}
 	*/
 	auto retval = _objects.getObjects(first, last);
-	pair<int, shared_ptr<MapObject>> act(_actor->getPos().toID(_xmax), _actor);
+	pair<int, shared_ptr<MapObject>> act(_actor->getPos().toRenderPriority(), _actor);
 	retval.insert(act);
 	return retval;
 }

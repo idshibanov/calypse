@@ -35,6 +35,7 @@ public:
 	bool operator!= (const Point&) const;
 	bool operator> (const Point&) const;
 	bool operator< (const Point&) const;
+	int toRenderPriority() const;
 	int toID(int) const;
 	Point toIso() const;
 	Point toMap() const;

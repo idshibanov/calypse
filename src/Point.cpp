@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Point.h"
+#include "Utils.h"
 
 
 Point::Point() {
@@ -124,6 +125,10 @@ bool Point::operator< (const Point& rhs) const {
 
 bool Point::operator> (const Point& rhs) const {
 	return _x > rhs._x && _y > rhs._y;
+}
+
+int Point::toRenderPriority() const {
+	return summation(_x + _y) + _y;
 }
 
 int Point::toID(int xMax) const {

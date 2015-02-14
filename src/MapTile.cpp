@@ -1,5 +1,5 @@
 #include "MapTile.h"
-#include "Bitwise.h"
+#include "Utils.h"
 
 MapTile::MapTile(char type){
 	_type = type;
