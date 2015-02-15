@@ -8,6 +8,8 @@
 ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, shared_ptr<Camera> cam, 
 	                  shared_ptr<Mouse> mouse, shared_ptr<AppState> stats)
 	                 : frame_t(ANIMATION_TICKS) {
+	//al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
+	//al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_REQUIRE);
 	_display = al_create_display(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
 	al_hide_mouse_cursor(_display);
 
@@ -281,8 +283,7 @@ void ScreenCtl::zoomIn() {
 		_zoom += 0.1;
 		_tileWidth = TD_TILESIZE_X * _zoom;
 		_tileHeight = TD_TILESIZE_Y * _zoom;
-		_tileSize.set(_tileWidth, _tileHeight);
-		_render = true;
+		update();
 	}
 }
 
@@ -291,7 +292,6 @@ void ScreenCtl::zoomOut() {
 		_zoom -= 0.1;
 		_tileWidth = TD_TILESIZE_X * _zoom;
 		_tileHeight = TD_TILESIZE_Y * _zoom;
-		_tileSize.set(_tileWidth, _tileHeight);
-		_render = true;
+		update();
 	}
 }
