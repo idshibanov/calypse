@@ -127,7 +127,8 @@ bool ScreenCtl::draw() {
 		Point reet_size = reet_info.lock()->_size * _zoom;
 		Point reet_offset = reet_info.lock()->_offset * _zoom;
 
-		for (auto obj : _renderedObjects) {
+		auto renderedObjects = _map->getObjects(_firstTile, _lastTile);
+		for (auto obj : renderedObjects) {
 			Point coord = obj.second->getPos();
 			coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
 			coord = coord.toIso() + _screenOffset;
@@ -204,7 +205,6 @@ void ScreenCtl::update() {
 	if (colmax < _lastTile._x) _lastTile._x = colmax;
 	if (rowmax < _lastTile._y) _lastTile._y = rowmax;
 
-	_renderedObjects = _map->getObjects(_firstTile, _lastTile);
 	_render = true;
 }
 
