@@ -131,6 +131,12 @@ int Point::toRenderPriority() const {
 	return summation(_x + _y) + _y;
 }
 
+int Point::toRenderPriority(const Point& size) const {
+	double x = _x + (size._x - 1) / 2.0;
+	double y = _y + (size._y - 1) / 2.0;
+	return summation(x + y) + y;
+}
+
 int Point::toID(int xMax) const {
 	return _y * xMax + _x;
 }

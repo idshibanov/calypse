@@ -99,9 +99,15 @@ map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const
 
 	for (auto obj : _objects) {
 		Point pos = obj.second->getPos();
+		int prio = pos.toRenderPriority();
+
+		// pass ResourceCtl and get proper size
+		if (obj.second->getType() == 1) {
+			prio = pos.toRenderPriority(Point(10,10));
+		}
 
 		if (pos > first * TILE_MASK && pos < last * TILE_MASK) {
-			retval.emplace(pos.toRenderPriority(), obj.second);
+			retval.emplace(prio, obj.second);
 		}
 	}
 	return retval;

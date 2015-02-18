@@ -120,12 +120,12 @@ bool ScreenCtl::draw() {
 		}
 
 		shared_ptr<Actor> _actor = _map->getActor();
-		auto act_info = _res->getObjectInfo(0);
-		Point act_offset = act_info.lock()->_offset * _zoom;
+		auto act_info = _res->getObjectInfo(0).lock();
+		Point act_offset = act_info->_offset * _zoom;
 
-		auto reet_info = _res->getObjectInfo(1);
-		Point reet_size = reet_info.lock()->_size * _zoom;
-		Point reet_offset = reet_info.lock()->_offset * _zoom;
+		auto reet_info = _res->getObjectInfo(1).lock();
+		Point reet_size = reet_info->_size * _zoom;
+		Point reet_offset = reet_info->_offset * _zoom;
 
 		auto renderedObjects = _map->getObjects(_firstTile, _lastTile);
 		for (auto obj : renderedObjects) {
@@ -141,7 +141,7 @@ bool ScreenCtl::draw() {
 			}
 			//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
 			//_font->draw(tileCoords, coord.add(12, 30), color);
-			//_font->draw(to_string(obj.second->getPos().toRenderPriority()), coord.add(12, 30), color);
+			_font->draw(to_string(obj.first), coord.add(12, 30), color);
 		}
 
 		string timeSTR("App time: " + to_string(_state->_appTime));
