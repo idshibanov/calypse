@@ -17,6 +17,8 @@ public:
 	Sprite& operator= (const Sprite&);
 	void draw(const Point& pos);
 	void drawScaled(const Point& pos, const Point& size);
+	// TODO: Apply on other classes
+	bool checkAlpha(const Point& pos);
 };
 
 class SpriteSheet : public Sprite {

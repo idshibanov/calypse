@@ -4,6 +4,9 @@
 #define PATHFINDING_MOVE_COST 10
 #define PATHFINDING_DIAGONAL_COST 14
 
+// Pathfinder is not thread safe! 
+// Implement mutex if will go for multithreading and definetely server-side.
+
 class LocalMap;
 
 class AStarNode {

@@ -168,9 +168,9 @@ Point Point::limit(int limit) const {
 }
 
 void Point::iterate(int max) {
-	_x++;
+	_x += SUBTILE_MASK;
 	if (_x >= max) {
-		_y++;
+		_y += SUBTILE_MASK;
 		_x = 0;
 	}
 }
