@@ -127,6 +127,10 @@ bool Point::operator> (const Point& rhs) const {
 	return _x > rhs._x && _y > rhs._y;
 }
 
+size_t Point::operator() (const Point& k) const {
+	return 0;
+}
+
 int Point::toRenderPriority() const {
 	return summation(_x + _y) + _y;
 }

@@ -1,7 +1,8 @@
 #include "ObjectInfo.h"
 
 
-ObjectInfo::ObjectInfo(int type, int sizeX, int sizeY, int offsetX, int offsetY) {
+ObjectInfo::ObjectInfo(int type, int sizeX, int sizeY, int offsetX, int offsetY, int spriteID) {
+	_spriteID = spriteID;
 	_type = type;
 	_size = Point(sizeX, sizeY);
 	_offset = Point(offsetX, offsetY);

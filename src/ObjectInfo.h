@@ -9,7 +9,8 @@ public:
 	Point _size;
 	Point _offset;
 	int _type;
-	ObjectInfo(int, int, int, int, int);
+	int _spriteID;
+	ObjectInfo(int, int, int, int, int, int);
 	ObjectInfo(ObjectInfo& rhs);
 	ObjectInfo& operator=(ObjectInfo& rhs);
 	~ObjectInfo();

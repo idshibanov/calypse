@@ -30,6 +30,15 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	_zoom = 1.0;
 
+	_font = new SpriteText("res/arialbd.ttf", 12);
+	_grass = new Sprite(0, "res/grass.png");
+	_reet = new Sprite(1, "res/reet.png");
+	_cursor = new Sprite(1, "res/cursor.png");
+
+	// 44x69, 11-0-11, 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
+	auto walk_size = _res->getObjectInfo(0).lock()->_size;
+	_walk = new SpriteSheet(0, "res/f2_walk.png", 48, 8, Point(walk_size._x, walk_size._y));
+
 	/*
 	_sprites.reserve(10*20);
 	for (int dir = 0; dir < 1; dir++) {
@@ -42,18 +51,7 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	}
 	*/
 
-	_font = new SpriteText("res/arialbd.ttf", 12);
 
-	_grass = new Sprite(0, "res/grass.png");
-	_reet = new Sprite(1, "res/reet.png");
-	_cursor = new Sprite(1, "res/cursor.png");
-
-	// 44x69, 11-0-11, 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
-	auto walk_size = _res->getObjectInfo(0).lock()->_size;
-	_walk = new SpriteSheet(0, "res/f2_walk.png", 48, 8, Point(walk_size._x, walk_size._y));
-
-	//_current_frame = _sprites.begin();
-	//_current_frame++;
 	_animation_speed = 100;
 	_animation_frame = 0;
 }
@@ -78,6 +76,7 @@ bool ScreenCtl::draw() {
 		Point _isoTileSize(_tileSize._x * 2, _tileSize._y);
 
 		// Map tiles
+		auto grass = _res->getSprite(1).get();
 		for (unsigned row = _firstTile._y; row < _lastTile._y; row++) {
 			for (unsigned col = _firstTile._x; col < _lastTile._x; col++) {
 				Point coord(col, row);
@@ -134,14 +133,17 @@ bool ScreenCtl::draw() {
 			coord = coord.toIso() + _screenOffset;
 			if (obj.second->getType() == 0) {
 				coord += act_offset;
-				_walk->drawScaled(coord, _actor->getSprite(), _zoom);
+				SpriteSheet* act_spr = dynamic_cast<SpriteSheet*>(_res->getSprite(3).get());
+				act_spr->drawScaled(coord, _actor->getSprite(), _zoom);
 			} else {
 				coord += reet_offset;
+				//_res->getSprite(2)->drawScaled(coord, reet_size);
 				_reet->drawScaled(coord, reet_size);
 			}
 			//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
 			//_font->draw(tileCoords, coord.add(12, 30), color);
 			_font->draw(to_string(obj.first), coord.add(12, 30), color);
+			//_buffer.setElement(ScreenArea(coord, reet_size, obj.second, _reet));
 		}
 
 		string timeSTR("App time: " + to_string(_state->_appTime));
@@ -156,7 +158,7 @@ bool ScreenCtl::draw() {
 		_font->draw(frameSTR, Point(5, 105), color);
 
 		// Almost last: mouse cursor
-		_cursor->draw(_mouse->getPos());
+		_res->getSprite(0)->draw(_mouse->getPos());
 
 		_lastTimestamp = _state->_appTime;
 		_render = false;
@@ -214,14 +216,6 @@ void ScreenCtl::updateTimers() {
 		_render = true;
 		_animation_frame++;
 		if (_animation_frame > 47) _animation_frame = 0;
-
-		/*
-		_current_frame++;
-		if (_current_frame == _sprites.end()) {
-			_current_frame = _sprites.begin();
-			_current_frame++;
-		}
-		*/
 		frame_t.relaunch();
 	}
 }

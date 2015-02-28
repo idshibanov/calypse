@@ -8,6 +8,7 @@
 
 #include "Map.h"
 #include "ResourceCtl.h"
+#include "ScreenBuffer.h"
 
 #define TD_DISPLAY_WIDTH 800
 #define TD_DISPLAY_HEIGHT 600
@@ -17,8 +18,7 @@
 
 class ScreenCtl {
 	ALLEGRO_DISPLAY* _display;
-	vector<RawSprite> _sprites;
-	vector<RawSprite>::iterator _current_frame;
+	ScreenBuffer _buffer;
 	SpriteText* _font;
 	Sprite* _grass;
 	Sprite* _reet;

@@ -35,6 +35,7 @@ public:
 	bool operator!= (const Point&) const;
 	bool operator> (const Point&) const;
 	bool operator< (const Point&) const;
+	size_t operator() (const Point& k) const;
 	int toRenderPriority() const;
 	int toRenderPriority(const Point&) const;
 	int toID(int) const;

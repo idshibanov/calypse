@@ -1,5 +1,5 @@
 #pragma once
-#include <unordered_map>
+#include <map>
 
 #include "ObjectInfo.h"
 #include "Sprite.h"
@@ -8,10 +8,11 @@
 // Configuration files (XML?) are planned
 
 class ResourceCtl {
-	unordered_map<short, shared_ptr<ObjectInfo>> _info;
-	vector<shared_ptr<Sprite>> _sprites;
+	map<int, shared_ptr<ObjectInfo>> _info;
+	map<int, shared_ptr<Sprite>> _sprites;
 public:
 	ResourceCtl();
 	~ResourceCtl();
-	weak_ptr<ObjectInfo> getObjectInfo(short type);
+	weak_ptr<ObjectInfo> getObjectInfo(int type);
+	shared_ptr<Sprite> getSprite(int id);
 };
