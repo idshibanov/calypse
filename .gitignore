@@ -3,6 +3,7 @@ res
 Debug
 Release
 allegro.log
+*.pdb
 *.sdf
 *.opensdf
 *.sln

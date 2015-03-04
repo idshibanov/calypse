@@ -20,10 +20,6 @@ class ScreenCtl {
 	ALLEGRO_DISPLAY* _display;
 	ScreenBuffer _buffer;
 	SpriteText* _font;
-	Sprite* _grass;
-	Sprite* _reet;
-	Sprite* _cursor;
-	SpriteSheet* _walk;
 
 	shared_ptr<ResourceCtl> _res;
 	shared_ptr<LocalMap> _map;

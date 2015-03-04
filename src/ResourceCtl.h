@@ -13,6 +13,7 @@ class ResourceCtl {
 public:
 	ResourceCtl();
 	~ResourceCtl();
+	void loadSprites();
 	weak_ptr<ObjectInfo> getObjectInfo(int type);
 	shared_ptr<Sprite> getSprite(int id);
 };

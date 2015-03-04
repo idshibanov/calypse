@@ -10,8 +10,12 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	                 : frame_t(ANIMATION_TICKS) {
 	//al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
 	//al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_REQUIRE);
+
 	_display = al_create_display(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
 	al_hide_mouse_cursor(_display);
+
+	// load sprites only after setting up display
+	res->loadSprites();
 
 	_screenWidth = TD_DISPLAY_WIDTH;
 	_screenHeight = TD_DISPLAY_HEIGHT;
@@ -31,13 +35,6 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_zoom = 1.0;
 
 	_font = new SpriteText("res/arialbd.ttf", 12);
-	_grass = new Sprite(0, "res/grass.png");
-	_reet = new Sprite(1, "res/reet.png");
-	_cursor = new Sprite(1, "res/cursor.png");
-
-	// 44x69, 11-0-11, 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
-	auto walk_size = _res->getObjectInfo(0).lock()->_size;
-	_walk = new SpriteSheet(0, "res/f2_walk.png", 48, 8, Point(walk_size._x, walk_size._y));
 
 	/*
 	_sprites.reserve(10*20);
@@ -58,10 +55,6 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 ScreenCtl::~ScreenCtl() {
 	delete _font;
-	delete _grass;
-	delete _reet;
-	delete _cursor;
-	delete _walk;
 
 	al_destroy_display(_display);
 }
@@ -73,7 +66,7 @@ bool ScreenCtl::draw() {
 		// map size
 		unsigned rowmax = _map->getRowMax();
 		unsigned colmax = _map->getColMax();
-		Point _isoTileSize(_tileSize._x * 2, _tileSize._y);
+		Point isoTileSize(_tileSize._x * 2, _tileSize._y);
 
 		// Map tiles
 		auto grass = _res->getSprite(1).get();
@@ -85,7 +78,7 @@ bool ScreenCtl::draw() {
 
 				// loop drawing sub bitmaps must be the same parent
 				//al_hold_bitmap_drawing(true);
-				_grass->drawScaled(coord, _isoTileSize);
+				grass->drawScaled(coord, isoTileSize);
 				//al_hold_bitmap_drawing(false);
 
 				if (_state->_drawCoords) {
@@ -137,8 +130,7 @@ bool ScreenCtl::draw() {
 				act_spr->drawScaled(coord, _actor->getSprite(), _zoom);
 			} else {
 				coord += reet_offset;
-				//_res->getSprite(2)->drawScaled(coord, reet_size);
-				_reet->drawScaled(coord, reet_size);
+				_res->getSprite(2)->drawScaled(coord, reet_size);
 			}
 			//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
 			//_font->draw(tileCoords, coord.add(12, 30), color);
