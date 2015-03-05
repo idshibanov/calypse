@@ -11,6 +11,7 @@ public:
 	weak_ptr<Sprite> _sprite;
 	ScreenArea(const Point&, const Point&, shared_ptr<MapObject>, weak_ptr<Sprite>);
 	~ScreenArea();
+	Point getMax() const;
 	bool operator< (const ScreenArea& area) const;
 	bool operator< (const Point& pos) const;
 };

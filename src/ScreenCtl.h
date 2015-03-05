@@ -51,6 +51,7 @@ public:
 	void redraw(bool cameraMoved = false);
 	void update();
 	void updateTimers();
+	shared_ptr<MapObject> processAction(const Point&);
 	int XtoISO(int, int);
 	int YtoISO(int, int);
 	int isoXtoMap(int, int);

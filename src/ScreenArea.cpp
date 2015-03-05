@@ -12,10 +12,14 @@ ScreenArea::~ScreenArea() {
 
 }
 
+Point ScreenArea::getMax() const {
+	return _pos + _size;
+}
+
 bool ScreenArea::operator< (const ScreenArea& area) const {
-	return _pos < area._pos;
+	return _pos.toRenderPriority() < area._pos.toRenderPriority();
 }
 
 bool ScreenArea::operator< (const Point& pos) const {
-	return _pos < pos;
+	return _pos.toRenderPriority() < pos.toRenderPriority();
 }

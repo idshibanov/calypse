@@ -120,11 +120,23 @@ bool Point::operator!= (const Point& rhs) const {
 }
 
 bool Point::operator< (const Point& rhs) const {
-	return _x < rhs._x && _y < rhs._y;
+	if (_x <= rhs._x && _y < rhs._y) {
+		return true;
+	} else if (_x < rhs._x && _y <= rhs._y) {
+		return true;
+	}
+	return false;
+	//return toRenderPriority() < rhs.toRenderPriority();
 }
 
 bool Point::operator> (const Point& rhs) const {
-	return _x > rhs._x && _y > rhs._y;
+	if (_x >= rhs._x && _y > rhs._y) {
+		return true;
+	} else if (_x > rhs._x && _y >= rhs._y) {
+		return true;
+	}
+	return false;
+	//return toRenderPriority() > rhs.toRenderPriority();
 }
 
 size_t Point::operator() (const Point& k) const {

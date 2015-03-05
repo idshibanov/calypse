@@ -8,12 +8,12 @@
 
 class ScreenBuffer {
 	set<ScreenArea> _items;
+	set<ScreenArea>::iterator getElementArea(const Point&);
 public:
 	ScreenBuffer();
 	~ScreenBuffer();
 	void reset();
 	void setElement(ScreenArea);
-	const shared_ptr<ScreenArea> getElementArea(const Point&);
 	shared_ptr<MapObject> getElement(const Point&);
 	shared_ptr<MapObject> getElement(const ScreenArea&);
 };

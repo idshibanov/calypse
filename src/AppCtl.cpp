@@ -133,6 +133,15 @@ void AppCtl::controlLoop() {
 			Point absPos(ev.mouse.x, ev.mouse.y);
 			_mouse->set(absPos, ev.mouse.button, true);
 			Point tile = _screen->convertCoords(absPos);
+
+			auto elem = _screen->processAction(absPos);
+			cout << "Click on: " << absPos._x << "," << absPos._y << endl;
+			if (elem) {
+				cout << "Found: " << elem->getID() << " pos: " << elem->getXPos() << "," << elem->getYPos() << endl;
+			} else {
+				cout << "Object not found" << endl;
+			}
+
 			cout << tile._x << "," << tile._y << endl;
 			auto actor = _map->getActor();
 			if (tile._x > 0 && tile._y > 0) {

@@ -62,6 +62,7 @@ ScreenCtl::~ScreenCtl() {
 bool ScreenCtl::draw() {
 	bool retval = false;
 	if (_render || _lastTimestamp < _state->_appTime) {
+		_buffer.reset();
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
 		// map size
 		unsigned rowmax = _map->getRowMax();
@@ -112,30 +113,39 @@ bool ScreenCtl::draw() {
 		}
 
 		shared_ptr<Actor> _actor = _map->getActor();
-		auto act_info = _res->getObjectInfo(0).lock();
-		Point act_offset = act_info->_offset * _zoom;
-
-		auto reet_info = _res->getObjectInfo(1).lock();
-		Point reet_size = reet_info->_size * _zoom;
-		Point reet_offset = reet_info->_offset * _zoom;
-
 		auto renderedObjects = _map->getObjects(_firstTile, _lastTile);
+
 		for (auto obj : renderedObjects) {
 			Point coord = obj.second->getPos();
 			coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
 			coord = coord.toIso() + _screenOffset;
-			if (obj.second->getType() == 0) {
-				coord += act_offset;
-				SpriteSheet* act_spr = dynamic_cast<SpriteSheet*>(_res->getSprite(3).get());
-				act_spr->drawScaled(coord, _actor->getSprite(), _zoom);
-			} else {
-				coord += reet_offset;
-				_res->getSprite(2)->drawScaled(coord, reet_size);
+
+			int type = obj.second->getType();
+			auto objInfo = _res->getObjectInfo(type).lock();
+
+			if (objInfo != nullptr) {
+				Point objSize = objInfo->_size * _zoom;
+				coord += objInfo->_offset * _zoom;
+
+				auto objSprite = _res->getSprite(objInfo->_spriteID);
+				if (type == 0) {
+					Sprite* spr = _res->getSprite(objInfo->_spriteID).get();
+					SpriteSheet* act_spr = dynamic_cast<SpriteSheet*>(spr);
+
+					act_spr->drawScaled(coord, _actor->getSprite(), _zoom);
+				} else {
+					objSprite->drawScaled(coord, objSize);
+				}
+
+				_buffer.setElement(ScreenArea(coord, objSize, obj.second, objSprite));
+				al_draw_rectangle(coord._x, coord._y, coord._x + objSize._x, coord._y + objSize._y,
+					al_map_rgb(255, 100, 100), 1.0);
+
+				//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
+				//_font->draw(tileCoords, coord.add(12, 30), color);
+				//_font->draw(to_string(obj.first), coord.add(12, 30), color);
+				_font->draw(to_string(obj.second->getID()), coord.add(12, 30), color);
 			}
-			//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
-			//_font->draw(tileCoords, coord.add(12, 30), color);
-			_font->draw(to_string(obj.first), coord.add(12, 30), color);
-			//_buffer.setElement(ScreenArea(coord, reet_size, obj.second, _reet));
 		}
 
 		string timeSTR("App time: " + to_string(_state->_appTime));
@@ -210,6 +220,10 @@ void ScreenCtl::updateTimers() {
 		if (_animation_frame > 47) _animation_frame = 0;
 		frame_t.relaunch();
 	}
+}
+
+shared_ptr<MapObject> ScreenCtl::processAction(const Point& pos) {
+	return _buffer.getElement(pos);
 }
 
 int ScreenCtl::XtoISO(int x, int y) {

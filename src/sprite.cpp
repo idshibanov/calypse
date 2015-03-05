@@ -1,3 +1,4 @@
+#include <allegro5\allegro_primitives.h>
 #include <cstdlib>
 #include "sprite.h"
 
@@ -59,6 +60,10 @@ Sprite::~Sprite(){
 		al_destroy_bitmap(_texture);
 }
 
+bool Sprite::checkAlpha(const Point& pos) {
+	return true;
+}
+
 void Sprite::draw(const Point& pos) {
 	if (_texture != NULL){
 		al_draw_bitmap(_texture, pos._x, pos._y, 0);
@@ -69,6 +74,10 @@ void Sprite::drawScaled(const Point& pos, const Point& size) {
 	if (_texture != NULL){
 		al_draw_scaled_bitmap(_texture, 0, 0, al_get_bitmap_width(_texture), al_get_bitmap_height(_texture),
 			pos._x, pos._y, size._x, size._y, 0);
+		if (size._y > 32) {
+			al_draw_rectangle(pos._x, pos._y, pos._x + size._x, pos._y + size._y,
+				al_map_rgb(255, 255, 255), 1.0);
+		}
 	}
 }
 
