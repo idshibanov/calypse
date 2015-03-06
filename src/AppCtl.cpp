@@ -135,17 +135,16 @@ void AppCtl::controlLoop() {
 			Point tile = _screen->convertCoords(absPos);
 
 			auto elem = _screen->processAction(absPos);
-			cout << "Click on: " << absPos._x << "," << absPos._y << endl;
+			cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
 			if (elem) {
 				cout << "Found: " << elem->getID() << " pos: " << elem->getXPos() << "," << elem->getYPos() << endl;
+				cout << "Reset: " << _map->resetObject(elem->getPos()) << endl;
 			} else {
-				cout << "Object not found" << endl;
-			}
-
-			cout << tile._x << "," << tile._y << endl;
-			auto actor = _map->getActor();
-			if (tile._x > 0 && tile._y > 0) {
-				actor->setDestination(tile);
+				cout << tile._x << "," << tile._y << endl;
+				auto actor = _map->getActor();
+				if (tile._x > 0 && tile._y > 0) {
+					actor->setDestination(tile);
+				}
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 			_mouse->setPressed(false);

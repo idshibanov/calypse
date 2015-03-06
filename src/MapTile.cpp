@@ -25,8 +25,10 @@ void MapTile::setType(char type){
 }
 
 bool MapTile::getSubtile(unsigned pos) {
-	if (pos < 26)
-		return getBit(_properties, pos+1);
+	if (pos < 26) {
+		return getBit(_properties, pos + 1);
+	}
+	return false;
 }
 
 bool MapTile::getSubtile(unsigned x, unsigned y) {

@@ -121,6 +121,10 @@ shared_ptr<Actor> LocalMap::getActor() {
 	return _actor;
 }
 
+bool LocalMap::resetObject(const Point& coord) {
+	return _objects.resetObject(coord);
+}
+
 bool LocalMap::tileExists(unsigned mapID) const {
 	return mapID < (_rowmax * _colmax);
 }

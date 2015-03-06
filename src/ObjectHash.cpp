@@ -42,6 +42,7 @@ bool ObjectHash::resetObject(const Point& pos) {
 		};
 
 		area.iterate(resetter);
+		_objects.erase(obj->getID());
 		return true;
 	}
 	return false;

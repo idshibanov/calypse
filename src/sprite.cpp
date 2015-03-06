@@ -61,6 +61,7 @@ Sprite::~Sprite(){
 }
 
 bool Sprite::checkAlpha(const Point& pos) {
+	al_get_pixel(_texture, pos._x, pos._y);
 	return true;
 }
 
@@ -74,10 +75,6 @@ void Sprite::drawScaled(const Point& pos, const Point& size) {
 	if (_texture != NULL){
 		al_draw_scaled_bitmap(_texture, 0, 0, al_get_bitmap_width(_texture), al_get_bitmap_height(_texture),
 			pos._x, pos._y, size._x, size._y, 0);
-		if (size._y > 32) {
-			al_draw_rectangle(pos._x, pos._y, pos._x + size._x, pos._y + size._y,
-				al_map_rgb(255, 255, 255), 1.0);
-		}
 	}
 }
 
