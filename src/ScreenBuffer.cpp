@@ -32,7 +32,7 @@ set<ScreenArea>::iterator ScreenBuffer::getElementArea(const Point& pos) {
 	for (auto it = _items.begin(); it != _items.end(); it++) {
 		if (pos > it->_pos && pos < it->getMax()) {
 			auto sp = it->_sprite.lock();
-			if (sp && sp->checkAlpha(pos)) {
+			if (sp && sp->checkAlpha(pos - it->_pos)) {
 				if (it->_zlevel > maxZ) {
 					retval = it;
 					maxZ = it->_zlevel;

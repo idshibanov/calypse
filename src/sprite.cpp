@@ -61,8 +61,9 @@ Sprite::~Sprite(){
 }
 
 bool Sprite::checkAlpha(const Point& pos) {
-	al_get_pixel(_texture, pos._x, pos._y);
-	return true;
+	unsigned char r, g, b, a;
+	al_unmap_rgba(al_get_pixel(_texture, pos._x, pos._y), &r, &g, &b, &a);
+	return !!a;
 }
 
 void Sprite::draw(const Point& pos) {
