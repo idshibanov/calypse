@@ -183,11 +183,11 @@ Point Point::limit(int limit) const {
 	return Point(x, y);
 }
 
-void Point::iterate(int max) {
+void Point::iterate(int max, int min) {
 	_x += SUBTILE_MASK;
 	if (_x >= max) {
 		_y += SUBTILE_MASK;
-		_x = 0;
+		_x = min;
 	}
 }
 

@@ -36,13 +36,17 @@ bool ObjectHash::resetObject(const Point& pos) {
 	auto obj = getObject(pos);
 	if (obj != nullptr) {
 		Rect area(obj->getPos(), Point(1,1));
+		if (obj->getType() == 2) {
+			area = Rect(obj->getPos(), Point(2, 3));
+		}
 
 		std::function<void(const Point&)> resetter = [this](const Point& pos) {
 			_mask.erase(pos.toID(_size));
 		};
 
 		area.iterate(resetter);
-		_objects.erase(obj->getID());
+		obj->setSprite(1);
+		//_objects.erase(obj->getID());
 		return true;
 	}
 	return false;

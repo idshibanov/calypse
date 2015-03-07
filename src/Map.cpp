@@ -42,6 +42,7 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 	int randOffset = 0;
 	//_objects.reserve(_rowmax * _colmax / 100);
 
+	_objects.setObject(Point(150, 150), Point(2, 3), make_shared<MapObject>(Point(150, 150), 2));
 	for (unsigned row = 0; row < _rowmax; row += 10){
 		for (unsigned col = 0; col < _colmax; col += 10){
 			for (int k = 0; k < objMaxDensity; k++){

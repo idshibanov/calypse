@@ -8,7 +8,8 @@
 class MapObject {
 protected:
 	Point _pos;
-    short _type;
+	short _type;
+	int _spriteID;
 	int _id;
 	static int lastID;
 public:
@@ -21,13 +22,14 @@ public:
 	Point getPos();
 	int getType();
 	int getID();
+	int getSprite();
+	void setSprite(int);
 };
 
 class Actor : public MapObject {
 	bool _static;
 	int _dir;
 	Point _dest;
-	int _spriteID;
 	int _timer;
 	weak_ptr<AStarSearch> _pathFinder;
 	std::vector<AStarNode> _path;
@@ -38,7 +40,6 @@ public:
 	~Actor();
 	void setXPos(int);
 	void setYPos(int);
-	int getSprite();
 	void setDestination(const Point&);
 	void update();
 	int getDirection(const Point&);

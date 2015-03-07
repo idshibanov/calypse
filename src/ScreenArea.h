@@ -8,8 +8,8 @@ public:
 	Point _size;
 	int _zlevel;
 	shared_ptr<MapObject> _obj;
-	weak_ptr<Sprite> _sprite;
-	ScreenArea(const Point&, const Point&, shared_ptr<MapObject>, weak_ptr<Sprite>);
+	SpriteSheet* _sprite;
+	ScreenArea(const Point&, const Point&, shared_ptr<MapObject>, SpriteSheet*);
 	~ScreenArea();
 	Point getMax() const;
 	bool operator< (const ScreenArea& area) const;

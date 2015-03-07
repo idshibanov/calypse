@@ -1,6 +1,6 @@
 #include "ScreenArea.h"
 
-ScreenArea::ScreenArea(const Point& pos, const Point& size, shared_ptr<MapObject> obj, weak_ptr<Sprite> spr) {
+ScreenArea::ScreenArea(const Point& pos, const Point& size, shared_ptr<MapObject> obj, SpriteSheet* spr) {
 	_pos = pos;
 	_size = size;
 	_zlevel = 1;
