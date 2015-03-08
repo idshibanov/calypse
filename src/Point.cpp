@@ -214,7 +214,7 @@ Rect::~Rect() {
 void Rect::iterate(std::function<void(const Point&)>& action) {
 	Point last = _pos + _size, current;
 
-	for (current = _pos; current < last; current.iterate(last._x)) {
+	for (current = _pos; current < last; current.iterate(last._x, _pos._x)) {
 		action(current);
 	}
 }
@@ -223,7 +223,7 @@ bool Rect::iterate(std::function<bool(const Point&)>& action, bool defaultVal) {
 	bool retval = defaultVal;
 	Point last = _pos + _size, current;
 
-	for (current = _pos; current < last; current.iterate(last._x)) {
+	for (current = _pos; current < last; current.iterate(last._x, _pos._x)) {
 		if (action(current) != defaultVal) {
 			retval = !retval;
 			break;
