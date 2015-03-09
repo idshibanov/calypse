@@ -140,7 +140,7 @@ bool Point::operator> (const Point& rhs) const {
 }
 
 size_t Point::operator() (const Point& k) const {
-	return 0;
+	return summation(_x + _y) + _y;
 }
 
 int Point::toRenderPriority() const {

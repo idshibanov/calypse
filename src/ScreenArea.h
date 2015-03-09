@@ -14,4 +14,5 @@ public:
 	Point getMax() const;
 	bool operator< (const ScreenArea& area) const;
 	bool operator< (const Point& pos) const;
+	size_t operator() (const ScreenArea&) const;
 };

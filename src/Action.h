@@ -10,12 +10,15 @@ enum ActionType {
 };
 
 class Action {
+	ActionType _type;
 	TaskTimer _timer;
-	
+	Point _target;
 public:
-	Action();
+	Action(ActionType, int, int, const Point&, weak_ptr<MapObject>);
+	Action(const Action&);
 	~Action();
-	void cut(weak_ptr<MapObject> target);
+	Action& operator= (const Action&);
 	void stop();
+	bool isActive() const;
 	bool update();
 };
