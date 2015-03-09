@@ -6,6 +6,7 @@ int MapObject::lastID = 0;
 MapObject::MapObject(Point pos, short type)
 	                : _pos(pos),  _type(type) {
 	_id = lastID++;
+	_spriteID = 0;
 }
 
 MapObject::MapObject(MapObject& rhs) {
@@ -43,6 +44,14 @@ int MapObject::getID() {
 	return _id;
 }
 
+int MapObject::getSprite() {
+	return _spriteID;
+}
+
+void MapObject::setSprite(int id) {
+	_spriteID = id;
+}
+
 
 
 Actor::Actor(short type, Point pos, int defaultSprite, weak_ptr<AStarSearch> pf)
@@ -77,10 +86,6 @@ void Actor::setXPos(int x) {
 
 void Actor::setYPos(int y) {
 	_pos._y = y;
-}
-
-int Actor::getSprite() {
-	return _spriteID;
 }
 
 void Actor::setDestination(const Point& mod) {

@@ -42,7 +42,7 @@ public:
 	Point toIso() const;
 	Point toMap() const;
 	Point limit(int) const;
-	void iterate(int);
+	void iterate(int max, int min = 0);
 	void convertToIso();
 	void convertToMap();
 };

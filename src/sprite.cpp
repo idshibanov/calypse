@@ -135,6 +135,12 @@ void SpriteSheet::drawRandom(const Point& pos) {
 	draw(pos, id);
 }
 
+bool SpriteSheet::checkAlpha(const Point& pos, unsigned int sprite_id) {
+	Point src(sprite_id % _rowsize, sprite_id / _rowsize);
+	src = src * _size + pos;
+	return Sprite::checkAlpha(src);
+}
+
 
 // SpriteText class
 SpriteText::SpriteText(const char* fontname, unsigned size)

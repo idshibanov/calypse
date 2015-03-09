@@ -13,16 +13,12 @@ void ScreenBuffer::reset () {
 }
 
 void ScreenBuffer::setElement(ScreenArea area) {
-	int sz = _items.size();
 	// TODO: better algo for setting Z level
 	auto elem = getElementArea(area._pos);
 	if (elem != _items.end()) {
 		area._zlevel = elem->_zlevel  + 1;
 	}
 	_items.emplace(area);
-	if (_items.size() == sz) {
-		sz++; // nope
-	}
 }
 
 set<ScreenArea>::iterator ScreenBuffer::getElementArea(const Point& pos) {
@@ -31,8 +27,8 @@ set<ScreenArea>::iterator ScreenBuffer::getElementArea(const Point& pos) {
 
 	for (auto it = _items.begin(); it != _items.end(); it++) {
 		if (pos > it->_pos && pos < it->getMax()) {
-			auto sp = it->_sprite.lock();
-			if (sp && sp->checkAlpha(pos - it->_pos)) {
+			auto sp = it->_sprite;
+			if (sp && sp->checkAlpha(pos - it->_pos, it->_obj->getSprite())) {
 				if (it->_zlevel > maxZ) {
 					retval = it;
 					maxZ = it->_zlevel;

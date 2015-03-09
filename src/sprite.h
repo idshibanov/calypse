@@ -36,6 +36,7 @@ public:
 	void draw(const Point& pos, unsigned int sprite_id);
 	void drawScaled(const Point& pos, unsigned int sprite_id, float zoom);
 	void drawRandom(const Point& pos);
+	bool checkAlpha(const Point& pos, unsigned int sprite_id);
 };
 
 class SpriteText {
