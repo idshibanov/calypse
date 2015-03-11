@@ -97,6 +97,13 @@ void AppCtl::controlLoop() {
 			case ALLEGRO_KEY_DOWN:
 				_keys[DOWN] = true;
 				break;
+			case ALLEGRO_KEY_0:
+				_mouse->setSprite(0);
+				break;
+			case ALLEGRO_KEY_1:
+				_mouse->setSprite(1);
+				// set certain flag
+				break;
 			case ALLEGRO_KEY_F9:
 				_state->_drawGrid = !_state->_drawGrid;
 				break;
@@ -143,10 +150,8 @@ void AppCtl::controlLoop() {
 				cout << tile._x << "," << tile._y << endl;
 				auto actor = _map->getActor();
 				if (tile._x > 0 && tile._y > 0) {
-					//actor->setDestination(tile);
-					auto path = _pFinder->searchPath(actor->getXPos(), actor->getYPos(), tile._x, tile._y);
-					Action act(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
-
+					auto act = make_shared<Action>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
+					actor->setAction(act);
 				}
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {

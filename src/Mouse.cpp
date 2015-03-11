@@ -1,6 +1,7 @@
 #include "mouse.h"
 
 Mouse::Mouse() {
+	_spriteID = 0;
     _frameid = -1;
     _elementid = -1;
     _button = 0;
@@ -37,15 +38,19 @@ int Mouse::getYPos(){
     return _pos._y;
 }
 
-Point Mouse::getPos() {
+Point Mouse::getPos() const {
 	return _pos;
 }
 
-int Mouse::getButton(){
+int Mouse::getButton() const {
     return _button;
 }
 
-bool Mouse::isPressed(){
+int Mouse::getSprite() const {
+	return _spriteID;
+}
+
+bool Mouse::isPressed() const {
     return _pressed;
 }
 
@@ -63,6 +68,10 @@ void Mouse::setPos(const Point& pos) {
 
 void Mouse::setButton(int button){
     _button = button;
+}
+
+void Mouse::setSprite(int id) {
+	_spriteID = id;
 }
 
 void Mouse::setPressed(bool pressed){

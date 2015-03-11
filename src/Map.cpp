@@ -14,7 +14,7 @@ LocalMap::~LocalMap(){
 
 void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 	_pFinder = pf;
-	_actor = make_shared<Actor>(0, Point(54, 54), 24, _pFinder);
+	_actor = make_shared<Actor>(0, Point(54, 54), 24);
 	srand((unsigned)time(NULL));
 	_rowmax = TD_MAP_ROWS;
 	_colmax = TD_MAP_COLS;

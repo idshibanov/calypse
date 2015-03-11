@@ -87,7 +87,6 @@ bool ScreenCtl::draw() {
 					_font->draw(tileCoords, coord.add(24,8), color);
 				}
 			}
-
 		}
 
 		if (_state->_drawGrid) {

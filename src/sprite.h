@@ -10,6 +10,7 @@ class Sprite {
 protected:
 	unsigned int _id;
 	ALLEGRO_BITMAP* _texture;
+	Point _bitmapSize;
 public:
 	Sprite(unsigned int, const char* filename);
 	virtual ~Sprite();

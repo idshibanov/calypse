@@ -13,6 +13,7 @@ class Mouse {
     int _elementid;
     int _button;
     bool _pressed;
+	int _spriteID;
 public:
     Mouse();
     ~Mouse();
@@ -20,12 +21,14 @@ public:
 	void setFrame(int frameid, const Point& framePos, int elementID = -1);
     int getXPos();
     int getYPos();
-	Point getPos();
-    int getButton();
-    bool isPressed();
+	Point getPos() const ;
+    int getButton() const;
+	int getSprite() const;
+    bool isPressed() const;
     void setXPos(int x);
     void setYPos(int y);
 	void setPos(const Point& pos);
     void setButton(int button);
+	void setSprite(int id);
     void setPressed(bool pressed);
 };

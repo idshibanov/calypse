@@ -54,16 +54,19 @@ void MapObject::setSprite(int id) {
 
 
 
-Actor::Actor(short type, Point pos, int defaultSprite, weak_ptr<AStarSearch> pf)
+Actor::Actor(short type, Point pos, int defaultSprite)
 	: MapObject(pos, type) {
 	_spriteID = defaultSprite;
 	_dir = 1;
 	_static = true;
-	_pathFinder = pf;
-	_dest.set(0, 0);
+	_action = nullptr;
 }
 
 Actor::Actor(Actor& rhs) : MapObject(rhs) {
+	_spriteID = rhs._spriteID;
+	_dir = rhs._dir;
+	_static = rhs._static;
+	_action = rhs._action;
 }
 
 Actor& Actor::operator=(Actor& rhs) {
@@ -71,8 +74,7 @@ Actor& Actor::operator=(Actor& rhs) {
 	_spriteID = rhs._spriteID;
 	_dir = rhs._dir;
 	_static = rhs._static;
-	_dest = rhs._dest;
-	_pathFinder = rhs._pathFinder;
+	_action = rhs._action;
 	return *this;
 }
 
@@ -88,42 +90,18 @@ void Actor::setYPos(int y) {
 	_pos._y = y;
 }
 
-void Actor::setDestination(const Point& mod) {
-	_timer = 0;
-	_dest = mod - (mod % 2);
-
-	cout << "Dest: " << _dest._x << "," << _dest._y << endl;
-	_path = _pathFinder.lock()->searchPath(_pos._x, _pos._y, _dest._x, _dest._y);
-	for (auto it = _path.begin(); it != _path.end(); ++it) {
-		std::cout << (*it) << endl;
-	}
-	std::cout << endl;
+void Actor::setAction(shared_ptr<Action> act) {
+	_action = act;
 }
 
 void Actor::update() {
-	if (!_path.empty()) {
-		_timer++;
-		if (_timer % 8 == 0) {
-			bool lastTile = _path.size() == 1;
-			Point mod;
-
-			if (lastTile) {
-				mod = _dest - _pos;
-				mod = mod.limit(SUBTILE_MASK);
-				move(mod);
-
-				if (_pos == _dest) {
-					_path.erase(_path.begin());
-				}
-			} else {
-				AStarNode& nextNode = _path.front();
-				Point next(nextNode._mapX, nextNode._mapY);
-				mod = (next - (_pos / TILE_MASK)) * SUBTILE_MASK;
-				move(mod);
-
-				if (_pos._x / TILE_MASK == nextNode._mapX && _pos._y / TILE_MASK == nextNode._mapY) {
-					_path.erase(_path.begin());
-				}
+	if (_action) {
+		if (_action->isActive()) {
+			_action->update();
+		} else {
+			auto next = _action->getNext();
+			if (next) {
+				_action = next;
 			}
 		}
 	}

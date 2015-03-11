@@ -27,6 +27,7 @@ Action::Action (const Action& act) {
 	_state = act._state;
 	_path = act._path;
 	_pf = act._pf;
+	_next = act._next;
 }
 
 Action& Action::operator= (const Action& act) {
@@ -37,7 +38,19 @@ Action& Action::operator= (const Action& act) {
 	_state = act._state;
 	_path = act._path;
 	_pf = act._pf;
+	_next = act._next;
 	return *this;
+}
+
+void Action::chainAction(shared_ptr<Action> act) {
+	if (_next) {
+		_next->stop();
+	}
+	_next = act;
+}
+
+shared_ptr<Action> Action::getNext() const {
+	return _next;
 }
 
 void Action::stop() {

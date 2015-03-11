@@ -13,8 +13,9 @@ Sprite::Sprite(unsigned int id, const char* filename){
 		//al_convert_mask_to_alpha(_texture, al_map_rgb(255, 0, 255));
 		al_convert_mask_to_alpha(_texture, al_map_rgb(11, 0, 11));
 
-		int sz = al_get_bitmap_height(_texture) * al_get_bitmap_width(_texture);
-		cout << filename << " Bitmap format: " << al_get_bitmap_format(_texture) << " Size: " << sz << endl;
+		_bitmapSize.set(al_get_bitmap_width(_texture), al_get_bitmap_height(_texture));
+		cout << filename << " Bitmap format: " << al_get_bitmap_format(_texture);
+		cout << " Size: " << _bitmapSize._x * _bitmapSize._y << endl;
 		//  70, 107, 107
 	}
 }
@@ -28,6 +29,7 @@ Sprite::Sprite(const Sprite& rhs) {
 		}
 		else {
 			al_convert_mask_to_alpha(_texture, al_map_rgb(255, 0, 255));
+			_bitmapSize.set(al_get_bitmap_width(_texture), al_get_bitmap_height(_texture));
 		}
 	}
 	else {
@@ -47,6 +49,7 @@ Sprite& Sprite::operator=(const Sprite& rhs){
 		}
 		else {
 			al_convert_mask_to_alpha(_texture, al_map_rgb(255, 0, 255));
+			_bitmapSize.set(al_get_bitmap_width(_texture), al_get_bitmap_height(_texture));
 		}
 	}
 	else {
@@ -61,9 +64,12 @@ Sprite::~Sprite(){
 }
 
 bool Sprite::checkAlpha(const Point& pos) {
-	unsigned char r, g, b, a;
-	al_unmap_rgba(al_get_pixel(_texture, pos._x, pos._y), &r, &g, &b, &a);
-	return !!a;
+	if (pos < _bitmapSize) {
+		unsigned char r, g, b, a;
+		al_unmap_rgba(al_get_pixel(_texture, pos._x, pos._y), &r, &g, &b, &a);
+		return !!a;
+	}
+	return false;
 }
 
 void Sprite::draw(const Point& pos) {
@@ -138,8 +144,7 @@ void SpriteSheet::drawRandom(const Point& pos) {
 bool SpriteSheet::checkAlpha(const Point& pos, unsigned int sprite_id) {
 	Point src(sprite_id % _rowsize, sprite_id / _rowsize);
 	src = src * _size + pos;
-	//return Sprite::checkAlpha(src);
-	return false;
+	return Sprite::checkAlpha(src);
 }
 
 

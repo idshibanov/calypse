@@ -28,18 +28,16 @@ public:
 class Actor : public MapObject {
 	bool _static;
 	int _dir;
-	Point _dest;
 	int _timer;
-	weak_ptr<AStarSearch> _pathFinder;
-	std::vector<AStarNode> _path;
+	shared_ptr<Action> _action;
 public:
-	Actor(short type, Point pos, int defaultSprite, weak_ptr<AStarSearch> pf);
+	Actor(short type, Point pos, int defaultSprite);
 	Actor(Actor& rhs);
 	Actor& operator=(Actor& rhs);
 	~Actor();
 	void setXPos(int);
 	void setYPos(int);
-	void setDestination(const Point&);
+	void setAction(shared_ptr<Action>);
 	void update();
 	int getDirection(const Point&);
 	void move(const Point&);
