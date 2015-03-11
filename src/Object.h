@@ -2,8 +2,7 @@
 #include <vector>
 #include "Main.h"
 #include "Point.h"
-#include "Timer.h"
-#include "Pathfinder.h"
+#include "Action.h"
 
 class MapObject {
 protected:

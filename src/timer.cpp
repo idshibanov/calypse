@@ -20,6 +20,7 @@ TaskTimer::~TaskTimer(){
 TaskTimer& TaskTimer::operator= (const TaskTimer& rhs) {
 		_ticks = rhs._ticks;
 		_maxTicks = rhs._maxTicks;
+		return *this;
 }
 
 /* TaskTimer::check() function to check the timer in control loop
@@ -44,8 +45,16 @@ unsigned TaskTimer::getTicks() const {
 	return _ticks;
 }
 
+unsigned TaskTimer::getProgress() const {
+	return _maxTicks - _ticks;
+}
+
 void TaskTimer::setTicks(unsigned ticks) {
 	_ticks = ticks;
+}
+
+void TaskTimer::stop() {
+	setTicks(0);
 }
 
 void TaskTimer::adjust(unsigned newMaximum) {

@@ -71,8 +71,8 @@ bool ScreenCtl::draw() {
 
 		// Map tiles
 		auto grass = _res->getSprite(1).get();
-		for (unsigned row = _firstTile._y; row < _lastTile._y; row++) {
-			for (unsigned col = _firstTile._x; col < _lastTile._x; col++) {
+		for (int row = _firstTile._y; row < _lastTile._y; row++) {
+			for (int col = _firstTile._x; col < _lastTile._x; col++) {
 				Point coord(col, row);
 				coord = (coord - _firstTile) * _tileSize + _offset;
 				coord = coord.toIso() + _screenOffset;

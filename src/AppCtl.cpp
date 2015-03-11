@@ -143,7 +143,10 @@ void AppCtl::controlLoop() {
 				cout << tile._x << "," << tile._y << endl;
 				auto actor = _map->getActor();
 				if (tile._x > 0 && tile._y > 0) {
-					actor->setDestination(tile);
+					//actor->setDestination(tile);
+					auto path = _pFinder->searchPath(actor->getXPos(), actor->getYPos(), tile._x, tile._y);
+					Action act(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
+
 				}
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {

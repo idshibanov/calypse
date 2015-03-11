@@ -138,7 +138,8 @@ void SpriteSheet::drawRandom(const Point& pos) {
 bool SpriteSheet::checkAlpha(const Point& pos, unsigned int sprite_id) {
 	Point src(sprite_id % _rowsize, sprite_id / _rowsize);
 	src = src * _size + pos;
-	return Sprite::checkAlpha(src);
+	//return Sprite::checkAlpha(src);
+	return false;
 }
 
 
