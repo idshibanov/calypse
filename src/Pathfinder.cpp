@@ -1,11 +1,9 @@
 #include "Map.h"
 #include "Pathfinder.h"
 
-AStarNode::AStarNode(unsigned x, unsigned y) {
+AStarNode::AStarNode(const Point& p) : _pos(p) {
 	_parent = nullptr;
 	_closed = false;
-	_mapX = x;
-	_mapY = y;
 	_f = 0;
 	_g = 0;
 	_h = 0;
@@ -20,11 +18,11 @@ bool AStarNode::operator< (const AStarNode& rhs) const {
 // }
 
 bool AStarNode::operator== (const AStarNode& rhs) const {
-	return this->_mapX == rhs._mapX && this->_mapY == rhs._mapY;
+	return _pos == rhs._pos;
 }
 
 ostream& operator<<(ostream& out, const AStarNode& rhs) {
-	out << "Node: " << rhs._mapX << "," << rhs._mapY;
+	out << "Node: " << rhs._pos._x << "," << rhs._pos._y;
 	out << "  g: " << rhs._g << " h: " << rhs._h;
 	return out;
 }
@@ -57,51 +55,59 @@ std::vector<shared_ptr<AStarNode>> AStarSearch::getNeighbors(AStarNode& node, AS
 
 
 	// WEST NODE (4)
-	if (_map->tileIsFree(node._mapX - 1, node._mapY)) {
-		nodesFound.push_back(make_shared<AStarNode>(node._mapX - 1, node._mapY));
+	Point neighbor = node._pos + Point(-1, 0);
+	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
+		nodesFound.push_back(make_shared<AStarNode>(neighbor));
 	}
 
 	// EAST NODE (6)
-	if (_map->tileIsFree(node._mapX + 1, node._mapY)) {
-		nodesFound.push_back(make_shared<AStarNode>(node._mapX + 1, node._mapY));
+	neighbor = node._pos + Point(1, 0);
+	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
+		nodesFound.push_back(make_shared<AStarNode>(neighbor));
 	}
 
 	// NORTH-WEST NODE (7)
-	if (_map->tileIsFree(node._mapX - 1, node._mapY - 1)) {
-		nodesFound.push_back(make_shared<AStarNode>(node._mapX - 1, node._mapY - 1));
+	neighbor = node._pos + Point(-1, -1);
+	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
+		nodesFound.push_back(make_shared<AStarNode>(neighbor));
 	}
 
 	// NORTH NODE (8)
-	if (_map->tileIsFree(node._mapX, node._mapY - 1)) {
-		nodesFound.push_back(make_shared<AStarNode>(node._mapX, node._mapY - 1));
+	neighbor = node._pos + Point(0, -1);
+	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
+		nodesFound.push_back(make_shared<AStarNode>(neighbor));
 	}
 
 	// NORTH-EAST NODE (9)
-	if (_map->tileIsFree(node._mapX + 1, node._mapY - 1)) {
-		nodesFound.push_back(make_shared<AStarNode>(node._mapX + 1, node._mapY - 1));
+	neighbor = node._pos + Point(1, -1);
+	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
+		nodesFound.push_back(make_shared<AStarNode>(neighbor));
 	}
 
 	// SOUTH-WEST NODE (1)
-	if (_map->tileIsFree(node._mapX - 1, node._mapY + 1)) {
-		nodesFound.push_back(make_shared<AStarNode>(node._mapX - 1, node._mapY + 1));
+	neighbor = node._pos + Point(-1, 1);
+	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
+		nodesFound.push_back(make_shared<AStarNode>(neighbor));
 	}
 
 	// SOUTH NODE (2)
-	if (_map->tileIsFree(node._mapX, node._mapY + 1)) {
-		nodesFound.push_back(make_shared<AStarNode>(node._mapX, node._mapY + 1));
+	neighbor = node._pos + Point(0, 1);
+	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
+		nodesFound.push_back(make_shared<AStarNode>(neighbor));
 	}
 
 	// SOUTH-EAST NODE (3)
-	if (_map->tileIsFree(node._mapX + 1, node._mapY + 1)) {
-		nodesFound.push_back(make_shared<AStarNode>(node._mapX + 1, node._mapY + 1));
+	neighbor = node._pos + Point(1, 1);
+	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
+		nodesFound.push_back(make_shared<AStarNode>(neighbor));
 	}
 
 	return nodesFound;
 }
 
 size_t AStarSearch::heuristicCost(AStarNode& start, AStarNode& goal) {
-	size_t diffX = abs((long)(start._mapX - goal._mapX));
-	size_t diffY = abs((long)(start._mapY - goal._mapY));
+	size_t diffX = abs((long)(start._pos._x - goal._pos._x));
+	size_t diffY = abs((long)(start._pos._y - goal._pos._y));
 	//return max(diffX, diffY) * PATHFINDING_MOVE_COST;
 	return PATHFINDING_MOVE_COST * (diffX + diffY) + min(diffX, diffY) * (PATHFINDING_DIAGONAL_COST - 2 * PATHFINDING_MOVE_COST);
 }
@@ -127,17 +133,13 @@ void AStarSearch::clearData() {
 	_pathFound.clear();
 }
 
-std::vector<AStarNode> AStarSearch::searchPath(size_t startID, size_t goalID) {
-	return searchPath(_map->convertIDToX(startID), _map->convertIDToY(startID), _map->convertIDToX(goalID), _map->convertIDToY(goalID));
-}
-
-std::vector<AStarNode> AStarSearch::searchPath(size_t startX, size_t startY, size_t goalX, size_t goalY) {
+std::vector<AStarNode> AStarSearch::searchPath(const Point& start, const Point& goal) {
 	// ensure we're not messing with previous data
 	clearData();
 
-	if (_map->tileIsFree(goalX / TILE_MASK, goalY / TILE_MASK)) {
-		AStarNode startNode(startX / TILE_MASK, startY / TILE_MASK);
-		AStarNode goalNode(goalX / TILE_MASK, goalY / TILE_MASK);
+	if (_map->tileIsFree(goal._x / TILE_MASK, goal._y / TILE_MASK)) {
+		AStarNode startNode(start / TILE_MASK);
+		AStarNode goalNode(goal / TILE_MASK);
 		_openSet.push(startNode);
 
 		while (!_openSet.empty()) {

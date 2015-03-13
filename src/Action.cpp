@@ -11,7 +11,7 @@ Action::Action(ActionType type, weak_ptr<Actor> actor, int cycles, int steps, co
 	auto finder = _pf.lock();
 	auto act = _actor.lock();
 	if (finder && act) {
-		_path = _pf.lock()->searchPath(act->getXPos(), act->getYPos(), _target._x, _target._y);
+		_path = _pf.lock()->searchPath(act->getPos(), _target);
 	}
 }
 
@@ -85,11 +85,11 @@ bool Action::update() {
 				}
 			} else {
 				AStarNode& nextNode = _path.front();
-				Point next(nextNode._mapX, nextNode._mapY);
+				Point next = nextNode._pos;
 				mod = (next - (act->getPos() / TILE_MASK)) * SUBTILE_MASK;
 				act->move(mod);
 
-				if (act->getXPos() / TILE_MASK == nextNode._mapX && act->getYPos() / TILE_MASK == nextNode._mapY) {
+				if (act->getXPos() / TILE_MASK == nextNode._pos._x && act->getYPos() / TILE_MASK == nextNode._pos._y) {
 					_path.erase(_path.begin());
 				}
 			}

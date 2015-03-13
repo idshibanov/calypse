@@ -142,6 +142,9 @@ bool ScreenCtl::draw() {
 			}
 		}
 
+		//al_draw_filled_triangle(300, 300, 556, 300, 428, 236, al_map_rgb(255, 128, 0));
+		//al_draw_filled_triangle(300, 300, 556, 300, 428, 364, al_map_rgb(255, 128, 0));
+
 		string timeSTR("App time: " + to_string(_state->_appTime));
 		string cpsSTR("Cycles per second: " + to_string(_state->_CPS));
 		string fpsSTR("Frames per second: " + to_string(_state->_FPS));

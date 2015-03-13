@@ -12,13 +12,12 @@ class LocalMap;
 class AStarNode {
 public:
 	shared_ptr<AStarNode> _parent;
-	unsigned _mapX;
-	unsigned _mapY;
+	Point _pos;
 	size_t _f; // total cost
 	size_t _g; // current cost
 	size_t _h; // heuristic_cost
 	bool _closed;
-	AStarNode(unsigned x, unsigned y);
+	AStarNode(const Point&);
 	bool operator< (const AStarNode& rhs) const;
 	//    bool operator() (const AStarNode& lhs, const AStarNode& rhs) const;
 	bool operator== (const AStarNode& rhs) const;
@@ -44,6 +43,5 @@ public:
 	size_t heuristicCost(size_t startID, size_t goalID);
 	void recursePath(shared_ptr<AStarNode>& node);
 	void clearData();
-	std::vector<AStarNode> searchPath(size_t startID, size_t goalID);
-	std::vector<AStarNode> searchPath(size_t startX, size_t startY, size_t goalX, size_t goalY);
+	std::vector<AStarNode> searchPath(const Point& start, const Point& goal);
 };
