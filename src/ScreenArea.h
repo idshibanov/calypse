@@ -14,5 +14,13 @@ public:
 	Point getMax() const;
 	bool operator< (const ScreenArea& area) const;
 	bool operator< (const Point& pos) const;
+	bool operator== (const ScreenArea&) const;
 	size_t operator() (const ScreenArea&) const;
+};
+
+template <>
+struct hash<ScreenArea> {
+	size_t operator() (const ScreenArea& area) const {
+		return area._pos.toRenderPriority();
+	}
 };

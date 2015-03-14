@@ -64,6 +64,7 @@ bool ScreenCtl::draw() {
 	if (_render || _lastTimestamp < _state->_appTime) {
 		_buffer.reset();
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
+		ALLEGRO_COLOR obj_color = al_map_rgb(155, 155, 255);
 		// map size
 		unsigned rowmax = _map->getRowMax();
 		unsigned colmax = _map->getColMax();
@@ -111,9 +112,22 @@ bool ScreenCtl::draw() {
 			}
 		} else if (_state->_drawMasks) {
 			auto allMasks = _map->getObjectMasks();
-			//for (auto msk : *allMasks) {
-				
-			//}
+			int map_size = _map->getColMax() * TILE_MASK;
+			auto red_color = al_map_rgb(255, 128, 0);
+			for (auto msk : *allMasks) {
+				Point top(msk.first % map_size, msk.first / map_size);
+				Point bot(top), left(top), right(top);
+
+				convertMapCoords(top.div(10)).add(32 * _zoom, 0);
+				convertMapCoords(bot.add(SUBTILE_MASK, SUBTILE_MASK).div(10)).add(32 * _zoom, 0);
+				convertMapCoords(left.add(0, SUBTILE_MASK).div(10)).add(32 * _zoom, 0);
+				convertMapCoords(right.add(SUBTILE_MASK, 0).div(10)).add(32 * _zoom, 0);
+
+				al_draw_filled_triangle(left._x, left._y, right._x, right._y, top._x, top._y, red_color);
+				al_draw_filled_triangle(left._x, left._y, right._x, right._y, bot._x, bot._y, red_color);
+
+				_font->draw(to_string(msk.second), left.add(28, 0), color);
+			}
 			//al_draw_filled_triangle(300, 300, 556, 300, 428, 236, al_map_rgb(255, 128, 0));
 			//al_draw_filled_triangle(300, 300, 556, 300, 428, 364, al_map_rgb(255, 128, 0));
 		}
@@ -145,7 +159,7 @@ bool ScreenCtl::draw() {
 				//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
 				//_font->draw(tileCoords, coord.add(12, 30), color);
 				//_font->draw(to_string(obj.first), coord.add(12, 30), color);
-				_font->draw(to_string(obj.second->getID()), coord.add(12, 30), color);
+				_font->draw(to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
 
@@ -161,7 +175,8 @@ bool ScreenCtl::draw() {
 		_font->draw(frameSTR, Point(5, 105), color);
 
 		// Almost last: mouse cursor
-		_res->getSprite(0)->draw(_mouse->getPos());
+		auto cur = dynamic_pointer_cast<SpriteSheet>(_res->getSprite(0));
+		cur->draw(_mouse->getPos(), _mouse->getSprite());
 
 		_lastTimestamp = _state->_appTime;
 		_render = false;

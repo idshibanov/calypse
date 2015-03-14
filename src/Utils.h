@@ -3,6 +3,8 @@
 
 int summation(int n);
 
+int reverseSummation(int sum);
+
 void setBit(uint32_t& x, unsigned bit);
 
 void clearBit(uint32_t& x, unsigned bit);

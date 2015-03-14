@@ -8,6 +8,13 @@ Point::Point() {
 	_y = 0;
 }
 
+Point::Point(int priority) {
+	int rev = reverseSummation(priority);
+	int sum = summation(rev);
+	_y = priority - sum;
+	_x = rev - _y;
+}
+
 Point::Point(int x, int y) {
 	_x = x;
 	_y = y;

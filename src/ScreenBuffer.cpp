@@ -21,9 +21,9 @@ void ScreenBuffer::setElement(ScreenArea area) {
 	_items.emplace(area);
 }
 
-set<ScreenArea>::iterator ScreenBuffer::getElementArea(const Point& pos) {
+unordered_set<ScreenArea>::iterator ScreenBuffer::getElementArea(const Point& pos) {
 	int maxZ = 0;
-	set<ScreenArea>::iterator retval = _items.end();
+	unordered_set<ScreenArea>::iterator retval = _items.end();
 
 	for (auto it = _items.begin(); it != _items.end(); it++) {
 		if (pos > it->_pos && pos < it->getMax()) {

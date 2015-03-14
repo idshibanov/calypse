@@ -8,8 +8,8 @@
 // ordered map will be faster to iterate
 
 class ScreenBuffer {
-	set<ScreenArea> _items;
-	set<ScreenArea>::iterator getElementArea(const Point&);
+	unordered_set<ScreenArea> _items;
+	unordered_set<ScreenArea>::iterator getElementArea(const Point&);
 public:
 	ScreenBuffer();
 	~ScreenBuffer();

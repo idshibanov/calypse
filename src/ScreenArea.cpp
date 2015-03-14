@@ -24,6 +24,10 @@ bool ScreenArea::operator< (const Point& pos) const {
 	return _pos.toRenderPriority() < pos.toRenderPriority();
 }
 
+bool ScreenArea::operator== (const ScreenArea& area) const {
+	return _pos == area._pos && _size == area._size;
+}
+
 size_t ScreenArea::operator() (const ScreenArea& area) const {
 	return area._pos.toRenderPriority();
 }

@@ -10,6 +10,7 @@ public:
 	int _x;
 	int _y;
 	Point();
+	Point(int);
 	Point(int, int);
 	Point(const Point&);
 	~Point();
