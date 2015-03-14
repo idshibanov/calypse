@@ -9,4 +9,5 @@ struct AppState {
 	// settings
 	bool _drawGrid;
 	bool _drawCoords;
+	bool _drawMasks;
 };

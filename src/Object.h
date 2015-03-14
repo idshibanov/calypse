@@ -8,14 +8,15 @@ class MapObject {
 protected:
 	Point _pos;
 	short _type;
+	bool _dragged;
 	int _spriteID;
 	int _id;
 	static int lastID;
 public:
-    MapObject(Point pos, short type);
+    MapObject(const Point& pos, short type);
     MapObject(MapObject& rhs);
     MapObject& operator=(MapObject& rhs);
-    ~MapObject();
+    virtual ~MapObject();
     int getXPos();
     int getYPos();
 	Point getPos();
@@ -31,7 +32,7 @@ class Actor : public MapObject {
 	int _timer;
 	shared_ptr<Action> _action;
 public:
-	Actor(short type, Point pos, int defaultSprite);
+	Actor(short type, const Point& pos, int defaultSprite);
 	Actor(Actor& rhs);
 	Actor& operator=(Actor& rhs);
 	~Actor();
@@ -41,4 +42,14 @@ public:
 	void update();
 	int getDirection(const Point&);
 	void move(const Point&);
+};
+
+class SmallObject : public MapObject {
+	bool _dragged;
+	Actor* _owner;
+public:
+	SmallObject(short, const Point&);
+	~SmallObject();
+	bool isDragged() const;
+	void pickUp(const Actor*);
 };

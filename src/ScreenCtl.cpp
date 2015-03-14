@@ -109,6 +109,13 @@ bool ScreenCtl::draw() {
 
 				al_draw_line(lineStart._x, lineStart._y, lineEnd._x, lineEnd._y, color, 1);
 			}
+		} else if (_state->_drawMasks) {
+			auto allMasks = _map->getObjectMasks();
+			//for (auto msk : *allMasks) {
+				
+			//}
+			//al_draw_filled_triangle(300, 300, 556, 300, 428, 236, al_map_rgb(255, 128, 0));
+			//al_draw_filled_triangle(300, 300, 556, 300, 428, 364, al_map_rgb(255, 128, 0));
 		}
 
 		shared_ptr<Actor> _actor = _map->getActor();
@@ -141,9 +148,6 @@ bool ScreenCtl::draw() {
 				_font->draw(to_string(obj.second->getID()), coord.add(12, 30), color);
 			}
 		}
-
-		//al_draw_filled_triangle(300, 300, 556, 300, 428, 236, al_map_rgb(255, 128, 0));
-		//al_draw_filled_triangle(300, 300, 556, 300, 428, 364, al_map_rgb(255, 128, 0));
 
 		string timeSTR("App time: " + to_string(_state->_appTime));
 		string cpsSTR("Cycles per second: " + to_string(_state->_CPS));

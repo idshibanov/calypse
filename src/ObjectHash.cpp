@@ -122,3 +122,7 @@ map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const
 	}
 	return retval;
 }
+
+const unordered_map<int, int>* ObjectHash::getObjectMasks() const {
+	return &_mask;
+}

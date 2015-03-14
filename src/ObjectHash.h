@@ -28,4 +28,5 @@ public:
 	shared_ptr<MapObject> getObject(const Point&);
 	int getObjectID(const Point&);
 	map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last) const;
+	const unordered_map<int, int>* getObjectMasks() const;
 };

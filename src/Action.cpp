@@ -1,18 +1,12 @@
 #include "Object.h"
 #include "Action.h"
 
-Action::Action(ActionType type, weak_ptr<Actor> actor, int cycles, int steps, const Point& pos, weak_ptr<AStarSearch> pf)
+Action::Action(ActionType type, weak_ptr<Actor> actor, int cycles, int steps)
                : _timer(cycles), _state(steps) {
 	_type = type;
-	_target = pos - (pos % 2);
 	_actor = actor;
-
-	_pf = pf;
-	auto finder = _pf.lock();
-	auto act = _actor.lock();
-	if (finder && act) {
-		_path = _pf.lock()->searchPath(act->getPos(), _target);
-	}
+	// don't start the timer until action started
+	_timer.stop();
 }
 
 Action::~Action() {
@@ -22,22 +16,16 @@ Action::~Action() {
 Action::Action (const Action& act) {
 	_type = act._type;
 	_actor = act._actor;
-	_target = act._target;
 	_timer = act._timer;
 	_state = act._state;
-	_path = act._path;
-	_pf = act._pf;
 	_next = act._next;
 }
 
 Action& Action::operator= (const Action& act) {
 	_type = act._type;
 	_actor = act._actor;
-	_target = act._target;
 	_timer = act._timer;
 	_state = act._state;
-	_path = act._path;
-	_pf = act._pf;
 	_next = act._next;
 	return *this;
 }
@@ -57,15 +45,55 @@ void Action::stop() {
 	_timer.setTicks(0);
 }
 
-bool Action::isActive() const {
-	return _timer.isActive();
-}
-
 int Action::getState() const {
 	return _state.getProgress();
 }
 
-bool Action::update() {
+ActionType Action::getType() const {
+	return _type;
+}
+
+
+
+MoveAction::MoveAction(ActionType type, weak_ptr<Actor> actor, int cycles, int steps, 
+	                   const Point& pos, weak_ptr<AStarSearch> pf) 
+                       : Action(type, actor, cycles, steps) {
+	_target = pos - (pos % 2);
+	_pf = pf;
+}
+
+MoveAction::MoveAction(const MoveAction& act) : Action(act) {
+	_target = act._target;
+	_path = act._path;
+	_pf = act._pf;
+}
+
+MoveAction::~MoveAction() {
+
+}
+
+MoveAction& MoveAction::operator= (const MoveAction& act) {
+	Action::operator=(act);
+	_target = act._target;
+	_path = act._path;
+	_pf = act._pf;
+	return *this;
+}
+
+bool MoveAction::isActive() const {
+	return !_path.empty();
+}
+
+void MoveAction::start() {
+	auto finder = _pf.lock();
+	auto act = _actor.lock();
+	if (finder && act) {
+		_path = finder->searchPath(act->getPos(), _target);
+		_timer.relaunch();
+	}
+}
+
+bool MoveAction::update() {
 	auto act = _actor.lock();
 	if (!_path.empty() && act) {
 		if (_timer.check()) {
@@ -103,3 +131,36 @@ bool Action::update() {
 	return false;
 }
 
+
+
+ObjectAction::ObjectAction(ActionType type, weak_ptr<Actor> actor, int cycles, int steps,
+	                       weak_ptr<MapObject> obj)
+	                       : Action(type, actor, cycles, steps) {
+	_target = obj;
+}
+
+ObjectAction::ObjectAction(const ObjectAction& act) : Action(act) {
+	_target = act._target;
+}
+
+ObjectAction::~ObjectAction() {
+
+}
+
+ObjectAction& ObjectAction::operator= (const ObjectAction& act) {
+	Action::operator=(act);
+	_target = act._target;
+	return *this;
+}
+
+bool ObjectAction::isActive() const {
+	return _timer.isActive();
+}
+
+void ObjectAction::start() {
+	_timer.relaunch();
+}
+
+bool ObjectAction::update() {
+	return false;
+}

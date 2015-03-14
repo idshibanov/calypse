@@ -3,7 +3,7 @@
 
 int MapObject::lastID = 0;
 
-MapObject::MapObject(Point pos, short type)
+MapObject::MapObject(const Point& pos, short type)
 	                : _pos(pos),  _type(type) {
 	_id = lastID++;
 	_spriteID = 0;
@@ -54,7 +54,7 @@ void MapObject::setSprite(int id) {
 
 
 
-Actor::Actor(short type, Point pos, int defaultSprite)
+Actor::Actor(short type, const Point& pos, int defaultSprite)
 	: MapObject(pos, type) {
 	_spriteID = defaultSprite;
 	_dir = 1;
@@ -91,7 +91,12 @@ void Actor::setYPos(int y) {
 }
 
 void Actor::setAction(shared_ptr<Action> act) {
-	_action = act;
+	if (_action) {
+		_action->chainAction(act);
+	} else {
+		_action = act;
+		_action->start();
+	}
 }
 
 void Actor::update() {
@@ -102,6 +107,9 @@ void Actor::update() {
 			auto next = _action->getNext();
 			if (next) {
 				_action = next;
+				_action->start();
+			} else {
+				_action = nullptr;
 			}
 		}
 	}
@@ -172,4 +180,18 @@ void Actor::move(const Point& mod) {
 	}
 
 	_pos += mod;
+}
+
+
+
+SmallObject::SmallObject(short type, const Point& pos) : MapObject(pos, type) {
+	_dragged = false;
+}
+
+SmallObject::~SmallObject() {
+
+}
+
+bool SmallObject::isDragged() const {
+	return _dragged;
 }

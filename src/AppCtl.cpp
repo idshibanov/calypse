@@ -34,6 +34,7 @@ AppCtl::AppCtl() {
 	_state->_CPS = 0;
 	_state->_drawGrid = false;
 	_state->_drawCoords = false;
+	_state->_drawMasks = false;
 	_keys = new bool[7];
 	for (int i = 0; i < 7; i++) _keys[i] = false;
 }
@@ -104,6 +105,9 @@ void AppCtl::controlLoop() {
 				_mouse->setSprite(1);
 				// set certain flag
 				break;
+			case ALLEGRO_KEY_F8:
+				_state->_drawMasks = !_state->_drawMasks;
+				break;
 			case ALLEGRO_KEY_F9:
 				_state->_drawGrid = !_state->_drawGrid;
 				break;
@@ -150,7 +154,7 @@ void AppCtl::controlLoop() {
 				cout << tile._x << "," << tile._y << endl;
 				auto actor = _map->getActor();
 				if (tile._x > 0 && tile._y > 0) {
-					auto act = make_shared<Action>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
+					auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
 					actor->setAction(act);
 				}
 			}

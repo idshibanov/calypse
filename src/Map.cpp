@@ -118,6 +118,10 @@ map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const P
 	return retval;
 }
 
+const unordered_map<int, int>* LocalMap::getObjectMasks() const {
+	return _objects.getObjectMasks();
+}
+
 shared_ptr<Actor> LocalMap::getActor() {
 	return _actor;
 }

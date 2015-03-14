@@ -37,6 +37,7 @@ public:
 	unsigned int convertIDToY(unsigned mapID) const;
 	shared_ptr<Actor> getActor();
 	map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
+	const unordered_map<int, int>* getObjectMasks() const;
 	bool resetObject(const Point& coord);
 	bool tileExists(unsigned mapID) const;
 	bool tileExists(unsigned tileX, unsigned tileY) const;

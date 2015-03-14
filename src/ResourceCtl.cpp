@@ -2,9 +2,9 @@
 
 ResourceCtl::ResourceCtl() {
 	int id = 0;
-	_info.emplace(id++, make_shared<ObjectInfo>(id, 44, 69, 10, -57, 3));	// actor
-	_info.emplace(id++, make_shared<ObjectInfo>(id, 64, 92, 0, -60, 2));	// reet
-	_info.emplace(id++, make_shared<ObjectInfo>(id, 160, 153, -96, -73, 4));	// hut
+	_info.emplace(id++, make_shared<ObjectInfo>(id, 44, 69, 10, -57, 3, false));	// actor
+	_info.emplace(id++, make_shared<ObjectInfo>(id, 64, 92, 0, -60, 2, false));	// reet
+	_info.emplace(id++, make_shared<ObjectInfo>(id, 160, 153, -96, -73, 4, false));	// hut
 }
 
 ResourceCtl::~ResourceCtl() {

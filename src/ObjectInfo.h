@@ -10,7 +10,8 @@ public:
 	Point _offset;
 	int _type;
 	int _spriteID;
-	ObjectInfo(int, int, int, int, int, int);
+	bool _draggable;
+	ObjectInfo(int, int, int, int, int, int, bool);
 	ObjectInfo(ObjectInfo& rhs);
 	ObjectInfo& operator=(ObjectInfo& rhs);
 	~ObjectInfo();
