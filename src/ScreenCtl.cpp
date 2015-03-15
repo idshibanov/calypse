@@ -95,8 +95,8 @@ bool ScreenCtl::draw() {
 				Point lineStart(_firstTile._x, row);
 				Point lineEnd(_lastTile._x, row);
 
-				convertMapCoords(lineStart).add(32 * _zoom, 0);
-				convertMapCoords(lineEnd).add(32 * _zoom, 0);
+				lineStart = convertMapCoords(lineStart * TILE_MASK);
+				lineEnd = convertMapCoords(lineEnd * TILE_MASK);
 
 				al_draw_line(lineStart._x, lineStart._y, lineEnd._x, lineEnd._y, color, 1);
 			}
@@ -105,8 +105,8 @@ bool ScreenCtl::draw() {
 				Point lineStart(col, _firstTile._y);
 				Point lineEnd(col, _lastTile._y);
 
-				convertMapCoords(lineStart).add(32 * _zoom, 0);
-				convertMapCoords(lineEnd).add(32 * _zoom, 0);
+				lineStart = convertMapCoords(lineStart * TILE_MASK);
+				lineEnd = convertMapCoords(lineEnd * TILE_MASK);
 
 				al_draw_line(lineStart._x, lineStart._y, lineEnd._x, lineEnd._y, color, 1);
 			}
@@ -118,18 +118,16 @@ bool ScreenCtl::draw() {
 				Point top(msk.first % map_size, msk.first / map_size);
 				Point bot(top), left(top), right(top);
 
-				convertMapCoords(top.div(10)).add(32 * _zoom, 0);
-				convertMapCoords(bot.add(SUBTILE_MASK, SUBTILE_MASK).div(10)).add(32 * _zoom, 0);
-				convertMapCoords(left.add(0, SUBTILE_MASK).div(10)).add(32 * _zoom, 0);
-				convertMapCoords(right.add(SUBTILE_MASK, 0).div(10)).add(32 * _zoom, 0);
+				convertMapCoords(top);
+				convertMapCoords(bot.add(SUBTILE_MASK, SUBTILE_MASK));
+				convertMapCoords(left.add(0, SUBTILE_MASK));
+				convertMapCoords(right.add(SUBTILE_MASK, 0));
 
 				al_draw_filled_triangle(left._x, left._y, right._x, right._y, top._x, top._y, red_color);
 				al_draw_filled_triangle(left._x, left._y, right._x, right._y, bot._x, bot._y, red_color);
 
-				_font->draw(to_string(msk.second), left.add(28, 0), color);
+				//_font->draw(to_string(msk.second), left.add(5, 0), color);
 			}
-			//al_draw_filled_triangle(300, 300, 556, 300, 428, 236, al_map_rgb(255, 128, 0));
-			//al_draw_filled_triangle(300, 300, 556, 300, 428, 364, al_map_rgb(255, 128, 0));
 		}
 
 		shared_ptr<Actor> _actor = _map->getActor();
@@ -277,8 +275,8 @@ Point ScreenCtl::convertCoords(const Point& pos) {
 }
 
 Point& ScreenCtl::convertMapCoords(Point& coord) {
-	coord = (coord - _firstTile) * _tileSize + _offset;
-	coord = coord.toIso() + _screenOffset;
+	coord = (coord - _firstTile * TILE_MASK) * _tileSize / TILE_MASK + _offset;
+	coord = coord.toIso().add(_tileSize._x, 0) + _screenOffset;
 	return coord;
 }
 
