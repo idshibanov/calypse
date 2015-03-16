@@ -17,8 +17,6 @@ void ResourceCtl::loadSprites() {
 	int id = 0;
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/cursor_sheet.png", 2, 2, Point(32,32)));
 	_sprites.emplace(id++, make_shared<Sprite>(id, "res/grass.png"));
-	//_sprites.emplace(id++, make_shared<Sprite>(id, "res/reet.png"));
-	//_sprites.emplace(id++, make_shared<Sprite>(id, "res/tump.png"));
 
 	auto reet_size = getObjectInfo(1).lock()->_size;
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/reet_sheet.png", 2, 2, reet_size));

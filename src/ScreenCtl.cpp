@@ -36,19 +36,6 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	_font = new SpriteText("res/arialbd.ttf", 12);
 
-	/*
-	_sprites.reserve(10*20);
-	for (int dir = 0; dir < 1; dir++) {
-		for (int i = 0; i < 21; i++) {
-			ostringstream ss;
-			ss << setw(4) << setfill('0') << i;
-			string res_path("res/char/run_" + to_string(dir) + "_" + ss.str() + ".png");
-			_sprites.emplace_back(dir * 20 + i, res_path.c_str(), 298, 235, 125, 185);
-		}
-	}
-	*/
-
-
 	_animation_speed = 100;
 	_animation_frame = 0;
 }

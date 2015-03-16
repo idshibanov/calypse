@@ -38,22 +38,22 @@ Sprite::Sprite(const Sprite& rhs) {
 }
 
 Sprite& Sprite::operator=(const Sprite& rhs){
-	if (_texture)
-		al_destroy_bitmap(_texture);
+	if (_texture != rhs._texture) {
+		if (_texture)
+			al_destroy_bitmap(_texture);
 
-	_id = rhs._id;
-	if (rhs._texture != NULL) {
-		_texture = al_clone_bitmap(rhs._texture);
-		if (_texture == NULL){
-			cout << "Warning: sprite " << _id << " is not loaded! (clone error)" << endl;
+		_id = rhs._id;
+		if (rhs._texture != NULL) {
+			_texture = al_clone_bitmap(rhs._texture);
+			if (_texture == NULL) {
+				cout << "Warning: sprite " << _id << " is not loaded! (clone error)" << endl;
+			} else {
+				al_convert_mask_to_alpha(_texture, al_map_rgb(255, 0, 255));
+				_bitmapSize.set(al_get_bitmap_width(_texture), al_get_bitmap_height(_texture));
+			}
+		} else {
+			_texture = NULL;
 		}
-		else {
-			al_convert_mask_to_alpha(_texture, al_map_rgb(255, 0, 255));
-			_bitmapSize.set(al_get_bitmap_width(_texture), al_get_bitmap_height(_texture));
-		}
-	}
-	else {
-		_texture = NULL;
 	}
 	return *this;
 }

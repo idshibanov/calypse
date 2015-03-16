@@ -76,13 +76,7 @@ vector<Point> ObjectHash::searchForObject(const Point& pos) {
 	if(objID != OBJECT_NOT_FOUND) {
 		retval.push_back(pos);
 		
-	}	
-	/*
-	private recursive function (pass pos + id), concat return results
-	AB.reserve( A.size() + B.size() ); // preallocate memory
-	AB.insert( AB.end(), A.begin(), A.end() );
-	AB.insert( AB.end(), B.begin(), B.end() );
-	*/
+	}
 	return retval;
 }
 
