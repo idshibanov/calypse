@@ -167,8 +167,11 @@ void ObjectAction::start() {
 
 bool ObjectAction::update() {
 	if (_timer.check()) {
-		auto obj = make_shared<MapObject>(Point(12, 12), 1);
-		return _map.lock()->addObject(obj);
+		//auto obj = make_shared<MapObject>(Point(12, 12), 1);
+		//return _map.lock()->addObject(obj);
+		if (!_map.expired() && !_target.expired()) {
+			return _map.lock()->resetObject(_target.lock()->getPos());
+		}
 	}
 	return false;
 }

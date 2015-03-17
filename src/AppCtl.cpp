@@ -149,13 +149,17 @@ void AppCtl::controlLoop() {
 			cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
 			if (elem) {
 				cout << "Found: " << elem->getID() << " pos: " << elem->getXPos() << "," << elem->getYPos() << endl;
-				cout << "Reset: " << _map->resetObject(elem->getPos()) << endl;
+				//cout << "Reset: " << _map->resetObject(elem->getPos()) << endl;
+				auto actor = _map->getActor();
+				auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, elem->getPos().sub(10,10), _pFinder);
+				auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 100, 8, elem, _map);
+				act1->chainAction(act2);
+				actor->setAction(act1);
 			} else {
 				cout << tile._x << "," << tile._y << endl;
 				auto actor = _map->getActor();
 				if (tile._x > 0 && tile._y > 0) {
-					//auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
-					auto act = make_shared<ObjectAction>(ACTION_CUT, actor, 30, 8, weak_ptr<MapObject>(), _map);
+					auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
 					actor->setAction(act);
 				}
 			}
