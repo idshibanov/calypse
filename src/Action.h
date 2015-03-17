@@ -3,6 +3,7 @@
 #include "Timer.h"
 #include "Pathfinder.h"
 
+class LocalMap;
 class MapObject;
 class Actor;
 
@@ -52,8 +53,9 @@ public:
 
 class ObjectAction : public Action {
 	weak_ptr<MapObject> _target;
+	weak_ptr<LocalMap> _map;
 public:
-	ObjectAction(ActionType, weak_ptr<Actor>, int, int, weak_ptr<MapObject>);
+	ObjectAction(ActionType, weak_ptr<Actor>, int, int, weak_ptr<MapObject>, weak_ptr<LocalMap>);
 	ObjectAction(const ObjectAction&);
 	~ObjectAction();
 	ObjectAction& operator= (const ObjectAction&);

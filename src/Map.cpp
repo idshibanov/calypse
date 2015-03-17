@@ -131,6 +131,11 @@ bool LocalMap::resetObject(const Point& coord) {
 	return _objects.resetObject(coord);
 }
 
+bool LocalMap::addObject(shared_ptr<MapObject> obj) {
+	Point size(10, 10);
+	return _objects.setObject(obj->getPos(), size, obj);
+}
+
 bool LocalMap::tileExists(unsigned mapID) const {
 	return mapID < (_rowmax * _colmax);
 }

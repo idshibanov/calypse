@@ -1,3 +1,4 @@
+#include "Map.h"
 #include "Object.h"
 #include "Action.h"
 
@@ -134,13 +135,15 @@ bool MoveAction::update() {
 
 
 ObjectAction::ObjectAction(ActionType type, weak_ptr<Actor> actor, int cycles, int steps,
-	                       weak_ptr<MapObject> obj)
+	                       weak_ptr<MapObject> obj, weak_ptr<LocalMap> map)
 	                       : Action(type, actor, cycles, steps) {
 	_target = obj;
+	_map = map;
 }
 
 ObjectAction::ObjectAction(const ObjectAction& act) : Action(act) {
 	_target = act._target;
+	_map = act._map;
 }
 
 ObjectAction::~ObjectAction() {
@@ -150,6 +153,7 @@ ObjectAction::~ObjectAction() {
 ObjectAction& ObjectAction::operator= (const ObjectAction& act) {
 	Action::operator=(act);
 	_target = act._target;
+	_map = act._map;
 	return *this;
 }
 
@@ -162,5 +166,9 @@ void ObjectAction::start() {
 }
 
 bool ObjectAction::update() {
+	if (_timer.check()) {
+		auto obj = make_shared<MapObject>(Point(12, 12), 1);
+		return _map.lock()->addObject(obj);
+	}
 	return false;
 }

@@ -39,6 +39,7 @@ public:
 	map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
 	const unordered_map<int, int>* getObjectMasks() const;
 	bool resetObject(const Point& coord);
+	bool addObject(shared_ptr<MapObject> obj);
 	bool tileExists(unsigned mapID) const;
 	bool tileExists(unsigned tileX, unsigned tileY) const;
 	bool tileIsFree(unsigned mapID) const;

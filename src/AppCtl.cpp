@@ -154,7 +154,8 @@ void AppCtl::controlLoop() {
 				cout << tile._x << "," << tile._y << endl;
 				auto actor = _map->getActor();
 				if (tile._x > 0 && tile._y > 0) {
-					auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
+					//auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
+					auto act = make_shared<ObjectAction>(ACTION_CUT, actor, 30, 8, weak_ptr<MapObject>(), _map);
 					actor->setAction(act);
 				}
 			}
