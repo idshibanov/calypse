@@ -152,7 +152,7 @@ void AppCtl::controlLoop() {
 				//cout << "Reset: " << _map->resetObject(elem->getPos()) << endl;
 				auto actor = _map->getActor();
 				auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, elem->getPos().sub(10,10), _pFinder);
-				auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 100, 8, elem, _map);
+				auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 20, 8, elem, _map);
 				act1->chainAction(act2);
 				actor->setAction(act1);
 			} else {
