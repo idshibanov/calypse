@@ -137,7 +137,7 @@ bool ScreenCtl::draw() {
 
 				objSprite->drawScaled(coord, obj.second->getSprite(), _zoom);
 
-				_buffer.setElement(ScreenArea(coord, objSize, obj.second, objSprite));
+				_buffer.setElement(ObjectArea(coord, objSize, obj.second, objSprite));
 				//al_draw_rectangle(coord._x, coord._y, coord._x + objSize._x, coord._y + objSize._y,
 					//al_map_rgb(255, 100, 100), 1.0);
 

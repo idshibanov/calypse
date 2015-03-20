@@ -1,6 +1,6 @@
 #include "ScreenArea.h"
 
-ScreenArea::ScreenArea(const Point& pos, const Point& size, shared_ptr<MapObject> obj, SpriteSheet* spr) {
+ObjectArea::ObjectArea(const Point& pos, const Point& size, shared_ptr<MapObject> obj, SpriteSheet* spr) {
 	_pos = pos;
 	_size = size;
 	_zlevel = 1;
@@ -8,26 +8,26 @@ ScreenArea::ScreenArea(const Point& pos, const Point& size, shared_ptr<MapObject
 	_sprite = spr;
 }
 
-ScreenArea::~ScreenArea() {
+ObjectArea::~ObjectArea() {
 
 }
 
-Point ScreenArea::getMax() const {
+Point ObjectArea::getMax() const {
 	return _pos + _size;
 }
 
-bool ScreenArea::operator< (const ScreenArea& area) const {
+bool ObjectArea::operator< (const ObjectArea& area) const {
 	return _pos.toRenderPriority() < area._pos.toRenderPriority();
 }
 
-bool ScreenArea::operator< (const Point& pos) const {
+bool ObjectArea::operator< (const Point& pos) const {
 	return _pos.toRenderPriority() < pos.toRenderPriority();
 }
 
-bool ScreenArea::operator== (const ScreenArea& area) const {
+bool ObjectArea::operator== (const ObjectArea& area) const {
 	return _pos == area._pos && _size == area._size;
 }
 
-size_t ScreenArea::operator() (const ScreenArea& area) const {
+size_t ObjectArea::operator() (const ObjectArea& area) const {
 	return area._pos.toRenderPriority();
 }

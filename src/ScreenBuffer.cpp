@@ -12,7 +12,7 @@ void ScreenBuffer::reset () {
 	_items.clear();
 }
 
-void ScreenBuffer::setElement(ScreenArea area) {
+void ScreenBuffer::setElement(ObjectArea area) {
 	// TODO: better algo for setting Z level
 	auto elem = getElementArea(area._pos);
 	if (elem != _items.end()) {
@@ -21,9 +21,9 @@ void ScreenBuffer::setElement(ScreenArea area) {
 	_items.emplace(area);
 }
 
-unordered_set<ScreenArea>::iterator ScreenBuffer::getElementArea(const Point& pos) {
+unordered_set<ObjectArea>::iterator ScreenBuffer::getElementArea(const Point& pos) {
 	int maxZ = 0;
-	unordered_set<ScreenArea>::iterator retval = _items.end();
+	unordered_set<ObjectArea>::iterator retval = _items.end();
 
 	for (auto it = _items.begin(); it != _items.end(); it++) {
 		if (pos > it->_pos && pos < it->getMax()) {
@@ -47,7 +47,7 @@ shared_ptr<MapObject> ScreenBuffer::getElement(const Point& pos) {
 	return nullptr;
 }
 
-shared_ptr<MapObject> ScreenBuffer::getElement(const ScreenArea& area) {
+shared_ptr<MapObject> ScreenBuffer::getElement(const ObjectArea& area) {
 	auto elem = _items.find(area);
 	if (elem != _items.end()) {
 		return elem->_obj;

@@ -7,20 +7,24 @@ public:
 	Point _pos;
 	Point _size;
 	int _zlevel;
+};
+
+class ObjectArea : public ScreenArea {
+public:
 	shared_ptr<MapObject> _obj;
 	SpriteSheet* _sprite;
-	ScreenArea(const Point&, const Point&, shared_ptr<MapObject>, SpriteSheet*);
-	~ScreenArea();
+	ObjectArea(const Point&, const Point&, shared_ptr<MapObject>, SpriteSheet*);
+	~ObjectArea();
 	Point getMax() const;
-	bool operator< (const ScreenArea& area) const;
+	bool operator< (const ObjectArea& area) const;
 	bool operator< (const Point& pos) const;
-	bool operator== (const ScreenArea&) const;
-	size_t operator() (const ScreenArea&) const;
+	bool operator== (const ObjectArea&) const;
+	size_t operator() (const ObjectArea&) const;
 };
 
 template <>
-struct hash<ScreenArea> {
-	size_t operator() (const ScreenArea& area) const {
+struct hash<ObjectArea> {
+	size_t operator() (const ObjectArea& area) const {
 		return area._pos.toRenderPriority();
 	}
 };
