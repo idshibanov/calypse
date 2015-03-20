@@ -1,16 +1,18 @@
 #include <functional>
 #include "ObjectHash.h"
 
+
 ObjectHash::ObjectHash(int size) {
 	_size = size;
 }
+
 
 ObjectHash::~ObjectHash() {
 
 }
 
+
 bool ObjectHash::setObject(const Point& pos, const Point& size, shared_ptr<MapObject> obj) {
-	bool retval = false;
 	Rect area(pos, size);
 	int id = obj->getID();
 
@@ -23,16 +25,21 @@ bool ObjectHash::setObject(const Point& pos, const Point& size, shared_ptr<MapOb
 	};
 
 	if (area.iterate(search, true)) {
-		_objects.emplace(id, obj);
-
 		area.iterate(setter);
-		retval = true;
-	}
-	
-	return retval;
+		return setObject(pos, obj);
+	}	
+	return false;
 }
 
-bool ObjectHash::resetObject(const Point& pos) {
+
+bool ObjectHash::setObject(const Point& pos, shared_ptr<MapObject> obj) {
+	int id = obj->getID();
+	_objects.emplace(id, obj);
+	return true;
+}
+
+
+bool ObjectHash::toggleObject(const Point& pos) {
 	auto obj = getObject(pos);
 	if (obj != nullptr) {
 		Rect area(obj->getPos(), Point(10,10));
@@ -57,9 +64,18 @@ bool ObjectHash::resetObject(const Point& pos) {
 	return false;
 }
 
+
+bool ObjectHash::resetObject(const Point& pos) {
+	// search object map (not mask)
+	// reset pos by obj pos + size from resource
+	return false;
+}
+
+
 bool ObjectHash::isFree(const Point& pos) const {
 	return checkPos(pos) == OBJECT_NOT_FOUND;
 }
+
 
 int ObjectHash::checkPos(const Point& pos) const {
 	auto it = _mask.find(pos.toID(_size));
@@ -68,6 +84,7 @@ int ObjectHash::checkPos(const Point& pos) const {
 	}
 	return OBJECT_NOT_FOUND;
 }
+
 
 vector<Point> ObjectHash::searchForObject(const Point& pos) {
 	vector<Point> retval;
@@ -89,6 +106,7 @@ shared_ptr<MapObject> ObjectHash::getObject(int objID) {
 	return nullptr;
 }
 
+
 shared_ptr<MapObject> ObjectHash::getObject(const Point& pos) {
 	int objID = checkPos(pos);
 	if(objID != OBJECT_NOT_FOUND) {
@@ -96,6 +114,7 @@ shared_ptr<MapObject> ObjectHash::getObject(const Point& pos) {
 	}
 	return nullptr;
 }
+
 
 map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const Point& last) const {
 	map<int, shared_ptr<MapObject>> retval;
@@ -116,6 +135,7 @@ map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const
 	}
 	return retval;
 }
+
 
 const unordered_map<int, int>* ObjectHash::getObjectMasks() const {
 	return &_mask;

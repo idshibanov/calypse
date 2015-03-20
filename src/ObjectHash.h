@@ -5,6 +5,7 @@
 
 #include "Point.h"
 #include "Object.h"
+#include "ResourceCtl.h"
 
 #define OBJECT_NOT_FOUND -1
 
@@ -20,6 +21,8 @@ public:
 	ObjectHash(int size);
 	~ObjectHash();
 	bool setObject(const Point& pos, const Point& size, shared_ptr<MapObject> obj);
+	bool setObject(const Point& pos, shared_ptr<MapObject> obj);
+	bool toggleObject(const Point& pos);
 	bool resetObject(const Point& pos);
 	bool isFree(const Point& pos) const;
 	int checkPos(const Point& pos) const;

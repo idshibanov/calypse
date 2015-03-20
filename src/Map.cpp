@@ -127,6 +127,10 @@ shared_ptr<Actor> LocalMap::getActor() {
 	return _actor;
 }
 
+bool LocalMap::toggleObject(const Point& coord) {
+	return _objects.toggleObject(coord);
+}
+
 bool LocalMap::resetObject(const Point& coord) {
 	return _objects.resetObject(coord);
 }

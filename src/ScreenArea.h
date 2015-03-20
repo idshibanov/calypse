@@ -1,30 +1,23 @@
 #pragma once
 #include "Sprite.h"
-#include "Object.h"
 
 class ScreenArea {
 public:
 	Point _pos;
 	Point _size;
 	int _zlevel;
-};
-
-class ObjectArea : public ScreenArea {
-public:
-	shared_ptr<MapObject> _obj;
-	SpriteSheet* _sprite;
-	ObjectArea(const Point&, const Point&, shared_ptr<MapObject>, SpriteSheet*);
-	~ObjectArea();
+	ScreenArea(const Point& pos, const Point& size);
+	virtual ~ScreenArea();
 	Point getMax() const;
-	bool operator< (const ObjectArea& area) const;
+	bool operator< (const ScreenArea& area) const;
 	bool operator< (const Point& pos) const;
-	bool operator== (const ObjectArea&) const;
-	size_t operator() (const ObjectArea&) const;
+	bool operator== (const ScreenArea&) const;
+	size_t operator() (const ScreenArea&) const;
 };
 
 template <>
-struct hash<ObjectArea> {
-	size_t operator() (const ObjectArea& area) const {
-		return area._pos.toRenderPriority();
+struct hash<shared_ptr<ScreenArea>> {
+	size_t operator() (const shared_ptr<ScreenArea>& area) const {
+		return area->_pos.toRenderPriority();
 	}
 };

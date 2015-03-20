@@ -38,6 +38,7 @@ public:
 	shared_ptr<Actor> getActor();
 	map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
 	const unordered_map<int, int>* getObjectMasks() const;
+	bool toggleObject(const Point& coord);
 	bool resetObject(const Point& coord);
 	bool addObject(shared_ptr<MapObject> obj);
 	bool tileExists(unsigned mapID) const;

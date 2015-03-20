@@ -171,7 +171,7 @@ bool ObjectAction::update() {
 		//return _map.lock()->addObject(obj);
 		if (_state.check()) {
 			if (!_map.expired() && !_target.expired()) {
-				return _map.lock()->resetObject(_target.lock()->getPos());
+				return _map.lock()->toggleObject(_target.lock()->getPos());
 			}
 		}
 		_timer.relaunch();
