@@ -1,6 +1,7 @@
 #include "ScreenArea.h"
 
 ScreenArea::ScreenArea(const Point& pos, const Point& size) {
+	_type = AREA_TYPE_SCREEN;
 	_pos = pos;
 	_size = size;
 	_zlevel = 1;
@@ -8,6 +9,10 @@ ScreenArea::ScreenArea(const Point& pos, const Point& size) {
 
 ScreenArea::~ScreenArea() {
 
+}
+
+ScreenAreaType ScreenArea::getType() const {
+	return _type;
 }
 
 Point ScreenArea::getMax() const {

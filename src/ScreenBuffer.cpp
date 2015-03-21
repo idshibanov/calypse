@@ -26,13 +26,16 @@ unordered_set<shared_ptr<ScreenArea>>::iterator ScreenBuffer::getElementArea(con
 	auto retval = _items.end();
 
 	for (auto it = _items.begin(); it != _items.end(); it++) {
-		auto area = dynamic_pointer_cast<ObjectArea>(*it);
-		if (pos > area->_pos && pos < area->getMax()) {
-			auto sp = area->_sprite;
-			if (sp && sp->checkAlpha(pos - area->_pos, area->_obj->getSprite())) {
-				if (area->_zlevel > maxZ) {
-					retval = it;
-					maxZ = area->_zlevel;
+		auto it_ptr = it->get();
+		if (pos > it_ptr->_pos && pos < it_ptr->getMax()) {
+			if (it_ptr->getType() == AREA_TYPE_OBJECT) {
+				auto area = dynamic_pointer_cast<ObjectArea>(*it);
+				auto sp = area->_sprite;
+				if (sp && sp->checkAlpha(pos - area->_pos, area->_obj->getSprite())) {
+					if (area->_zlevel > maxZ) {
+						retval = it;
+						maxZ = area->_zlevel;
+					}
 				}
 			}
 		}
