@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
-#include "main.h"
-#include "frame.h"
-#include "sprite.h"
-#include "timer.h"
+#include "ScreenArea.h"
+#include "Main.h"
+#include "Frame.h"
+#include "Timer.h"
 
 #define UIBUTTON_DEFAULT_CLICKED_TICKS 10
 
@@ -13,20 +13,17 @@ enum UIElementType {
 	UIELEMENT_TYPE_INVALID
 };
 
-class UIElement {
+class UIElement : public ScreenArea {
 protected:
-	Point _pos;
-	Point _size;
 	UIFrame* _parent;
 	bool _active;
 	bool _visible;
-	UIElementType _type;
+	UIElementType _elType;
 	UIElement(Point pos, Point size, UIFrame* parent, bool active = true, bool visible = true);
 public:
 	virtual ~UIElement();
 	Point getPos();
-	Point getMax();
-	int getType();
+	int getElementType();
 	bool isActive();
 	bool isVisible();
 	virtual void update() = 0;

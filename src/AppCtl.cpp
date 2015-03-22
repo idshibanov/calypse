@@ -148,13 +148,19 @@ void AppCtl::controlLoop() {
 			auto elem = _screen->processAction(absPos);
 			cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
 			if (elem) {
-				cout << "Found: " << elem->getID() << " pos: " << elem->getXPos() << "," << elem->getYPos() << endl;
-				//cout << "Reset: " << _map->resetObject(elem->getPos()) << endl;
-				auto actor = _map->getActor();
-				auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, elem->getPos().sub(10,10), _pFinder);
-				auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 20, 8, elem, _map);
-				act1->chainAction(act2);
-				actor->setAction(act1);
+				if (elem->getType() == AREA_TYPE_OBJECT) {
+					auto obj = dynamic_pointer_cast<ObjectArea>(elem)->_obj;
+					cout << "Found: " << obj->getID() << " pos: " << obj->getXPos() << "," << obj->getYPos() << endl;
+
+					auto actor = _map->getActor();
+					auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, obj->getPos().sub(10, 10), _pFinder);
+					auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 20, 8, obj, _map);
+					act1->chainAction(act2);
+					actor->setAction(act1);
+				} else {
+					auto button = dynamic_pointer_cast<UIButton>(elem);
+					button->launchTimer();
+				}
 			} else {
 				cout << tile._x << "," << tile._y << endl;
 				auto actor = _map->getActor();

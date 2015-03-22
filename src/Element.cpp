@@ -3,13 +3,13 @@
 #include "element.h"
 
 // Abstract UI Element class
-UIElement::UIElement(Point pos, Point size, UIFrame* parent, bool active, bool visible) {
-	_pos = pos;
-	_size = size;
+UIElement::UIElement(Point pos, Point size, UIFrame* parent, bool active, bool visible) 
+                     : ScreenArea(pos, size) {
 	_parent = parent;
 	_active = active;
 	_visible = visible;
-	_type = UIELEMENT_TYPE_INVALID;
+	_type = AREA_TYPE_ELEMENT;
+	_elType = UIELEMENT_TYPE_INVALID;
 }
 
 UIElement::~UIElement() {
@@ -20,12 +20,8 @@ Point UIElement::getPos() {
 	return _pos;
 }
 
-Point UIElement::getMax() {
-	return _pos + _size;
-}
-
-int UIElement::getType() {
-	return _type;
+int UIElement::getElementType() {
+	return _elType;
 }
 
 bool UIElement::isActive() {
@@ -42,7 +38,7 @@ UILabel::UILabel(Point pos, Point size, UIFrame* parent, shared_ptr<SpriteText> 
 	: UIElement(pos, size, parent, active, visible) {
 	_text = text;
 	_font = font;
-	_type = UIELEMENT_TYPE_LABEL;
+	_elType = UIELEMENT_TYPE_LABEL;
 }
 
 UILabel::~UILabel() {
@@ -80,7 +76,7 @@ UIButton::UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared
 	_text = text;
 	_state = state;
 	_font = font;
-	_type = UIELEMENT_TYPE_BUTTON;
+	_elType = UIELEMENT_TYPE_BUTTON;
 }
 
 UIButton::~UIButton() {

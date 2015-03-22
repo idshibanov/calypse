@@ -30,6 +30,9 @@ void ResourceCtl::loadSprites() {
 
 	auto hide_size = getObjectInfo(3).lock()->_size;
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/bear_hide.png", 1, 1, hide_size));
+
+	_sprites.emplace(id++, make_shared<Sprite>(id, "res/buttonG32.png"));
+	_sprites.emplace(id++, make_shared<Sprite>(id, "res/buttonR32.png"));
 }
 
 weak_ptr<ObjectInfo> ResourceCtl::getObjectInfo(int type) {

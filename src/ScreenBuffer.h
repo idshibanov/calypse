@@ -16,6 +16,5 @@ public:
 	~ScreenBuffer();
 	void reset();
 	void setElement(shared_ptr<ScreenArea>);
-	shared_ptr<MapObject> getElement(const Point&);
-	shared_ptr<MapObject> getElement(shared_ptr<ScreenArea>);
+	shared_ptr<ScreenArea> getElement(const Point&);
 };

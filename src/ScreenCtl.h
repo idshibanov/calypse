@@ -19,13 +19,15 @@
 class ScreenCtl {
 	ALLEGRO_DISPLAY* _display;
 	ScreenBuffer _buffer;
-	SpriteText* _font;
+	shared_ptr<SpriteText> _font;
 
 	shared_ptr<ResourceCtl> _res;
 	shared_ptr<LocalMap> _map;
 	shared_ptr<Camera> _cam;
 	shared_ptr<Mouse> _mouse;
 	shared_ptr<AppState> _state;
+
+	shared_ptr<UIButton> _button;
 
 	bool _render;
 	int _lastTimestamp;
@@ -51,7 +53,7 @@ public:
 	void redraw(bool cameraMoved = false);
 	void update();
 	void updateTimers();
-	shared_ptr<MapObject> processAction(const Point&);
+	shared_ptr<ScreenArea> processAction(const Point&);
 	int XtoISO(int, int);
 	int YtoISO(int, int);
 	int isoXtoMap(int, int);

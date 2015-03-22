@@ -34,15 +34,16 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	_zoom = 1.0;
 
-	_font = new SpriteText("res/arialbd.ttf", 12);
+	_font = make_shared<SpriteText>("res/arialbd.ttf", 12);
+
+	_button = make_shared<UIButton>(Point(700, 0), nullptr, Point(100, 50), -1, _res->getSprite(6),
+		_res->getSprite(7), _font, string("Label"));
 
 	_animation_speed = 100;
 	_animation_frame = 0;
 }
 
 ScreenCtl::~ScreenCtl() {
-	delete _font;
-
 	al_destroy_display(_display);
 }
 
@@ -50,6 +51,7 @@ bool ScreenCtl::draw() {
 	bool retval = false;
 	if (_render || _lastTimestamp < _state->_appTime) {
 		_buffer.reset();
+		_buffer.setElement(_button);
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
 		ALLEGRO_COLOR obj_color = al_map_rgb(155, 155, 255);
 		// map size
@@ -147,6 +149,7 @@ bool ScreenCtl::draw() {
 				_font->draw(to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
+		_button->draw();
 
 		string timeSTR("App time: " + to_string(_state->_appTime));
 		string cpsSTR("Cycles per second: " + to_string(_state->_CPS));
@@ -210,6 +213,7 @@ void ScreenCtl::update() {
 	if (colmax < _lastTile._x) _lastTile._x = colmax;
 	if (rowmax < _lastTile._y) _lastTile._y = rowmax;
 
+	_button->update();
 	_render = true;
 }
 
@@ -223,7 +227,7 @@ void ScreenCtl::updateTimers() {
 	}
 }
 
-shared_ptr<MapObject> ScreenCtl::processAction(const Point& pos) {
+shared_ptr<ScreenArea> ScreenCtl::processAction(const Point& pos) {
 	return _buffer.getElement(pos);
 }
 

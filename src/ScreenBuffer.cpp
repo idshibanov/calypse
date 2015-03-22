@@ -37,12 +37,23 @@ unordered_set<shared_ptr<ScreenArea>>::iterator ScreenBuffer::getElementArea(con
 						maxZ = area->_zlevel;
 					}
 				}
+			} else {
+				retval = it;
 			}
 		}
 	}
 	return retval;
 }
 
+shared_ptr<ScreenArea> ScreenBuffer::getElement(const Point& pos) {
+	auto area = getElementArea(pos);
+	if (area != _items.end()) {
+		return *area;
+	}
+	return nullptr;
+}
+
+/*
 shared_ptr<MapObject> ScreenBuffer::getElement(const Point& pos) {
 	auto area = getElementArea(pos);
 	if (area != _items.end()) {
@@ -59,3 +70,4 @@ shared_ptr<MapObject> ScreenBuffer::getElement(shared_ptr<ScreenArea> area) {
 	}
 	return nullptr;
 }
+*/
