@@ -11,7 +11,7 @@ class LocalMap;
 
 class AStarNode {
 public:
-	shared_ptr<AStarNode> _parent;
+	std::shared_ptr<AStarNode> _parent;
 	Point _pos;
 	size_t _f; // total cost
 	size_t _g; // current cost
@@ -21,7 +21,7 @@ public:
 	bool operator< (const AStarNode& rhs) const;
 	//    bool operator() (const AStarNode& lhs, const AStarNode& rhs) const;
 	bool operator== (const AStarNode& rhs) const;
-	friend ostream& operator<<(ostream& out, const AStarNode& rhs);
+	friend std::ostream& operator<<(std::ostream& out, const AStarNode& rhs);
 };
 
 template<typename T>
@@ -31,17 +31,17 @@ public:
 };
 
 class AStarSearch {
-	shared_ptr<LocalMap> _map;
+	std::shared_ptr<LocalMap> _map;
 	AStarHeap<AStarNode> _openSet;
-	std::vector<shared_ptr<AStarNode>> _visitedSet;
+	std::vector<std::shared_ptr<AStarNode>> _visitedSet;
 	std::vector<AStarNode> _pathFound;
 public:
-	AStarSearch(shared_ptr<LocalMap> map);
+	AStarSearch(std::shared_ptr<LocalMap> map);
 	~AStarSearch();
-	std::vector<shared_ptr<AStarNode>> getNeighbors(AStarNode& node, AStarNode& goal);
+	std::vector<std::shared_ptr<AStarNode>> getNeighbors(AStarNode& node, AStarNode& goal);
 	size_t heuristicCost(AStarNode& start, AStarNode& goal);
 	size_t heuristicCost(size_t startID, size_t goalID);
-	void recursePath(shared_ptr<AStarNode>& node);
+	void recursePath(std::shared_ptr<AStarNode>& node);
 	void clearData();
 	std::vector<AStarNode> searchPath(const Point& start, const Point& goal);
 };

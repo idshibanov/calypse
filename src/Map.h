@@ -17,27 +17,27 @@ class MapObject;
 class AStarSearch;
 
 class LocalMap {
-	weak_ptr<AStarSearch> _pFinder;
-	vector<MapTile> _tiles;
+	std::weak_ptr<AStarSearch> _pFinder;
+	std::vector<MapTile> _tiles;
 	//unordered_map<int, shared_ptr<MapObject>> _objects;
 	ObjectHash _objects;
-	shared_ptr<Actor> _actor;
+	std::shared_ptr<Actor> _actor;
 	unsigned int _rowmax;
 	unsigned int _colmax;
 	int _xmax;
 public:
 	LocalMap();
 	~LocalMap();
-	void generate(weak_ptr<AStarSearch> pf);
+	void generate(std::weak_ptr<AStarSearch> pf);
 	short getTileType(unsigned x, unsigned y) const;
 	short getTileType(unsigned id) const;
 	unsigned int getRowMax() const;
 	unsigned int getColMax() const;
 	unsigned int convertIDToX(unsigned mapID) const;
 	unsigned int convertIDToY(unsigned mapID) const;
-	shared_ptr<Actor> getActor();
-	map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
-	const unordered_map<int, int>* getObjectMasks() const;
+	std::shared_ptr<Actor> getActor();
+	std::map<int, std::shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
+	const std::unordered_map<int, int>* getObjectMasks() const;
 	bool toggleObject(const Point& coord);
 	bool resetObject(const Point& coord);
 	bool addObject(shared_ptr<MapObject> obj);

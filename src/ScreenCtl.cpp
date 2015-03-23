@@ -37,7 +37,7 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_font = make_shared<SpriteText>("res/arialbd.ttf", 12);
 
 	_button = make_shared<UIButton>(Point(700, 0), nullptr, Point(100, 50), -1, _res->getSprite(6),
-		_res->getSprite(7), _font, string("Label"));
+		_res->getSprite(7), _font, std::string("Label"));
 
 	_animation_speed = 100;
 	_animation_frame = 0;
@@ -73,7 +73,7 @@ bool ScreenCtl::draw() {
 				//al_hold_bitmap_drawing(false);
 
 				if (_state->_drawCoords) {
-					string tileCoords(to_string(col) + ", " + to_string(row));
+					std::string tileCoords(std::to_string(col) + ", " + std::to_string(row));
 					_font->draw(tileCoords, coord.add(24,8), color);
 				}
 			}
@@ -146,16 +146,16 @@ bool ScreenCtl::draw() {
 				//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
 				//_font->draw(tileCoords, coord.add(12, 30), color);
 				//_font->draw(to_string(obj.first), coord.add(12, 30), color);
-				_font->draw(to_string(obj.second->getID()), coord.add(12, 30), obj_color);
+				_font->draw(std::to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
 		_button->draw();
 
-		string timeSTR("App time: " + to_string(_state->_appTime));
-		string cpsSTR("Cycles per second: " + to_string(_state->_CPS));
-		string fpsSTR("Frames per second: " + to_string(_state->_FPS));
-		string spdSTR("Animation speed: " + to_string(static_cast<int>(_animation_speed)) + "%");
-		string frameSTR("Animation frame #" + to_string(_actor->getSprite()));
+		std::string timeSTR("App time: " + std::to_string(_state->_appTime));
+		std::string cpsSTR("Cycles per second: " + std::to_string(_state->_CPS));
+		std::string fpsSTR("Frames per second: " + std::to_string(_state->_FPS));
+		std::string spdSTR("Animation speed: " + std::to_string(static_cast<int>(_animation_speed)) + "%");
+		std::string frameSTR("Animation frame #" + std::to_string(_actor->getSprite()));
 		_font->draw(timeSTR, Point(5, 5), color);
 		_font->draw(cpsSTR, Point(5, 30), color);
 		_font->draw(fpsSTR, Point(5, 55), color);
@@ -163,7 +163,7 @@ bool ScreenCtl::draw() {
 		_font->draw(frameSTR, Point(5, 105), color);
 
 		// Almost last: mouse cursor
-		auto cur = dynamic_pointer_cast<SpriteSheet>(_res->getSprite(0));
+		auto cur = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(0));
 		cur->draw(_mouse->getPos(), _mouse->getSprite());
 
 		_lastTimestamp = _state->_appTime;

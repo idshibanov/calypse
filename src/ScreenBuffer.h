@@ -9,12 +9,12 @@
 // ordered map will be faster to iterate
 
 class ScreenBuffer {
-	unordered_set<shared_ptr<ScreenArea>> _items;
-	unordered_set<shared_ptr<ScreenArea>>::iterator getElementArea(const Point&);
+	std::unordered_set<std::shared_ptr<ScreenArea>> _items;
+	std::unordered_set<std::shared_ptr<ScreenArea>>::iterator getElementArea(const Point&);
 public:
 	ScreenBuffer();
 	~ScreenBuffer();
 	void reset();
-	void setElement(shared_ptr<ScreenArea>);
-	shared_ptr<ScreenArea> getElement(const Point&);
+	void setElement(std::shared_ptr<ScreenArea>);
+	std::shared_ptr<ScreenArea> getElement(const Point&);
 };

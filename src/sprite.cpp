@@ -189,13 +189,13 @@ void SpriteText::draw(const char* str, const Point& pos, ALLEGRO_COLOR color) {
 		al_draw_text(_font, color, pos._x, pos._y, 0, str);
 }
 
-void SpriteText::draw(string& str, const Point& pos, ALLEGRO_COLOR color) {
+void SpriteText::draw(std::string& str, const Point& pos, ALLEGRO_COLOR color) {
 	draw(str.c_str(), pos, color);
 }
 
 
 void SpriteText::draw(const Point& text, const Point& pos, ALLEGRO_COLOR color) {
-	string objectCoords(to_string(text._x) + ", " + to_string(text._y));
+	std::string objectCoords(std::to_string(text._x) + ", " + std::to_string(text._y));
 	draw(objectCoords.c_str(), pos, color);
 }
 

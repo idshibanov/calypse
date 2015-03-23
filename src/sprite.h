@@ -42,7 +42,7 @@ public:
 
 class SpriteText {
 	ALLEGRO_FONT* _font;
-	string _filename;
+	std::string _filename;
 	int _fontsize;
 public:
 	SpriteText(const char* fontname, unsigned size);
@@ -50,7 +50,7 @@ public:
 	SpriteText(const SpriteText&);
 	SpriteText& operator= (const SpriteText&);
 	void draw(const char* str, const Point& pos, ALLEGRO_COLOR color);
-	void draw(string& str, const Point& pos, ALLEGRO_COLOR color);
+	void draw(std::string& str, const Point& pos, ALLEGRO_COLOR color);
 	void draw(const Point& text, const Point& pos, ALLEGRO_COLOR color);
 };
 

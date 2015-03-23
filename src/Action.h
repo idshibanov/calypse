@@ -16,17 +16,17 @@ enum ActionType {
 class Action {
 	ActionType _type;
 protected:
-	weak_ptr<Actor> _actor;
+	std::weak_ptr<Actor> _actor;
 	TaskTimer _timer;
 	TaskTimer _state;
-	shared_ptr<Action> _next;
-	Action(ActionType, weak_ptr<Actor>, int, int);
+	std::shared_ptr<Action> _next;
+	Action(ActionType, std::weak_ptr<Actor>, int, int);
 public:
 	Action(const Action&);
 	virtual ~Action();
 	Action& operator= (const Action&);
-	void chainAction(shared_ptr<Action>);
-	shared_ptr<Action> getNext() const;
+	void chainAction(std::shared_ptr<Action>);
+	std::shared_ptr<Action> getNext() const;
 	void stop();
 	int getState() const;
 	ActionType getType() const;
@@ -38,10 +38,10 @@ public:
 
 class MoveAction : public Action {
 	Point _target;
-	vector<AStarNode> _path;
-	weak_ptr<AStarSearch> _pf;
+	std::vector<AStarNode> _path;
+	std::weak_ptr<AStarSearch> _pf;
 public:
-	MoveAction(ActionType, weak_ptr<Actor>, int, int, const Point&, weak_ptr<AStarSearch>);
+	MoveAction(ActionType, std::weak_ptr<Actor>, int, int, const Point&, std::weak_ptr<AStarSearch>);
 	MoveAction(const MoveAction&);
 	~MoveAction();
 	MoveAction& operator= (const MoveAction&);
@@ -52,10 +52,10 @@ public:
 
 
 class ObjectAction : public Action {
-	weak_ptr<MapObject> _target;
-	weak_ptr<LocalMap> _map;
+	std::weak_ptr<MapObject> _target;
+	std::weak_ptr<LocalMap> _map;
 public:
-	ObjectAction(ActionType, weak_ptr<Actor>, int, int, weak_ptr<MapObject>, weak_ptr<LocalMap>);
+	ObjectAction(ActionType, std::weak_ptr<Actor>, int, int, std::weak_ptr<MapObject>, std::weak_ptr<LocalMap>);
 	ObjectAction(const ObjectAction&);
 	~ObjectAction();
 	ObjectAction& operator= (const ObjectAction&);

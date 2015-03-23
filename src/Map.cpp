@@ -83,7 +83,7 @@ unsigned int LocalMap::convertIDToY(unsigned mapID) const {
 	return mapID / _colmax;
 }
 
-map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
+std::map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
 	//vector<shared_ptr<MapObject>> retval;
 	//map<int, shared_ptr<MapObject>> retval;
 	//Point size = last - first;
@@ -114,12 +114,12 @@ map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const P
 	}
 	*/
 	auto retval = _objects.getObjects(first, last);
-	pair<int, shared_ptr<MapObject>> act(_actor->getPos().toRenderPriority(), _actor);
+	std::pair<int, shared_ptr<MapObject>> act(_actor->getPos().toRenderPriority(), _actor);
 	retval.insert(act);
 	return retval;
 }
 
-const unordered_map<int, int>* LocalMap::getObjectMasks() const {
+const std::unordered_map<int, int>* LocalMap::getObjectMasks() const {
 	return _objects.getObjectMasks();
 }
 

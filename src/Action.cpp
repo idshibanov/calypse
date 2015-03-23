@@ -2,7 +2,7 @@
 #include "Object.h"
 #include "Action.h"
 
-Action::Action(ActionType type, weak_ptr<Actor> actor, int cycles, int steps)
+Action::Action(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps)
                : _timer(cycles), _state(steps) {
 	_type = type;
 	_actor = actor;
@@ -31,14 +31,14 @@ Action& Action::operator= (const Action& act) {
 	return *this;
 }
 
-void Action::chainAction(shared_ptr<Action> act) {
+void Action::chainAction(std::shared_ptr<Action> act) {
 	if (_next) {
 		_next->stop();
 	}
 	_next = act;
 }
 
-shared_ptr<Action> Action::getNext() const {
+std::shared_ptr<Action> Action::getNext() const {
 	return _next;
 }
 
@@ -56,8 +56,8 @@ ActionType Action::getType() const {
 
 
 
-MoveAction::MoveAction(ActionType type, weak_ptr<Actor> actor, int cycles, int steps, 
-	                   const Point& pos, weak_ptr<AStarSearch> pf) 
+MoveAction::MoveAction(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps,
+	                   const Point& pos, std::weak_ptr<AStarSearch> pf)
                        : Action(type, actor, cycles, steps) {
 	_target = pos - (pos % 2);
 	_pf = pf;
@@ -134,8 +134,8 @@ bool MoveAction::update() {
 
 
 
-ObjectAction::ObjectAction(ActionType type, weak_ptr<Actor> actor, int cycles, int steps,
-	                       weak_ptr<MapObject> obj, weak_ptr<LocalMap> map)
+ObjectAction::ObjectAction(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps,
+	                       std::weak_ptr<MapObject> obj, std::weak_ptr<LocalMap> map)
 	                       : Action(type, actor, cycles, steps) {
 	_target = obj;
 	_map = map;

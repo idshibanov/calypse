@@ -31,13 +31,13 @@ public:
 };
 
 class UILabel : public UIElement {
-	string _text;
-	shared_ptr<SpriteText> _font;
+	std::string _text;
+	std::shared_ptr<SpriteText> _font;
 public:
-	UILabel(Point pos, Point size, UIFrame* parent, shared_ptr<SpriteText> font,
-		string& text, bool active = true, bool visible = true);
+	UILabel(Point pos, Point size, UIFrame* parent, std::shared_ptr<SpriteText> font,
+		std::string& text, bool active = true, bool visible = true);
 	~UILabel();
-	string& getText();
+	std::string& getText();
 	void update();
 	void draw();
 };
@@ -45,20 +45,20 @@ public:
 class UIButton : public UIElement {
 	int _action_id;
 	bool _state;
-	shared_ptr<Sprite> _sprite;
-	shared_ptr<Sprite> _spriteClicked;
+	std::shared_ptr<Sprite> _sprite;
+	std::shared_ptr<Sprite> _spriteClicked;
 	TaskTimer _clickTimer;
-	string _text;
-	shared_ptr<SpriteText> _font;
+	std::string _text;
+	std::shared_ptr<SpriteText> _font;
 public:
-	UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared_ptr<Sprite> spr,
-		shared_ptr<Sprite> sprOn, shared_ptr<SpriteText> font, string& text,
+	UIButton(Point pos, UIFrame* parent, Point size, int action_id, std::shared_ptr<Sprite> spr,
+		std::shared_ptr<Sprite> sprOn, std::shared_ptr<SpriteText> font, std::string& text,
 		bool active = true, bool visible = true, bool state = false,
 		unsigned clickedTicks = UIBUTTON_DEFAULT_CLICKED_TICKS);
 	~UIButton();
 	int getActionID();
 	bool getState();
-	string& getText();
+	std::string& getText();
 	void launchTimer();
 	bool checkTimer();
 	void update();

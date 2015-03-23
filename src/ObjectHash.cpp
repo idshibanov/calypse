@@ -86,8 +86,8 @@ int ObjectHash::checkPos(const Point& pos) const {
 }
 
 
-vector<Point> ObjectHash::searchForObject(const Point& pos) {
-	vector<Point> retval;
+std::vector<Point> ObjectHash::searchForObject(const Point& pos) {
+	std::vector<Point> retval;
 	
 	int objID = checkPos(pos);
 	if(objID != OBJECT_NOT_FOUND) {
@@ -116,8 +116,8 @@ shared_ptr<MapObject> ObjectHash::getObject(const Point& pos) {
 }
 
 
-map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const Point& last) const {
-	map<int, shared_ptr<MapObject>> retval;
+std::map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const Point& last) const {
+	std::map<int, shared_ptr<MapObject>> retval;
 	Point size = last - first;
 
 	for (auto obj : _objects) {
@@ -137,6 +137,6 @@ map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const
 }
 
 
-const unordered_map<int, int>* ObjectHash::getObjectMasks() const {
+const std::unordered_map<int, int>* ObjectHash::getObjectMasks() const {
 	return &_mask;
 }

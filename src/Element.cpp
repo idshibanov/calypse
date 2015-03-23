@@ -34,8 +34,8 @@ bool UIElement::isVisible() {
 
 // Label class
 UILabel::UILabel(Point pos, Point size, UIFrame* parent, shared_ptr<SpriteText> font,
-	string& text, bool active, bool visible)
-	: UIElement(pos, size, parent, active, visible) {
+	             std::string& text, bool active, bool visible)
+	             : UIElement(pos, size, parent, active, visible) {
 	_text = text;
 	_font = font;
 	_elType = UIELEMENT_TYPE_LABEL;
@@ -45,7 +45,7 @@ UILabel::~UILabel() {
 
 }
 
-string& UILabel::getText() {
+std::string& UILabel::getText() {
 	return _text;
 }
 
@@ -67,9 +67,9 @@ void UILabel::draw() {
 
 // Button class
 UIButton::UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared_ptr<Sprite> spr,
-	shared_ptr<Sprite> sprOn, shared_ptr<SpriteText> font, string& text,
-	bool active, bool visible, bool state, unsigned clickedTicks)
-	: UIElement(pos, size, parent, active, visible), _clickTimer(clickedTicks) {
+	               shared_ptr<Sprite> sprOn, shared_ptr<SpriteText> font, std::string& text,
+	               bool active, bool visible, bool state, unsigned clickedTicks)
+	               : UIElement(pos, size, parent, active, visible), _clickTimer(clickedTicks) {
 	_action_id = action_id;
 	_sprite = spr;
 	_spriteClicked = sprOn;
@@ -91,7 +91,7 @@ bool UIButton::getState() {
 	return _state;
 }
 
-string& UIButton::getText() {
+std::string& UIButton::getText() {
 	return _text;
 }
 

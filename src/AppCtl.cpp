@@ -9,7 +9,7 @@
 AppCtl::AppCtl() {
 	_res = make_shared<ResourceCtl>();
 	_map = make_shared<LocalMap>();
-	_pFinder = make_shared<AStarSearch>(_map);
+	_pFinder = std::make_shared<AStarSearch>(_map);
 	_map->generate(_pFinder);
 
 	_state = make_shared<AppState>();
@@ -149,8 +149,8 @@ void AppCtl::controlLoop() {
 			cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
 			if (elem) {
 				if (elem->getType() == AREA_TYPE_OBJECT) {
-					auto obj = dynamic_pointer_cast<ObjectArea>(elem)->_obj;
-					cout << "Found: " << obj->getID() << " pos: " << obj->getXPos() << "," << obj->getYPos() << endl;
+					auto obj = std::dynamic_pointer_cast<ObjectArea>(elem)->_obj;
+					std::cout << "Found: " << obj->getID() << " pos: " << obj->getXPos() << "," << obj->getYPos() << endl;
 
 					auto actor = _map->getActor();
 					auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, obj->getPos().sub(10, 10), _pFinder);
@@ -158,7 +158,7 @@ void AppCtl::controlLoop() {
 					act1->chainAction(act2);
 					actor->setAction(act1);
 				} else {
-					auto button = dynamic_pointer_cast<UIButton>(elem);
+					auto button = std::dynamic_pointer_cast<UIButton>(elem);
 					button->launchTimer();
 				}
 			} else {

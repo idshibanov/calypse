@@ -1,7 +1,12 @@
 #pragma once
 #include <iostream>
 #include <memory>
-using namespace std;
+
+using std::cout;
+using std::endl;
+using std::shared_ptr;
+using std::weak_ptr;
+using std::make_shared;
 
 #define TD_TILESIZE_X 32
 #define TD_TILESIZE_Y 32

@@ -22,8 +22,8 @@ class UIFrame {
 	bool _visible;
 	UIFrame* _parent;
 
-	vector<shared_ptr<UIElement>> _elem;
-	shared_ptr<Sprite> _bgSprite;
+	std::vector<std::shared_ptr<UIElement>> _elem;
+	std::shared_ptr<Sprite> _bgSprite;
 	ALLEGRO_COLOR _bgColor;
 public:
 	UIFrame();
@@ -40,11 +40,11 @@ public:
 	int getAbsYPos();
 	bool isVisible();
 	void move(int xpos, int ypos);
-	void addElement(shared_ptr<UIElement> elem);
-	shared_ptr<UIElement> getElement(int absX, int absY);
+	void addElement(std::shared_ptr<UIElement> elem);
+	std::shared_ptr<UIElement> getElement(int absX, int absY);
 	void setParent(UIFrame* p);
 	void setZLevel(unsigned z);
 	void setVisible(bool value);
-	void setSprite(shared_ptr<Sprite> sprite);
+	void setSprite(std::shared_ptr<Sprite> sprite);
 	void draw();
 };

@@ -19,15 +19,15 @@
 class ScreenCtl {
 	ALLEGRO_DISPLAY* _display;
 	ScreenBuffer _buffer;
-	shared_ptr<SpriteText> _font;
+	std::shared_ptr<SpriteText> _font;
 
-	shared_ptr<ResourceCtl> _res;
-	shared_ptr<LocalMap> _map;
-	shared_ptr<Camera> _cam;
-	shared_ptr<Mouse> _mouse;
-	shared_ptr<AppState> _state;
+	std::shared_ptr<ResourceCtl> _res;
+	std::shared_ptr<LocalMap> _map;
+	std::shared_ptr<Camera> _cam;
+	std::shared_ptr<Mouse> _mouse;
+	std::shared_ptr<AppState> _state;
 
-	shared_ptr<UIButton> _button;
+	std::shared_ptr<UIButton> _button;
 
 	bool _render;
 	int _lastTimestamp;
@@ -47,13 +47,13 @@ class ScreenCtl {
 	int _animation_frame;
 	TaskTimer frame_t;
 public:
-	ScreenCtl(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<Camera>, shared_ptr<Mouse>, shared_ptr<AppState>);
+	ScreenCtl(std::shared_ptr<ResourceCtl>, std::shared_ptr<LocalMap>, std::shared_ptr<Camera>, std::shared_ptr<Mouse>, std::shared_ptr<AppState>);
 	~ScreenCtl();
 	bool draw();
 	void redraw(bool cameraMoved = false);
 	void update();
 	void updateTimers();
-	shared_ptr<ScreenArea> processAction(const Point&);
+	std::shared_ptr<ScreenArea> processAction(const Point&);
 	int XtoISO(int, int);
 	int YtoISO(int, int);
 	int isoXtoMap(int, int);

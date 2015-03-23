@@ -4,9 +4,9 @@
 
 class ObjectArea : public ScreenArea {
 public:
-	shared_ptr<MapObject> _obj;
+	std::shared_ptr<MapObject> _obj;
 	SpriteSheet* _sprite;
-	ObjectArea(const Point&, const Point&, shared_ptr<MapObject>, SpriteSheet*);
+	ObjectArea(const Point&, const Point&, std::shared_ptr<MapObject>, SpriteSheet*);
 	~ObjectArea();
 };
 

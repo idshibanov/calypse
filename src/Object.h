@@ -30,7 +30,7 @@ class Actor : public MapObject {
 	bool _static;
 	int _dir;
 	int _timer;
-	shared_ptr<Action> _action;
+	std::shared_ptr<Action> _action;
 public:
 	Actor(short type, const Point& pos, int defaultSprite);
 	Actor(Actor& rhs);
@@ -38,7 +38,7 @@ public:
 	~Actor();
 	void setXPos(int);
 	void setYPos(int);
-	void setAction(shared_ptr<Action>);
+	void setAction(std::shared_ptr<Action>);
 	void update();
 	int getDirection(const Point&);
 	void move(const Point&);

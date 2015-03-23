@@ -26,9 +26,11 @@ public:
 	size_t operator() (const ScreenArea&) const;
 };
 
-template <>
-struct hash<shared_ptr<ScreenArea>> {
-	size_t operator() (const shared_ptr<ScreenArea>& area) const {
-		return area->_pos.toRenderPriority();
-	}
-};
+namespace std {
+	template <>
+	struct hash<shared_ptr<ScreenArea>> {
+		size_t operator() (const shared_ptr<ScreenArea>& area) const {
+			return area->_pos.toRenderPriority();
+		}
+	};
+}

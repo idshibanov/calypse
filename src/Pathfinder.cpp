@@ -21,7 +21,7 @@ bool AStarNode::operator== (const AStarNode& rhs) const {
 	return _pos == rhs._pos;
 }
 
-ostream& operator<<(ostream& out, const AStarNode& rhs) {
+std::ostream& operator<<(std::ostream& out, const AStarNode& rhs) {
 	out << "Node: " << rhs._pos._x << "," << rhs._pos._y;
 	out << "  g: " << rhs._g << " h: " << rhs._h;
 	return out;
