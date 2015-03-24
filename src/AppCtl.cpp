@@ -150,7 +150,6 @@ void AppCtl::controlLoop() {
 			if (elem) {
 				if (elem->getType() == AREA_TYPE_OBJECT) {
 					auto obj = std::dynamic_pointer_cast<ObjectArea>(elem)->_obj;
-					std::cout << "Found: " << obj->getID() << " pos: " << obj->getXPos() << "," << obj->getYPos() << endl;
 
 					auto actor = _map->getActor();
 					auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, obj->getPos().sub(10, 10), _pFinder);
