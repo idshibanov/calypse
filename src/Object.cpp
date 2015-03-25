@@ -7,16 +7,19 @@ MapObject::MapObject(const Point& pos, short type)
 	                : _pos(pos),  _type(type) {
 	_id = lastID++;
 	_spriteID = 0;
+	_dragged = false;
 }
 
 MapObject::MapObject(MapObject& rhs) {
 	_pos = rhs._pos;
 	_type = rhs._type;
+	_dragged = rhs._dragged;
 }
 
 MapObject& MapObject::operator=(MapObject& rhs){
     _pos = rhs._pos;
-    _type = rhs._type;
+	_type = rhs._type;
+	_dragged = rhs._dragged;
     return *this;
 }
 
@@ -194,4 +197,8 @@ SmallObject::~SmallObject() {
 
 bool SmallObject::isDragged() const {
 	return _dragged;
+}
+
+void SmallObject::pickUp(const Actor* act) {
+	_dragged = true;
 }

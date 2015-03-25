@@ -171,7 +171,13 @@ bool ObjectAction::update() {
 		//return _map.lock()->addObject(obj);
 		if (_state.check()) {
 			if (!_map.expired() && !_target.expired()) {
-				return _map.lock()->toggleObject(_target.lock()->getPos());
+				if (_type == ACTION_CUT) {
+					return _map.lock()->toggleObject(_target.lock()->getPos());
+				} else if (_type == ACTION_DRAG && !_actor.expired()) {
+					auto smallTarget = std::dynamic_pointer_cast<SmallObject>(_target.lock());
+					smallTarget->pickUp(_actor.lock().get());
+					return true;
+				}
 			}
 		}
 		_timer.relaunch();

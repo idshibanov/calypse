@@ -10,12 +10,13 @@ class Actor;
 enum ActionType {
 	ACTION_MOVE,
 	ACTION_CUT,
+	ACTION_DRAG,
 	ACTION_END
 };
 
 class Action {
-	ActionType _type;
 protected:
+	ActionType _type;
 	std::weak_ptr<Actor> _actor;
 	TaskTimer _timer;
 	TaskTimer _state;
