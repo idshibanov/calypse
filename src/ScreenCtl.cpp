@@ -128,15 +128,16 @@ bool ScreenCtl::draw() {
 			coord = coord.toIso() + _screenOffset;
 
 			int type = obj.second->getType();
-			auto objInfo = _res->getObjectInfo(type).lock();
+			auto objInfo = _res->getObjectInfo(type);
 
 			if (objInfo != nullptr) {
 				if (objInfo->_draggable == true) {
 					auto smallObj = std::dynamic_pointer_cast<SmallObject>(obj.second);
 					if (smallObj->isDragged()) {
+						int actYOffset = _res->getObjectInfo(_actor->getType())->_offset._y;
 						coord = _actor->getPos();
 						coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
-						coord = coord.toIso().sub(0,70) + _screenOffset;
+						coord = coord.toIso().add(0, actYOffset - 10) + _screenOffset;
 					}
 				}
 				Point objSize = objInfo->_size * _zoom;

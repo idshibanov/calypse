@@ -14,6 +14,6 @@ public:
 	ResourceCtl();
 	~ResourceCtl();
 	void loadSprites();
-	std::weak_ptr<ObjectInfo> getObjectInfo(int type);
-	std::shared_ptr<Sprite> getSprite(int id);
+	shared_ptr<ObjectInfo> getObjectInfo(int type);
+	shared_ptr<Sprite> getSprite(int id);
 };
