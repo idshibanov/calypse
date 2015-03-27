@@ -132,8 +132,7 @@ bool ScreenCtl::draw() {
 
 			if (objInfo != nullptr) {
 				if (objInfo->_draggable == true) {
-					auto smallObj = std::dynamic_pointer_cast<SmallObject>(obj.second);
-					if (smallObj->isDragged()) {
+					if (obj.second->isDragged()) {
 						int actYOffset = _res->getObjectInfo(_actor->getType())->_offset._y;
 						coord = _actor->getPos();
 						coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);

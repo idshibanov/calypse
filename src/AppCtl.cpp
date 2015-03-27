@@ -8,7 +8,7 @@
 
 AppCtl::AppCtl() {
 	_res = make_shared<ResourceCtl>();
-	_map = make_shared<LocalMap>();
+	_map = make_shared<LocalMap>(_res);
 	_pFinder = std::make_shared<AStarSearch>(_map);
 	_map->generate(_pFinder);
 
@@ -144,33 +144,41 @@ void AppCtl::controlLoop() {
 			Point absPos(ev.mouse.x, ev.mouse.y);
 			_mouse->set(absPos, ev.mouse.button, true);
 			Point tile = _screen->convertCoords(absPos);
+			auto actor = _map->getActor();
 
 			auto elem = _screen->processAction(absPos);
 			cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
-			if (elem) {
-				if (elem->getType() == AREA_TYPE_OBJECT) {
-					auto obj = std::dynamic_pointer_cast<ObjectArea>(elem)->_obj;
-					auto actor = _map->getActor();
+			if (ev.mouse.button == MOUSE_BUTTON_LEFT) {
+				if (elem) {
+					if (elem->getType() == AREA_TYPE_OBJECT) {
+						auto obj = std::dynamic_pointer_cast<ObjectArea>(elem)->_obj;
 
-					auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, obj->getPos().sub(10, 10), _pFinder);
-					if (_res->getObjectInfo(obj->getType())->_draggable) {
-						auto act2 = make_shared<ObjectAction>(ACTION_DRAG, actor, 1, 1, obj, _map);
-						act1->chainAction(act2);
+						auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, obj->getPos().sub(10, 10), _pFinder);
+						if (_res->getObjectInfo(obj->getType())->_draggable) {
+							auto act2 = make_shared<ObjectAction>(ACTION_DRAG, actor, 1, 1, obj, _map);
+							act1->chainAction(act2);
+						} else {
+							auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 20, 8, obj, _map);
+							act1->chainAction(act2);
+						}
+						actor->setAction(act1);
 					} else {
-						auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 20, 8, obj, _map);
-						act1->chainAction(act2);
+						auto button = std::dynamic_pointer_cast<UIButton>(elem);
+						button->launchTimer();
 					}
-					actor->setAction(act1);
 				} else {
-					auto button = std::dynamic_pointer_cast<UIButton>(elem);
-					button->launchTimer();
+					cout << tile._x << "," << tile._y << endl;
+					if (tile._x > 0 && tile._y > 0) {
+						auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
+						actor->setAction(act);
+					}
 				}
-			} else {
-				cout << tile._x << "," << tile._y << endl;
-				auto actor = _map->getActor();
-				if (tile._x > 0 && tile._y > 0) {
-					auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
-					actor->setAction(act);
+			} else if (ev.mouse.button == MOUSE_BUTTON_RIGHT) {
+				if (tile._x > 0 && tile._y > 0 && actor->isHolding()) {
+					auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
+					auto act2 = make_shared<PointAction>(ACTION_DROP, actor, 1, 1, tile);
+					act1->chainAction(act2);
+					actor->setAction(act1);
 				}
 			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {

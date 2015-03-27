@@ -174,8 +174,54 @@ bool ObjectAction::update() {
 				if (_type == ACTION_CUT) {
 					return _map.lock()->toggleObject(_target.lock()->getPos());
 				} else if (_type == ACTION_DRAG && !_actor.expired()) {
-					auto smallTarget = std::dynamic_pointer_cast<SmallObject>(_target.lock());
-					smallTarget->pickUp(_actor.lock().get());
+					_actor.lock()->pickUp(_target);
+					_target.lock()->dragged(true);
+					return true;
+				}
+			}
+		}
+		_timer.relaunch();
+	}
+	return false;
+}
+
+
+
+
+PointAction::PointAction(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps, const Point& pos)
+	: Action(type, actor, cycles, steps) {
+	_targetPos = pos;
+}
+
+PointAction::PointAction(const PointAction& act) : Action(act) {
+	_targetPos = act._targetPos;
+}
+
+PointAction::~PointAction() {
+
+}
+
+PointAction& PointAction::operator= (const PointAction& act) {
+	Action::operator=(act);
+	_targetPos = act._targetPos;
+	return *this;
+}
+
+bool PointAction::isActive() const {
+	return _state.isActive();
+}
+
+void PointAction::start() {
+	_timer.relaunch();
+	_state.relaunch();
+}
+
+bool PointAction::update() {
+	if (_timer.check()) {
+		if (_state.check()) {
+			if (!_actor.expired()) {
+				if (_type == ACTION_DROP) {
+					_actor.lock()->drop(_targetPos);
 					return true;
 				}
 			}

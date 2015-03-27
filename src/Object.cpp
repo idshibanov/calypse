@@ -3,8 +3,8 @@
 
 int MapObject::lastID = 0;
 
-MapObject::MapObject(const Point& pos, short type)
-	                : _pos(pos),  _type(type) {
+MapObject::MapObject(short type, const Point& pos)
+	                 : _type(type), _pos(pos) {
 	_id = lastID++;
 	_spriteID = 0;
 	_dragged = false;
@@ -39,6 +39,10 @@ Point MapObject::getPos() {
 	return _pos;
 }
 
+void MapObject::setPos(const Point& pos) {
+	_pos = pos;
+}
+
 int MapObject::getType(){
     return _type;
 }
@@ -55,10 +59,18 @@ void MapObject::setSprite(int id) {
 	_spriteID = id;
 }
 
+void MapObject::dragged(bool state) {
+	_dragged = state;
+}
+
+bool MapObject::isDragged() const {
+	return _dragged;
+}
+
 
 
 Actor::Actor(short type, const Point& pos, int defaultSprite)
-	: MapObject(pos, type) {
+	: MapObject(type, pos) {
 	_spriteID = defaultSprite;
 	_dir = 1;
 	_static = true;
@@ -185,18 +197,35 @@ void Actor::move(const Point& mod) {
 	_pos += mod;
 }
 
+void Actor::pickUp(weak_ptr<MapObject> slave) {
+	_slave = slave;
+}
+
+void Actor::drop(const Point& pos) {
+	auto slave = _slave.lock();
+	if (slave) {
+		slave->setPos(_pos);
+		slave->dragged(false);
+	}
+	_slave = weak_ptr<MapObject>();
+}
+
+bool Actor::isHolding() const {
+	return !_slave.expired();
+}
+
+weak_ptr<MapObject> Actor::getSlave() {
+	return _slave;
+}
 
 
-SmallObject::SmallObject(short type, const Point& pos) : MapObject(pos, type) {
+
+SmallObject::SmallObject(short type, const Point& pos) : MapObject(type, pos) {
 	_dragged = false;
 }
 
 SmallObject::~SmallObject() {
 
-}
-
-bool SmallObject::isDragged() const {
-	return _dragged;
 }
 
 void SmallObject::pickUp(const Actor* act) {

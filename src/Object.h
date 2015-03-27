@@ -13,24 +13,28 @@ protected:
 	int _id;
 	static int lastID;
 public:
-    MapObject(const Point& pos, short type);
+	MapObject(short type, const Point& pos);
     MapObject(MapObject& rhs);
     MapObject& operator=(MapObject& rhs);
-    virtual ~MapObject();
+	virtual ~MapObject();
+	int getType();
+	int getID();
     int getXPos();
     int getYPos();
 	Point getPos();
-	int getType();
-	int getID();
+	void setPos(const Point&);
 	int getSprite();
 	void setSprite(int);
+	void dragged(bool);
+	bool isDragged() const;
 };
 
 class Actor : public MapObject {
 	bool _static;
 	int _dir;
 	int _timer;
-	std::shared_ptr<Action> _action;
+	shared_ptr<Action> _action;
+	weak_ptr<MapObject> _slave;
 public:
 	Actor(short type, const Point& pos, int defaultSprite);
 	Actor(Actor& rhs);
@@ -42,14 +46,16 @@ public:
 	void update();
 	int getDirection(const Point&);
 	void move(const Point&);
+	void pickUp(weak_ptr<MapObject>);
+	void drop(const Point&);
+	bool isHolding() const;
+	weak_ptr<MapObject> getSlave();
 };
 
 class SmallObject : public MapObject {
-	bool _dragged;
 	Actor* _owner;
 public:
 	SmallObject(short, const Point&);
 	~SmallObject();
-	bool isDragged() const;
 	void pickUp(const Actor*);
 };
