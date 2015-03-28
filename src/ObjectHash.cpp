@@ -2,7 +2,8 @@
 #include "ObjectHash.h"
 
 
-ObjectHash::ObjectHash(int size) {
+ObjectHash::ObjectHash(shared_ptr<ResourceCtl> res, int size) {
+	_res = res;
 	_size = size;
 }
 
@@ -12,8 +13,9 @@ ObjectHash::~ObjectHash() {
 }
 
 
-bool ObjectHash::setObject(const Point& pos, const Point& size, shared_ptr<MapObject> obj) {
-	Rect area(pos, size);
+bool ObjectHash::setObject(shared_ptr<MapObject> obj) {
+	auto objInfo = _res->getObjectInfo(obj->getType());
+	Rect area(obj->getPos(), objInfo->mapSize());
 	int id = obj->getID();
 
 	std::function<bool(const Point&)> search = [this](const Point& pos) {
@@ -26,8 +28,9 @@ bool ObjectHash::setObject(const Point& pos, const Point& size, shared_ptr<MapOb
 
 	if (area.iterate(search, true)) {
 		area.iterate(setter);
-		return setObject(pos, obj);
-	}	
+		_objects.emplace(id, obj);
+		return true;
+	}
 	return false;
 }
 
@@ -42,10 +45,8 @@ bool ObjectHash::setObject(const Point& pos, shared_ptr<MapObject> obj) {
 bool ObjectHash::toggleObject(const Point& pos) {
 	auto obj = getObject(pos);
 	if (obj != nullptr) {
-		Rect area(obj->getPos(), Point(10,10));
-		if (obj->getType() == 2) {
-			area = Rect(obj->getPos(), Point(20, 30));
-		}
+		auto objInfo = _res->getObjectInfo(obj->getType());
+		Rect area(obj->getPos(), objInfo->mapSize());
 
 		if (obj->getType() == 1) {
 			if (obj->getSprite() == 1) {
@@ -79,7 +80,7 @@ bool ObjectHash::isFree(const Point& pos) const {
 
 int ObjectHash::checkPos(const Point& pos) const {
 	auto it = _mask.find(pos.toID(_size));
-	if(it != _mask.end()) {
+	if (it != _mask.end()) {
 		return it->second;
 	}
 	return OBJECT_NOT_FOUND;
@@ -88,11 +89,11 @@ int ObjectHash::checkPos(const Point& pos) const {
 
 std::vector<Point> ObjectHash::searchForObject(const Point& pos) {
 	std::vector<Point> retval;
-	
+
 	int objID = checkPos(pos);
-	if(objID != OBJECT_NOT_FOUND) {
+	if (objID != OBJECT_NOT_FOUND) {
 		retval.push_back(pos);
-		
+
 	}
 	return retval;
 }
@@ -100,7 +101,7 @@ std::vector<Point> ObjectHash::searchForObject(const Point& pos) {
 
 shared_ptr<MapObject> ObjectHash::getObject(int objID) {
 	auto it = _objects.find(objID);
-	if(it != _objects.end()) {
+	if (it != _objects.end()) {
 		return it->second;
 	}
 	return nullptr;
@@ -109,7 +110,7 @@ shared_ptr<MapObject> ObjectHash::getObject(int objID) {
 
 shared_ptr<MapObject> ObjectHash::getObject(const Point& pos) {
 	int objID = checkPos(pos);
-	if(objID != OBJECT_NOT_FOUND) {
+	if (objID != OBJECT_NOT_FOUND) {
 		return getObject(objID);
 	}
 	return nullptr;
@@ -122,12 +123,9 @@ std::map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, 
 
 	for (auto obj : _objects) {
 		Point pos = obj.second->getPos();
-		int prio = pos.toRenderPriority();
+		auto objInfo = _res->getObjectInfo(obj.second->getType());
 
-		// pass ResourceCtl and get proper size
-		if (obj.second->getType() == 1) {
-			prio = pos.toRenderPriority(Point(10,10));
-		}
+		int prio = pos.toRenderPriority(objInfo->mapSize());
 
 		if (pos > first * TILE_MASK && pos < last * TILE_MASK) {
 			retval.emplace(prio, obj.second);

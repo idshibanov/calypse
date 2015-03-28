@@ -5,9 +5,10 @@
 class ObjectArea : public ScreenArea {
 public:
 	std::shared_ptr<MapObject> _obj;
-	SpriteSheet* _sprite;
-	ObjectArea(const Point&, const Point&, std::shared_ptr<MapObject>, SpriteSheet*);
+	weak_ptr<Sprite> _sprite;
+	ObjectArea(const Point&, const Point&, std::shared_ptr<MapObject>, weak_ptr<Sprite>);
 	~ObjectArea();
+	shared_ptr<SpriteSheet> castSprite() const;
 };
 
 /*

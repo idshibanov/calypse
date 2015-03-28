@@ -4,7 +4,7 @@
 #include "Pathfinder.h"
 #include "Object.h"
 
-LocalMap::LocalMap(shared_ptr<ResourceCtl> res) : _objects(TD_MAP_COLS * TILE_MASK) {
+LocalMap::LocalMap(shared_ptr<ResourceCtl> res) : _objects(res, TD_MAP_COLS * TILE_MASK) {
 	_res = res;
 }
 
@@ -42,8 +42,8 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 	int randOffset = 0;
 	//_objects.reserve(_rowmax * _colmax / 100);
 
-	_objects.setObject(Point(150, 150), Point(20, 30), make_shared<MapObject>(2, Point(150, 150)));
-	_objects.setObject(Point(80, 90), Point(1, 1), make_shared<MapObject>(3, Point(80, 90)));
+	_objects.setObject(make_shared<MapObject>(2, Point(150, 150)));
+	_objects.setObject(make_shared<MapObject>(3, Point(80, 90)));
 	for (unsigned row = 0; row < _rowmax; row += 10){
 		for (unsigned col = 0; col < _colmax; col += 10){
 			for (int k = 0; k < objMaxDensity; k++){
@@ -51,9 +51,7 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 				Point objPos((col + (randOffset % 10)) * TILE_MASK, (row + (randOffset / 10)) * TILE_MASK);
 				cout << "OBJ: " << col + (randOffset % 10) << "," << row + (randOffset / 10);
 				cout << "  >> " << objPos._x << "," << objPos._y << " Prio: " << objPos.toRenderPriority() << endl;
-				_objects.setObject(objPos, Point(10, 10), make_shared<MapObject>(1, objPos));
-				//_objects.emplace(objPos.toID(_xmax), make_shared<MapObject>(1, objPos));
-				//_tiles[tempY * _colmax + tempX].setObject(tempObj);
+				_objects.setObject(make_shared<MapObject>(1, objPos));
 			}
 		}
 	}
@@ -136,7 +134,7 @@ bool LocalMap::resetObject(const Point& coord) {
 }
 
 bool LocalMap::addObject(shared_ptr<MapObject> obj) {
-	return _objects.setObject(obj->getPos(), _res->getObjectInfo(obj->getType())->_size, obj);
+	return _objects.setObject(obj);
 }
 
 bool LocalMap::tileExists(unsigned mapID) const {

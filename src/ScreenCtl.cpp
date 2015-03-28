@@ -131,23 +131,28 @@ bool ScreenCtl::draw() {
 			auto objInfo = _res->getObjectInfo(type);
 
 			if (objInfo != nullptr) {
-				if (objInfo->_draggable == true) {
+				if (objInfo->liftable() == true) {
 					if (obj.second->isDragged()) {
-						int actYOffset = _res->getObjectInfo(_actor->getType())->_offset._y;
+						int actYOffset = _res->getObjectInfo(_actor->getType())->offset()._y;
 						coord = _actor->getPos();
 						coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
 						coord = coord.toIso().add(0, actYOffset - 10) + _screenOffset;
 					}
 				}
-				Point objSize = objInfo->_size * _zoom;
-				coord += objInfo->_offset * _zoom;
+				Point objSize = objInfo->sprSize() * _zoom;
+				coord += objInfo->offset() * _zoom;
 
-				Sprite* obj_spr = _res->getSprite(objInfo->_spriteID).get();
-				SpriteSheet* objSprite = dynamic_cast<SpriteSheet*>(obj_spr);
+				auto objSprite = _res->getSprite(objInfo->spriteID());
+				if (objInfo->frames() == 0) {
+					objSprite->drawScaled(coord, objSize);
 
-				objSprite->drawScaled(coord, obj.second->getSprite(), _zoom);
+					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSprite));
+				} else {
+					auto objSpriteSheet = std::dynamic_pointer_cast<SpriteSheet>(objSprite);
+					objSpriteSheet->drawScaled(coord, obj.second->getSprite(), _zoom);
 
-				_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSprite));
+					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSpriteSheet));
+				}
 				//al_draw_rectangle(coord._x, coord._y, coord._x + objSize._x, coord._y + objSize._y,
 					//al_map_rgb(255, 100, 100), 1.0);
 

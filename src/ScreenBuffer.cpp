@@ -30,7 +30,8 @@ std::unordered_set<shared_ptr<ScreenArea>>::iterator ScreenBuffer::getElementAre
 		if (pos > it_ptr->_pos && pos < it_ptr->getMax()) {
 			if (it_ptr->getType() == AREA_TYPE_OBJECT) {
 				auto area = std::dynamic_pointer_cast<ObjectArea>(*it);
-				auto sp = area->_sprite;
+
+				auto sp = area->castSprite();
 				if (sp && sp->checkAlpha(pos - area->_pos, area->_obj->getSprite())) {
 					if (area->_zlevel > maxZ) {
 						retval = it;

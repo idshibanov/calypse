@@ -154,7 +154,7 @@ void AppCtl::controlLoop() {
 						auto obj = std::dynamic_pointer_cast<ObjectArea>(elem)->_obj;
 
 						auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, obj->getPos().sub(10, 10), _pFinder);
-						if (_res->getObjectInfo(obj->getType())->_draggable) {
+						if (_res->getObjectInfo(obj->getType())->liftable()) {
 							auto act2 = make_shared<ObjectAction>(ACTION_DRAG, actor, 1, 1, obj, _map);
 							act1->chainAction(act2);
 						} else {

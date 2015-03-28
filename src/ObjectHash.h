@@ -18,10 +18,12 @@ class ObjectHash {
 	Point _chunkPos;
 	Point _offset;
 	int _size;
+	ObjectHash(const ObjectHash&);
+	ObjectHash& operator= (const ObjectHash&);
 public:
-	ObjectHash(int size);
+	ObjectHash(shared_ptr<ResourceCtl>, int size);
 	~ObjectHash();
-	bool setObject(const Point& pos, const Point& size, shared_ptr<MapObject> obj);
+	bool setObject(shared_ptr<MapObject> obj);
 	bool setObject(const Point& pos, shared_ptr<MapObject> obj);
 	bool toggleObject(const Point& pos);
 	bool resetObject(const Point& pos);
