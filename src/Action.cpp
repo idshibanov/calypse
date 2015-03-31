@@ -90,6 +90,9 @@ void MoveAction::start() {
 	auto act = _actor.lock();
 	if (finder && act) {
 		_path = finder->searchPath(act->getPos(), _target);
+		if (_path.back()._pos != _target / 10) {
+			_target = _path.back()._pos;
+		}
 		_timer.relaunch();
 	}
 }
@@ -167,8 +170,6 @@ void ObjectAction::start() {
 
 bool ObjectAction::update() {
 	if (_timer.check()) {
-		//auto obj = make_shared<MapObject>(Point(12, 12), 1);
-		//return _map.lock()->addObject(obj);
 		if (_state.check()) {
 			if (!_map.expired() && !_target.expired()) {
 				if (_type == ACTION_CUT) {
@@ -188,9 +189,10 @@ bool ObjectAction::update() {
 
 
 
-PointAction::PointAction(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps, const Point& pos)
+PointAction::PointAction(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps, const Point& pos, weak_ptr<LocalMap> map)
 	: Action(type, actor, cycles, steps) {
 	_targetPos = pos;
+	_map = map;
 }
 
 PointAction::PointAction(const PointAction& act) : Action(act) {
@@ -223,6 +225,9 @@ bool PointAction::update() {
 				if (_type == ACTION_DROP) {
 					_actor.lock()->drop(_targetPos);
 					return true;
+				} else if (_type == ACTION_CRAFT && !_map.expired()) {
+					auto obj = make_shared<MapObject>(1, Point(16, 16));
+					return _map.lock()->addObject(obj);
 				}
 			}
 		}

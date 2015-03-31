@@ -226,7 +226,6 @@ void ScreenCtl::update() {
 	if (colmax < _lastTile._x) _lastTile._x = colmax;
 	if (rowmax < _lastTile._y) _lastTile._y = rowmax;
 
-	_button->update();
 	_render = true;
 }
 
@@ -237,6 +236,7 @@ void ScreenCtl::updateTimers() {
 		_animation_frame++;
 		if (_animation_frame > 47) _animation_frame = 0;
 		frame_t.relaunch();
+		_button->update();
 	}
 }
 

@@ -137,10 +137,11 @@ std::vector<AStarNode> AStarSearch::searchPath(const Point& start, const Point& 
 	// ensure we're not messing with previous data
 	clearData();
 
-	if (_map->tileIsFree(goal._x / TILE_MASK, goal._y / TILE_MASK)) {
+	//if (_map->tileIsFree(goal._x / TILE_MASK, goal._y / TILE_MASK)) {
 		AStarNode startNode(start / TILE_MASK);
 		AStarNode goalNode(goal / TILE_MASK);
 		_openSet.push(startNode);
+		shared_ptr<AStarNode> closest = nullptr;
 
 		while (!_openSet.empty()) {
 			shared_ptr<AStarNode> current = make_shared<AStarNode>(_openSet.top());
@@ -178,11 +179,18 @@ std::vector<AStarNode> AStarSearch::searchPath(const Point& start, const Point& 
 
 					_visitedSet.push_back(n);
 					bool isOpen = _openSet.contains(*n);
-					if (!isOpen)
+					if (!isOpen) {
 						_openSet.push(*n);
+						if (closest == nullptr || closest->_h > n->_h) {
+							closest = n;
+						}
+					}
 				}
 			}
 		}
+	//}
+	if (closest) {
+		recursePath(closest);
 	}
 	return _pathFound;
 }

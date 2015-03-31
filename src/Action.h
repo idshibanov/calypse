@@ -12,6 +12,7 @@ enum ActionType {
 	ACTION_CUT,
 	ACTION_DRAG,
 	ACTION_DROP,
+	ACTION_CRAFT,
 	ACTION_END
 };
 
@@ -70,8 +71,9 @@ public:
 
 class PointAction : public Action {
 	Point _targetPos;
+	weak_ptr<LocalMap> _map;
 public:
-	PointAction(ActionType, std::weak_ptr<Actor>, int, int, const Point&);
+	PointAction(ActionType, std::weak_ptr<Actor>, int, int, const Point&, weak_ptr<LocalMap>);
 	PointAction(const PointAction&);
 	~PointAction();
 	PointAction& operator= (const PointAction&);
