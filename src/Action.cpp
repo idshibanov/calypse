@@ -90,8 +90,15 @@ void MoveAction::start() {
 	auto act = _actor.lock();
 	if (finder && act) {
 		_path = finder->searchPath(act->getPos(), _target);
-		if (_path.back()._pos != _target / 10) {
-			_target = _path.back()._pos;
+		Point _targetTile = _target / TILE_MASK;
+		if (!_path.empty() && _path.back()._pos != _targetTile) {
+			// fix (to the edge)
+			_target = _path.back()._pos * TILE_MASK;
+			/*
+			Point mod = _target - _path.back()._pos * TILE_MASK;
+			mod = mod.limit(SUBTILE_MASK);
+			_target = _targetTile * TILE_MASK - mod;
+			*/
 		}
 		_timer.relaunch();
 	}

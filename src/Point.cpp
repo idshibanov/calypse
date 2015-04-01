@@ -34,34 +34,54 @@ Point& Point::set(int x, int y) {
 	return *this;
 }
 
-Point& Point::add(int x, int y) {
+Point& Point::modAdd(int x, int y) {
 	_x += x;
 	_y += y;
 	return *this;
 }
 
-Point& Point::sub(int x, int y) {
+Point& Point::modSub(int x, int y) {
 	_x -= x;
 	_y -= y;
 	return *this;
 }
 
-Point& Point::mul(int mod) {
+Point& Point::modMul(int mod) {
 	_x *= mod;
 	_y *= mod;
 	return *this;
 }
 
-Point& Point::div(int mod) {
+Point& Point::modDiv(int mod) {
 	_x /= mod;
 	_y /= mod;
 	return *this;
 }
 
-Point& Point::inv() {
+Point& Point::modInv() {
 	_x = -_x;
 	_y = -_y;
 	return *this;
+}
+
+Point Point::add(int x, int y) const {
+	return Point(_x + x, _y + y);
+}
+
+Point Point::sub(int x, int y) const {
+	return Point(_x - x, _y - y);
+}
+
+Point Point::mul(int mod) const {
+	return Point(_x * mod, _y * mod);
+}
+
+Point Point::div(int mod) const {
+	return Point(_x / mod, _y / mod);
+}
+
+Point Point::inv() const {
+	return Point(-_x, -_y);
 }
 
 Point& Point::operator= (const Point& rhs) {
@@ -190,10 +210,10 @@ Point Point::limit(int limit) const {
 	return Point(x, y);
 }
 
-void Point::iterate(int max, int min) {
-	_x += SUBTILE_MASK;
+void Point::iterate(int max, int min, int step) {
+	_x += step;
 	if (_x >= max) {
-		_y += SUBTILE_MASK;
+		_y += step;
 		_x = min;
 	}
 }
@@ -216,6 +236,16 @@ Rect::Rect(const Point& pos, const Point& size) {
 }
 
 Rect::~Rect() {
+}
+
+bool Rect::contain(const Point& pos) const {
+	Point max = _pos + _size;
+
+	if (pos._x < _pos._x || pos._y < _pos._y ||
+		pos._x > max._x || pos._y > max._y) {
+		return false;
+	}
+	return true;
 }
 
 void Rect::iterate(std::function<void(const Point&)>& action) {

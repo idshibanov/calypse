@@ -46,6 +46,7 @@ public:
 	bool tileExists(unsigned tileX, unsigned tileY) const;
 	bool tileIsFree(unsigned mapID) const;
 	bool tileIsFree(unsigned tileX, unsigned tileY) const;
+	bool isFree(const Point& pos) const;
 	void setTile(unsigned id, unsigned value);
 	void processAction(int x, int y, int id);
 	void update();

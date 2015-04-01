@@ -149,9 +149,8 @@ bool LocalMap::tileIsFree(unsigned mapID) const {
 	if (tileExists(mapID)) {
 		//int pos = (mapID / _colmax * TILE_MASK) * _xmax + (mapID % _colmax) * TILE_MASK;
 		Point pos((mapID % _colmax) * TILE_MASK, mapID / _colmax * TILE_MASK);
-		if (_objects.isFree(pos)) {
-			return true;
-		}
+
+		return _objects.isFree(pos);
 	}
 	return false;
 }
@@ -161,6 +160,14 @@ bool LocalMap::tileIsFree(unsigned tileX, unsigned tileY) const {
 	if (tileX < _colmax && tileY < _rowmax)
 		retval = tileIsFree(tileY * _colmax + tileX);
 	return retval;
+}
+
+bool LocalMap::isFree(const Point& pos) const {
+	if (pos._x >= 0 && pos._x < _xmax &&
+		pos._y >= 0 && pos._y < _rowmax*TILE_MASK) {
+		return _objects.isFree(pos);
+	}
+	return false;
 }
 
 void LocalMap::setTile(unsigned id, unsigned value) {

@@ -15,11 +15,16 @@ public:
 	Point(const Point&);
 	~Point();
 	Point& set(int, int);
-	Point& add(int, int);
-	Point& sub(int, int);
-	Point& mul(int);
-	Point& div(int);
-	Point& inv();
+	Point& modAdd(int, int);
+	Point& modSub(int, int);
+	Point& modMul(int);
+	Point& modDiv(int);
+	Point& modInv();
+	Point add(int, int) const;
+	Point sub(int, int) const;
+	Point mul(int) const;
+	Point div(int) const;
+	Point inv() const;
 	Point& operator= (const Point&);
 	Point& operator+= (const Point&);
 	Point& operator-= (const Point&);
@@ -43,7 +48,7 @@ public:
 	Point toIso() const;
 	Point toMap() const;
 	Point limit(int) const;
-	void iterate(int max, int min = 0);
+	void iterate(int max, int min = 0, int step = SUBTILE_MASK);
 	void convertToIso();
 	void convertToMap();
 };
@@ -54,6 +59,7 @@ public:
 	~Rect();
 	Point _pos;
 	Point _size;
+	bool contain(const Point& pos) const;
 	void iterate(std::function<void(const Point&)>& action);
 	bool iterate(std::function<bool(const Point&)>& action, bool defaultVal);
 };

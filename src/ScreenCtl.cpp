@@ -74,7 +74,7 @@ bool ScreenCtl::draw() {
 
 				if (_state->_drawCoords) {
 					std::string tileCoords(std::to_string(col) + ", " + std::to_string(row));
-					_font->draw(tileCoords, coord.add(24,8), color);
+					_font->draw(tileCoords, coord.add(24, 8), color);
 				}
 			}
 		}
@@ -108,9 +108,9 @@ bool ScreenCtl::draw() {
 				Point bot(top), left(top), right(top);
 
 				convertMapCoords(top);
-				convertMapCoords(bot.add(SUBTILE_MASK, SUBTILE_MASK));
-				convertMapCoords(left.add(0, SUBTILE_MASK));
-				convertMapCoords(right.add(SUBTILE_MASK, 0));
+				convertMapCoords(bot.modAdd(SUBTILE_MASK, SUBTILE_MASK));
+				convertMapCoords(left.modAdd(0, SUBTILE_MASK));
+				convertMapCoords(right.modAdd(SUBTILE_MASK, 0));
 
 				al_draw_filled_triangle(left._x, left._y, right._x, right._y, top._x, top._y, red_color);
 				al_draw_filled_triangle(left._x, left._y, right._x, right._y, bot._x, bot._y, red_color);
@@ -136,7 +136,7 @@ bool ScreenCtl::draw() {
 						int actYOffset = _res->getObjectInfo(_actor->getType())->offset()._y;
 						coord = _actor->getPos();
 						coord = (coord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
-						coord = coord.toIso().add(0, actYOffset - 10) + _screenOffset;
+						coord = coord.toIso().modAdd(0, actYOffset - 10) + _screenOffset;
 					}
 				}
 				Point objSize = objInfo->sprSize() * _zoom;
@@ -221,7 +221,7 @@ void ScreenCtl::update() {
 
 	// calculate last tile to render, based on current offset
 	_lastTile = _offset;
-	_lastTile.inv().add(_screenWidth + maxOffset, _screenHeight + maxOffset);
+	_lastTile.modInv().modAdd(_screenWidth + maxOffset, _screenHeight + maxOffset);
 	_lastTile = _firstTile + (_lastTile / _tileSize);
 	if (colmax < _lastTile._x) _lastTile._x = colmax;
 	if (rowmax < _lastTile._y) _lastTile._y = rowmax;
@@ -280,7 +280,7 @@ Point ScreenCtl::convertCoords(const Point& pos) {
 
 Point& ScreenCtl::convertMapCoords(Point& coord) {
 	coord = (coord - _firstTile * TILE_MASK) * _tileSize / TILE_MASK + _offset;
-	coord = coord.toIso().add(_tileSize._x, 0) + _screenOffset;
+	coord = coord.toIso().modAdd(_tileSize._x, 0) + _screenOffset;
 	return coord;
 }
 

@@ -153,15 +153,20 @@ void AppCtl::controlLoop() {
 					if (elem->getType() == AREA_TYPE_OBJECT) {
 						auto obj = std::dynamic_pointer_cast<ObjectArea>(elem)->_obj;
 
-						auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, obj->getPos().sub(10, 10), _pFinder);
-						if (_res->getObjectInfo(obj->getType())->liftable()) {
-							auto act2 = make_shared<ObjectAction>(ACTION_DRAG, actor, 1, 1, obj, _map);
-							act1->chainAction(act2);
-						} else {
-							auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 20, 8, obj, _map);
-							act1->chainAction(act2);
+						Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());
+						Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
+
+						if (target._x >= 0 && target._y >= 0) {
+							auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, target, _pFinder);
+							if (_res->getObjectInfo(obj->getType())->liftable()) {
+								auto act2 = make_shared<ObjectAction>(ACTION_DRAG, actor, 1, 1, obj, _map);
+								act1->chainAction(act2);
+							} else {
+								auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 20, 8, obj, _map);
+								act1->chainAction(act2);
+							}
+							actor->setAction(act1);
 						}
-						actor->setAction(act1);
 					} else {
 						auto button = std::dynamic_pointer_cast<UIButton>(elem);
 						button->launchTimer();

@@ -56,7 +56,7 @@ void UILabel::update() {
 void UILabel::draw() {
 	Point drawPos(_pos);
 	if (_parent) {
-		drawPos.add(_parent->getAbsXPos(), _parent->getAbsYPos());
+		drawPos.modAdd(_parent->getAbsXPos(), _parent->getAbsYPos());
 	}
 
 	// add text positioning
@@ -113,7 +113,7 @@ void UIButton::update() {
 void UIButton::draw() {
 	Point drawPos(_pos);
 	if (_parent) {
-		drawPos.add(_parent->getAbsXPos(), _parent->getAbsYPos());
+		drawPos.modAdd(_parent->getAbsXPos(), _parent->getAbsYPos());
 	}
 
 	if (_sprite) {
