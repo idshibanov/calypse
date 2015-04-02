@@ -8,8 +8,11 @@ class MapObject {
 protected:
 	Point _pos;
 	short _type;
-	bool _dragged;
 	int _spriteID;
+	
+	bool _dragged;
+	Point* _masterPos;
+
 	int _id;
 	static int lastID;
 public:
@@ -25,6 +28,7 @@ public:
 	void setPos(const Point&);
 	int getSprite();
 	void setSprite(int);
+	void lift(Point* master);
 	void dragged(bool);
 	bool isDragged() const;
 };

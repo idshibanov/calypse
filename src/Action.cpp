@@ -90,10 +90,16 @@ void MoveAction::start() {
 	auto act = _actor.lock();
 	if (finder && act) {
 		_path = finder->searchPath(act->getPos(), _target);
-		Point _targetTile = _target / TILE_MASK;
-		if (!_path.empty() && _path.back()._pos != _targetTile) {
+		if (!_path.empty()) {
+			Point _targetTile = _target / TILE_MASK;
+			Point end = _path.back()._pos;
+
+			if (end != _targetTile) {
+				if (end._x < _targetTile._x) _target._x = _targetTile._x * TILE_MASK - SUBTILE_MASK;
+				if (end._y < _targetTile._y) _target._y = _targetTile._y * TILE_MASK - SUBTILE_MASK;
+			}
 			// fix (to the edge)
-			_target = _path.back()._pos * TILE_MASK;
+			//_target = _path.back()._pos * TILE_MASK;
 			/*
 			Point mod = _target - _path.back()._pos * TILE_MASK;
 			mod = mod.limit(SUBTILE_MASK);
@@ -172,7 +178,16 @@ bool ObjectAction::isActive() const {
 }
 
 void ObjectAction::start() {
-	_timer.relaunch();
+	if (!_actor.expired() && !_target.expired()) {
+		auto actPos = _actor.lock()->getPos();
+		auto objPos = _target.lock()->getPos();
+		if (abs(actPos._x - objPos._x) > SUBTILE_MASK*2 || abs(actPos._y - objPos._y) > SUBTILE_MASK*2) {
+			stop();
+		} else {
+			_timer.relaunch();
+			_state.relaunch();
+		}
+	}
 }
 
 bool ObjectAction::update() {
@@ -221,8 +236,15 @@ bool PointAction::isActive() const {
 }
 
 void PointAction::start() {
-	_timer.relaunch();
-	_state.relaunch();
+	if (!_actor.expired()) {
+		auto actPos = _actor.lock()->getPos();
+		if (abs(actPos._x - _targetPos._x) > SUBTILE_MASK || abs(actPos._y - _targetPos._y) > SUBTILE_MASK) {
+			stop();
+		} else {
+			_timer.relaunch();
+			_state.relaunch();
+		}
+	}
 }
 
 bool PointAction::update() {

@@ -143,7 +143,7 @@ void AppCtl::controlLoop() {
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
 			Point absPos(ev.mouse.x, ev.mouse.y);
 			_mouse->set(absPos, ev.mouse.button, true);
-			Point tile = _screen->convertCoords(absPos);
+			Point clickPos = _screen->convertCoords(absPos);
 			auto actor = _map->getActor();
 
 			auto elem = _screen->processAction(absPos);
@@ -172,20 +172,25 @@ void AppCtl::controlLoop() {
 						button->launchTimer();
 					}
 				} else {
-					cout << tile._x << "," << tile._y << endl;
-					if (tile._x > 0 && tile._y > 0) {
-						auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
+					cout << clickPos._x << "," << clickPos._y << endl;
+					if (clickPos._x > 0 && clickPos._y > 0) {
+						auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, clickPos, _pFinder);
 						actor->setAction(act);
 					}
 				}
 			} else if (ev.mouse.button == MOUSE_BUTTON_RIGHT) {
-				if (tile._x > 0 && tile._y > 0 && actor->isHolding()) {
-					auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, tile, _pFinder);
-					auto act2 = make_shared<PointAction>(ACTION_DROP, actor, 1, 1, tile, _map);
-					act1->chainAction(act2);
-					actor->setAction(act1);
+				if (clickPos._x > 0 && clickPos._y > 0 && actor->isHolding()) {
+					Rect clickArea(clickPos, Point(2, 2));
+					Point target = _pFinder->findAdjacent(actor->getPos(), clickArea);
+
+					if (target._x >= 0 && target._y >= 0) {
+						auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, target, _pFinder);
+						auto act2 = make_shared<PointAction>(ACTION_DROP, actor, 1, 1, clickPos, _map);
+						act1->chainAction(act2);
+						actor->setAction(act1);
+					}
 				} else {
-					auto act1 = make_shared<PointAction>(ACTION_CRAFT, actor, 8, 15, tile, _map);
+					auto act1 = make_shared<PointAction>(ACTION_CRAFT, actor, 8, 15, clickPos, _map);
 					actor->setAction(act1);
 				}
 			}

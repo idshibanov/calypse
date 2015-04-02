@@ -36,6 +36,7 @@ int MapObject::getYPos(){
 }
 
 Point MapObject::getPos() {
+	if (_dragged && _masterPos) return *_masterPos;
 	return _pos;
 }
 
@@ -65,6 +66,16 @@ void MapObject::dragged(bool state) {
 
 bool MapObject::isDragged() const {
 	return _dragged;
+}
+
+void MapObject::lift(Point* pos) {
+	_masterPos = pos;
+
+	if (pos != nullptr) {
+		_dragged = true;
+	} else {
+		_dragged = false;
+	}
 }
 
 
@@ -199,13 +210,16 @@ void Actor::move(const Point& mod) {
 
 void Actor::pickUp(weak_ptr<MapObject> slave) {
 	_slave = slave;
+	if (!_slave.expired()) {
+		_slave.lock()->lift(&_pos);
+	}
 }
 
 void Actor::drop(const Point& pos) {
 	auto slave = _slave.lock();
 	if (slave) {
-		slave->setPos(_pos);
-		slave->dragged(false);
+		slave->setPos(pos);
+		slave->lift(nullptr);
 	}
 	_slave = weak_ptr<MapObject>();
 }

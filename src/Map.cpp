@@ -112,7 +112,7 @@ std::map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, co
 	}
 	*/
 	auto retval = _objects.getObjects(first, last);
-	std::pair<int, shared_ptr<MapObject>> act(_actor->getPos().toRenderPriority(), _actor);
+	std::pair<int, shared_ptr<MapObject>> act(_actor->getPos().toRenderPriority()-1, _actor);
 	retval.insert(act);
 	return retval;
 }
