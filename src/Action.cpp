@@ -2,8 +2,9 @@
 #include "Object.h"
 #include "Action.h"
 
-Action::Action(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps)
+Action::Action(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor, int cycles, int steps)
                : _timer(cycles), _state(steps) {
+	_res = res;
 	_type = type;
 	_actor = actor;
 	// don't start the timer until action started
@@ -14,7 +15,8 @@ Action::~Action() {
 
 }
 
-Action::Action (const Action& act) {
+Action::Action(const Action& act) {
+	_res = act._res;
 	_type = act._type;
 	_actor = act._actor;
 	_timer = act._timer;
@@ -23,6 +25,7 @@ Action::Action (const Action& act) {
 }
 
 Action& Action::operator= (const Action& act) {
+	_res = act._res;
 	_type = act._type;
 	_actor = act._actor;
 	_timer = act._timer;
@@ -56,9 +59,9 @@ ActionType Action::getType() const {
 
 
 
-MoveAction::MoveAction(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps,
+MoveAction::MoveAction(ActionType type, weak_ptr<ResourceCtl> res, std::weak_ptr<Actor> actor, int cycles, int steps,
 	                   const Point& pos, std::weak_ptr<AStarSearch> pf)
-                       : Action(type, actor, cycles, steps) {
+                       : Action(type, res, actor, cycles, steps) {
 	_target = pos - (pos % 2);
 	_pf = pf;
 }
@@ -150,9 +153,9 @@ bool MoveAction::update() {
 
 
 
-ObjectAction::ObjectAction(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps,
+ObjectAction::ObjectAction(ActionType type, weak_ptr<ResourceCtl> res, std::weak_ptr<Actor> actor, int cycles, int steps,
 	                       std::weak_ptr<MapObject> obj, std::weak_ptr<LocalMap> map)
-	                       : Action(type, actor, cycles, steps) {
+	                       : Action(type, res, actor, cycles, steps) {
 	_target = obj;
 	_map = map;
 }
@@ -180,12 +183,14 @@ bool ObjectAction::isActive() const {
 void ObjectAction::start() {
 	if (!_actor.expired() && !_target.expired()) {
 		auto actPos = _actor.lock()->getPos();
-		auto objPos = _target.lock()->getPos();
-		if (abs(actPos._x - objPos._x) > SUBTILE_MASK*2 || abs(actPos._y - objPos._y) > SUBTILE_MASK*2) {
-			stop();
-		} else {
+		auto areaStart = _target.lock()->getPos().sub(SUBTILE_MASK * 2, SUBTILE_MASK * 2);
+		auto areaEnd = _res.lock()->getObjectInfo(_target.lock()->getType())->mapSize().add(SUBTILE_MASK * 2, SUBTILE_MASK * 2);
+		Rect objArea(areaStart, areaEnd);
+		if (objArea.contain(actPos)) {
 			_timer.relaunch();
 			_state.relaunch();
+		} else {
+			stop();
 		}
 	}
 }
@@ -211,8 +216,9 @@ bool ObjectAction::update() {
 
 
 
-PointAction::PointAction(ActionType type, std::weak_ptr<Actor> actor, int cycles, int steps, const Point& pos, weak_ptr<LocalMap> map)
-	: Action(type, actor, cycles, steps) {
+PointAction::PointAction(ActionType type, weak_ptr<ResourceCtl> res, std::weak_ptr<Actor> actor, 
+	                     int cycles, int steps, const Point& pos, weak_ptr<LocalMap> map)
+	                     : Action(type, res, actor, cycles, steps) {
 	_targetPos = pos;
 	_map = map;
 }
@@ -238,7 +244,7 @@ bool PointAction::isActive() const {
 void PointAction::start() {
 	if (!_actor.expired()) {
 		auto actPos = _actor.lock()->getPos();
-		if (abs(actPos._x - _targetPos._x) > SUBTILE_MASK || abs(actPos._y - _targetPos._y) > SUBTILE_MASK) {
+		if (abs(actPos._x - _targetPos._x) > SUBTILE_MASK*2 || abs(actPos._y - _targetPos._y) > SUBTILE_MASK*2) {
 			stop();
 		} else {
 			_timer.relaunch();

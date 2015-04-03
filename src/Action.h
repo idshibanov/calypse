@@ -1,7 +1,7 @@
 #pragma once
-#include "Point.h"
 #include "Timer.h"
 #include "Pathfinder.h"
+#include "ResourceCtl.h"
 
 class LocalMap;
 class MapObject;
@@ -18,12 +18,13 @@ enum ActionType {
 
 class Action {
 protected:
+	weak_ptr<ResourceCtl> _res;
 	ActionType _type;
 	std::weak_ptr<Actor> _actor;
 	TaskTimer _timer;
 	TaskTimer _state;
 	std::shared_ptr<Action> _next;
-	Action(ActionType, std::weak_ptr<Actor>, int, int);
+	Action(ActionType, weak_ptr<ResourceCtl>, std::weak_ptr<Actor>, int, int);
 public:
 	Action(const Action&);
 	virtual ~Action();
@@ -44,7 +45,7 @@ class MoveAction : public Action {
 	std::vector<AStarNode> _path;
 	std::weak_ptr<AStarSearch> _pf;
 public:
-	MoveAction(ActionType, std::weak_ptr<Actor>, int, int, const Point&, std::weak_ptr<AStarSearch>);
+	MoveAction(ActionType, weak_ptr<ResourceCtl>, std::weak_ptr<Actor>, int, int, const Point&, std::weak_ptr<AStarSearch>);
 	MoveAction(const MoveAction&);
 	~MoveAction();
 	MoveAction& operator= (const MoveAction&);
@@ -59,7 +60,7 @@ class ObjectAction : public Action {
 	weak_ptr<LocalMap> _map;
 	Point _targetPos;
 public:
-	ObjectAction(ActionType, std::weak_ptr<Actor>, int, int, std::weak_ptr<MapObject>, std::weak_ptr<LocalMap>);
+	ObjectAction(ActionType, weak_ptr<ResourceCtl>, std::weak_ptr<Actor>, int, int, std::weak_ptr<MapObject>, std::weak_ptr<LocalMap>);
 	ObjectAction(const ObjectAction&);
 	~ObjectAction();
 	ObjectAction& operator= (const ObjectAction&);
@@ -73,7 +74,7 @@ class PointAction : public Action {
 	Point _targetPos;
 	weak_ptr<LocalMap> _map;
 public:
-	PointAction(ActionType, std::weak_ptr<Actor>, int, int, const Point&, weak_ptr<LocalMap>);
+	PointAction(ActionType, weak_ptr<ResourceCtl>, std::weak_ptr<Actor>, int, int, const Point&, weak_ptr<LocalMap>);
 	PointAction(const PointAction&);
 	~PointAction();
 	PointAction& operator= (const PointAction&);

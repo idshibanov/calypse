@@ -157,12 +157,12 @@ void AppCtl::controlLoop() {
 						Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
 
 						if (target._x >= 0 && target._y >= 0) {
-							auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, target, _pFinder);
+							auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
 							if (_res->getObjectInfo(obj->getType())->liftable()) {
-								auto act2 = make_shared<ObjectAction>(ACTION_DRAG, actor, 1, 1, obj, _map);
+								auto act2 = make_shared<ObjectAction>(ACTION_DRAG, _res, actor, 1, 1, obj, _map);
 								act1->chainAction(act2);
 							} else {
-								auto act2 = make_shared<ObjectAction>(ACTION_CUT, actor, 20, 8, obj, _map);
+								auto act2 = make_shared<ObjectAction>(ACTION_CUT, _res, actor, 20, 8, obj, _map);
 								act1->chainAction(act2);
 							}
 							actor->setAction(act1);
@@ -174,7 +174,7 @@ void AppCtl::controlLoop() {
 				} else {
 					cout << clickPos._x << "," << clickPos._y << endl;
 					if (clickPos._x > 0 && clickPos._y > 0) {
-						auto act = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, clickPos, _pFinder);
+						auto act = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, clickPos, _pFinder);
 						actor->setAction(act);
 					}
 				}
@@ -184,13 +184,13 @@ void AppCtl::controlLoop() {
 					Point target = _pFinder->findAdjacent(actor->getPos(), clickArea);
 
 					if (target._x >= 0 && target._y >= 0) {
-						auto act1 = make_shared<MoveAction>(ACTION_MOVE, actor, 8, 8, target, _pFinder);
-						auto act2 = make_shared<PointAction>(ACTION_DROP, actor, 1, 1, clickPos, _map);
+						auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
+						auto act2 = make_shared<PointAction>(ACTION_DROP, _res, actor, 1, 1, clickPos, _map);
 						act1->chainAction(act2);
 						actor->setAction(act1);
 					}
 				} else {
-					auto act1 = make_shared<PointAction>(ACTION_CRAFT, actor, 8, 15, clickPos, _map);
+					auto act1 = make_shared<PointAction>(ACTION_CRAFT, _res, actor, 8, 15, clickPos, _map);
 					actor->setAction(act1);
 				}
 			}

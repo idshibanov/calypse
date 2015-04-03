@@ -48,6 +48,8 @@ public:
 	void setYPos(int);
 	void setAction(std::shared_ptr<Action>);
 	void update();
+	bool isWorking() const;
+	int getProgress() const;
 	int getDirection(const Point&);
 	void move(const Point&);
 	void pickUp(weak_ptr<MapObject>);

@@ -142,6 +142,12 @@ bool ScreenCtl::draw() {
 				Point objSize = objInfo->sprSize() * _zoom;
 				coord += objInfo->offset() * _zoom;
 
+				if (type == 0) {
+					if (_actor->isWorking()) {
+						_font->draw(std::to_string(_actor->getProgress()), coord.add(54, 25), color);
+					}
+				}
+
 				auto objSprite = _res->getSprite(objInfo->spriteID());
 				if (objInfo->frames() == 0) {
 					objSprite->drawScaled(coord, objSize);
@@ -163,6 +169,7 @@ bool ScreenCtl::draw() {
 			}
 		}
 		_button->draw();
+
 
 		std::string timeSTR("App time: " + std::to_string(_state->_appTime));
 		std::string cpsSTR("Cycles per second: " + std::to_string(_state->_CPS));

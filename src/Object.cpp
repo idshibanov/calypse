@@ -142,6 +142,21 @@ void Actor::update() {
 }
 
 
+bool Actor::isWorking() const {
+	if (_action && _action->getType() != ACTION_MOVE) {
+		return _action->isActive();
+	}
+	return false;
+}
+
+
+int Actor::getProgress() const {
+	if (_action) return _action->getState();
+
+	return -1;
+}
+
+
 int Actor::getDirection(const Point& mod) {
 	if (mod._x < 0 && mod._y < 0) {
 		return 7;
