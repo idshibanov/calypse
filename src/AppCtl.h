@@ -23,12 +23,12 @@ class AppCtl {
 	ALLEGRO_EVENT_QUEUE* _eventQueue;
 	ALLEGRO_TIMER* _timer;
 
-	std::shared_ptr<ResourceCtl> _res;
-	std::shared_ptr<LocalMap> _map;
-	std::shared_ptr<AStarSearch> _pFinder;
-	std::shared_ptr<Camera> _camera;
-	std::shared_ptr<Mouse> _mouse;
-	std::shared_ptr<AppState> _state;
+	shared_ptr<ResourceCtl> _res;
+	shared_ptr<LocalMap> _map;
+	shared_ptr<AStarSearch> _pFinder;
+	shared_ptr<Camera> _camera;
+	shared_ptr<Mouse> _mouse;
+	shared_ptr<AppState> _state;
 
 	bool _isRunning;
 	bool _render;

@@ -32,9 +32,9 @@ public:
 
 class UILabel : public UIElement {
 	std::string _text;
-	std::shared_ptr<SpriteText> _font;
+	shared_ptr<SpriteText> _font;
 public:
-	UILabel(Point pos, Point size, UIFrame* parent, std::shared_ptr<SpriteText> font,
+	UILabel(Point pos, Point size, UIFrame* parent, shared_ptr<SpriteText> font,
 		std::string& text, bool active = true, bool visible = true);
 	~UILabel();
 	std::string& getText();
@@ -45,14 +45,14 @@ public:
 class UIButton : public UIElement {
 	int _action_id;
 	bool _state;
-	std::shared_ptr<Sprite> _sprite;
-	std::shared_ptr<Sprite> _spriteClicked;
+	shared_ptr<Sprite> _sprite;
+	shared_ptr<Sprite> _spriteClicked;
 	TaskTimer _clickTimer;
 	std::string _text;
-	std::shared_ptr<SpriteText> _font;
+	shared_ptr<SpriteText> _font;
 public:
-	UIButton(Point pos, UIFrame* parent, Point size, int action_id, std::shared_ptr<Sprite> spr,
-		std::shared_ptr<Sprite> sprOn, std::shared_ptr<SpriteText> font, std::string& text,
+	UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared_ptr<Sprite> spr,
+		shared_ptr<Sprite> sprOn, shared_ptr<SpriteText> font, std::string& text,
 		bool active = true, bool visible = true, bool state = false,
 		unsigned clickedTicks = UIBUTTON_DEFAULT_CLICKED_TICKS);
 	~UIButton();
