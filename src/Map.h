@@ -34,8 +34,6 @@ public:
 	short getTileType(unsigned id) const;
 	unsigned int getRowMax() const;
 	unsigned int getColMax() const;
-	unsigned int convertIDToX(unsigned mapID) const;
-	unsigned int convertIDToY(unsigned mapID) const;
 	shared_ptr<Actor> getActor();
 	std::map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
 	const std::unordered_map<int, int>* getObjectMasks() const;

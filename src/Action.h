@@ -2,19 +2,11 @@
 #include "Timer.h"
 #include "Pathfinder.h"
 #include "ResourceCtl.h"
+#include "ActionType.h"
 
 class LocalMap;
 class MapObject;
 class Actor;
-
-enum ActionType {
-	ACTION_MOVE,
-	ACTION_CUT,
-	ACTION_DRAG,
-	ACTION_DROP,
-	ACTION_CRAFT,
-	ACTION_END
-};
 
 class Action {
 protected:

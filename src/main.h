@@ -13,3 +13,4 @@ using std::make_shared;
 
 // TODO: UI / general animation (clock) / idle animation / object stats
 // Nice to have: better PF, normalized speed, smooth animation, drag&drop, active areas, AI
+// Point -> Rect -> Surface generalization with templating

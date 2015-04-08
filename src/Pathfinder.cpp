@@ -112,13 +112,6 @@ size_t AStarSearch::heuristicCost(const AStarNode& start, const AStarNode& goal)
 	return PATHFINDING_MOVE_COST * (diffX + diffY) + min(diffX, diffY) * (PATHFINDING_DIAGONAL_COST - 2 * PATHFINDING_MOVE_COST);
 }
 
-size_t AStarSearch::heuristicCost(size_t startID, size_t goalID) const {
-	size_t diffX = abs((long)(_map->convertIDToX(startID) - _map->convertIDToX(goalID)));
-	size_t diffY = abs((long)(_map->convertIDToY(startID) - _map->convertIDToY(goalID)));
-	//return max(diffX, diffY) * PATHFINDING_MOVE_COST;
-	return PATHFINDING_MOVE_COST * (diffX + diffY) + min(diffX, diffY) * (PATHFINDING_DIAGONAL_COST - 2 * PATHFINDING_MOVE_COST);
-}
-
 void AStarSearch::recursePath(shared_ptr<AStarNode>& node) {
 	if (node->_parent) {
 		recursePath(node->_parent);

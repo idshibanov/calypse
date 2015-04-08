@@ -73,44 +73,7 @@ unsigned int LocalMap::getColMax() const {
 	return _colmax;
 }
 
-unsigned int LocalMap::convertIDToX(unsigned mapID) const {
-	return mapID % _colmax;
-}
-
-unsigned int LocalMap::convertIDToY(unsigned mapID) const {
-	return mapID / _colmax;
-}
-
 std::map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
-	//vector<shared_ptr<MapObject>> retval;
-	//map<int, shared_ptr<MapObject>> retval;
-	//Point size = last - first;
-
-	/*
-	retval.reserve(size._x * size._y / 100);
-	Point max = last * TILE_MASK;
-	for (int y = first._y * TILE_MASK; y < max._y; y++) {
-		for (int x = first._x * TILE_MASK; x < max._x; x++) {
-			if (x == _actor->getXPos() && y == _actor->getYPos()) {
-				retval.push_back(_actor);
-			} else {
-				auto obj = _objects.find(y * _colmax * TILE_MASK + x);
-				if (obj != _objects.end()) {
-					retval.push_back(obj->second);
-				}
-			}
-		}
-	}
-
-	for (auto obj : _objects) {
-		Point pos = obj.second->getPos();
-
-		if (pos > first * TILE_MASK && pos < last * TILE_MASK) {
-			retval.insert(obj);
-			//retval.push_back(obj.second);
-		}
-	}
-	*/
 	auto retval = _objects.getObjects(first, last);
 	std::pair<int, shared_ptr<MapObject>> act(_actor->getPos().toRenderPriority()-1, _actor);
 	retval.insert(act);

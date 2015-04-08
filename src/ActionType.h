@@ -1,0 +1,10 @@
+#pragma once
+
+enum ActionType {
+	ACTION_MOVE,
+	ACTION_CUT,
+	ACTION_DRAG,
+	ACTION_DROP,
+	ACTION_CRAFT,
+	ACTION_END
+};

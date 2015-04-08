@@ -14,3 +14,12 @@ ObjectArea::~ObjectArea() {
 shared_ptr<SpriteSheet> ObjectArea::castSprite() const {
 	return std::dynamic_pointer_cast<SpriteSheet>(_sprite.lock());
 }
+
+const shared_ptr<ObjectActionArea> ObjectArea::getSubArea(const Point& pos) const {
+	for (auto it = _subAreas.begin(); it != _subAreas.end(); it++) {
+		if (it->get()->_area.contain(pos)) {
+			return *it;
+		}
+	}
+	return nullptr;
+}
