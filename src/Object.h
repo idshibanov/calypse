@@ -47,7 +47,7 @@ public:
 	void setXPos(int);
 	void setYPos(int);
 	void setAction(std::shared_ptr<Action>);
-	void update();
+	virtual void update();
 	bool isWorking() const;
 	int getProgress() const;
 	int getDirection(const Point&);
@@ -64,4 +64,8 @@ public:
 	SmallObject(short, const Point&);
 	~SmallObject();
 	void pickUp(const Actor*);
+};
+
+class SmartActor : public Actor {
+	void update();
 };

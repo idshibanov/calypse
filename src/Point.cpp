@@ -84,6 +84,10 @@ Point Point::inv() const {
 	return Point(-_x, -_y);
 }
 
+Point Point::absDiff(const Point& pos) const {
+	return Point(abs(_x-pos._x), abs(_y-pos._y));
+}
+
 Point& Point::operator= (const Point& rhs) {
 	_x = rhs._x;
 	_y = rhs._y;
@@ -228,6 +232,26 @@ void Point::convertToMap() {
 	_y = (2 * _y - _x) / 2;
 }
 
+bool Point::in(const Point& pos, const Point& size) const {
+	Point max = pos + size;
+
+	if (_x < pos._x || _y < pos._y ||
+		_x > max._x || _y > max._y) {
+		return false;
+	}
+	return true;
+}
+
+bool Point::in(const Rect& area) const {
+	return in(area._pos, area._size);
+}
+
+bool Point::in(const Point& center, double radius) const {
+	Point diff = absDiff(center);
+	diff = diff*diff;
+	return sqrt(diff._x + diff._y) <= radius;
+}
+
 
 
 Rect::Rect(const Point& pos, const Point& size) {
@@ -239,13 +263,7 @@ Rect::~Rect() {
 }
 
 bool Rect::contain(const Point& pos) const {
-	Point max = _pos + _size;
-
-	if (pos._x < _pos._x || pos._y < _pos._y ||
-		pos._x > max._x || pos._y > max._y) {
-		return false;
-	}
-	return true;
+	return pos.in(_pos, _size);
 }
 
 void Rect::iterate(std::function<void(const Point&)>& action) {

@@ -25,6 +25,7 @@ public:
 	Point mul(int) const;
 	Point div(int) const;
 	Point inv() const;
+	Point absDiff(const Point&) const;
 	Point& operator= (const Point&);
 	Point& operator+= (const Point&);
 	Point& operator-= (const Point&);
@@ -51,6 +52,9 @@ public:
 	void iterate(int max, int min = 0, int step = SUBTILE_MASK);
 	void convertToIso();
 	void convertToMap();
+	bool in(const Point& pos, const Point& size) const; // rectangle
+	bool in(const Rect& area) const; // rectangle
+	bool in(const Point& center, double radius) const; // circle
 };
 
 class Rect {
