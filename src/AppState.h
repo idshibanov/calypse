@@ -10,4 +10,5 @@ struct AppState {
 	bool _drawGrid;
 	bool _drawCoords;
 	bool _drawMasks;
+	int _appSpeed;
 };

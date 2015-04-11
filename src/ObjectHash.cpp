@@ -18,6 +18,11 @@ bool ObjectHash::setObject(shared_ptr<MapObject> obj) {
 	Rect area(obj->getPos(), objInfo->mapSize());
 	int id = obj->getID();
 
+	if (obj->getType() == 0) {
+		auto act = std::dynamic_pointer_cast<Actor>(obj);
+		_actors.push_back(act);
+	}
+
 	std::function<bool(const Point&)> search = [this](const Point& pos) {
 		return isFree(pos);
 	};
@@ -137,4 +142,11 @@ std::map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, 
 
 const std::unordered_map<int, int>* ObjectHash::getObjectMasks() const {
 	return &_mask;
+}
+
+
+void ObjectHash::update() {
+	for (auto it = _actors.begin(); it != _actors.end(); it++) {
+		it->get()->update();
+	}
 }

@@ -10,11 +10,14 @@ AppCtl::AppCtl() {
 	_res = make_shared<ResourceCtl>();
 	_map = make_shared<LocalMap>(_res);
 	_pFinder = std::make_shared<AStarSearch>(_map);
-	_map->generate(_pFinder);
 
 	_state = make_shared<AppState>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 	_mouse = make_shared<Mouse>();
+
+	_events = make_shared<EventService>(_res, _map, _pFinder, _state);
+	_map->generate(_pFinder, _events);
+
 	_screen = new ScreenCtl(_res, _map, _camera, _mouse, _state);
 
 	_eventQueue = al_create_event_queue();
@@ -30,6 +33,7 @@ AppCtl::AppCtl() {
 	_render_frames = 0;
 	_animation_frame = 0;
 
+	_state->_appSpeed = 100;
 	_state->_FPS = 0;
 	_state->_CPS = 0;
 	_state->_drawGrid = false;

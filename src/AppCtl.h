@@ -5,6 +5,7 @@
 #include <allegro5/allegro_ttf.h>
 
 #include "ScreenCtl.h"
+#include "EventService.h"
 
 #define CLOCK_SPEED 1000
 
@@ -26,6 +27,7 @@ class AppCtl {
 	shared_ptr<ResourceCtl> _res;
 	shared_ptr<LocalMap> _map;
 	shared_ptr<AStarSearch> _pFinder;
+	shared_ptr<EventService> _events;
 	shared_ptr<Camera> _camera;
 	shared_ptr<Mouse> _mouse;
 	shared_ptr<AppState> _state;

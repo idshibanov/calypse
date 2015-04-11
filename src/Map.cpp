@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "Map.h"
+#include "EventService.h"
 #include "Pathfinder.h"
 #include "Object.h"
 
@@ -12,7 +13,8 @@ LocalMap::~LocalMap(){
 
 }
 
-void LocalMap::generate(weak_ptr<AStarSearch> pf) {
+void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
+	_events = ev;
 	_pFinder = pf;
 	_actor = make_shared<Actor>(0, Point(54, 54), 24);
 	srand((unsigned)time(NULL));
@@ -44,6 +46,7 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf) {
 
 	_objects.setObject(make_shared<MapObject>(2, Point(150, 150)));
 	_objects.setObject(make_shared<MapObject>(3, Point(80, 90)));
+	_objects.setObject(make_shared<SmartActor>(0, Point(110, 110), 24, _events));
 	for (unsigned row = 0; row < _rowmax; row += 10){
 		for (unsigned col = 0; col < _colmax; col += 10){
 			for (int k = 0; k < objMaxDensity; k++){
@@ -82,6 +85,10 @@ std::map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, co
 
 const std::unordered_map<int, int>* LocalMap::getObjectMasks() const {
 	return _objects.getObjectMasks();
+}
+
+shared_ptr<MapObject> LocalMap::getObject(int id) {
+	return _objects.getObject(id);
 }
 
 shared_ptr<Actor> LocalMap::getActor() {
@@ -143,4 +150,5 @@ void LocalMap::processAction(int x, int y, int id) {
 
 void LocalMap::update() {
 	_actor->update();
+	_objects.update();
 }

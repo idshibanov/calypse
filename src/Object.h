@@ -4,6 +4,8 @@
 #include "Point.h"
 #include "Action.h"
 
+class EventService;
+
 class MapObject {
 protected:
 	Point _pos;
@@ -68,10 +70,9 @@ public:
 };
 
 class SmartActor : public Actor {
-	weak_ptr<ResourceCtl> _res;
-	weak_ptr<AStarSearch> _pf;
+	weak_ptr<EventService> _events;
 public:
-	SmartActor(short type, const Point& pos, int defaultSprite, weak_ptr<ResourceCtl>, weak_ptr<AStarSearch>);
+	SmartActor(short type, const Point& pos, int defaultSprite, weak_ptr<EventService>);
 	SmartActor(SmartActor& rhs);
 	SmartActor& operator=(SmartActor& rhs);
 	~SmartActor();

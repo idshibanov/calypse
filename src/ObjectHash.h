@@ -15,6 +15,7 @@ class ObjectHash {
 	shared_ptr<ResourceCtl> _res;
 	std::unordered_map<int, shared_ptr<MapObject>> _objects;
 	std::unordered_map<int, int> _mask;
+	std::vector<shared_ptr<Actor>> _actors;
 	Point _chunkPos;
 	Point _offset;
 	int _size;
@@ -35,4 +36,5 @@ public:
 	int getObjectID(const Point&);
 	std::map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last) const;
 	const std::unordered_map<int, int>* getObjectMasks() const;
+	void update();
 };

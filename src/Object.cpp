@@ -1,5 +1,5 @@
 #include "Object.h"
-#include "Pathfinder.h"
+#include "EventService.h"
 
 int MapObject::lastID = 0;
 
@@ -264,21 +264,18 @@ void SmallObject::pickUp(const Actor* act) {
 
 
 SmartActor::SmartActor(short type, const Point& pos, int defaultSprite, 
-	                   weak_ptr<ResourceCtl> res, weak_ptr<AStarSearch> pf)
+	                   weak_ptr<EventService> ev)
 	                   : Actor(type, pos, defaultSprite) {
-	_res = res;
-	_pf = pf;
+	_events = ev;
 }
 
 SmartActor::SmartActor(SmartActor& rhs) : Actor(rhs) {
-	_res = rhs._res;
-	_pf = rhs._pf;
+	_events = rhs._events;
 }
 
 SmartActor& SmartActor::operator=(SmartActor& rhs) {
 	Actor::operator=(rhs);
-	_res = rhs._res;
-	_pf = rhs._pf;
+	_events = rhs._events;
 	return *this;
 }
 
@@ -300,6 +297,6 @@ void SmartActor::update() {
 			}
 		}
 	} else {
-		//auto newAct = MoveAction(ACTION_END, _res, this, 1, 1, Point(1, 1), _pf);
+		_events.lock()->spawnAction(_id);
 	}
 }
