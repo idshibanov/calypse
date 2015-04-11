@@ -34,6 +34,7 @@ public:
 };
 
 class Actor : public MapObject {
+protected:
 	bool _static;
 	int _dir;
 	int _timer;
@@ -43,7 +44,7 @@ public:
 	Actor(short type, const Point& pos, int defaultSprite);
 	Actor(Actor& rhs);
 	Actor& operator=(Actor& rhs);
-	~Actor();
+	virtual ~Actor();
 	void setXPos(int);
 	void setYPos(int);
 	void setAction(std::shared_ptr<Action>);
@@ -67,5 +68,12 @@ public:
 };
 
 class SmartActor : public Actor {
+	weak_ptr<ResourceCtl> _res;
+	weak_ptr<AStarSearch> _pf;
+public:
+	SmartActor(short type, const Point& pos, int defaultSprite, weak_ptr<ResourceCtl>, weak_ptr<AStarSearch>);
+	SmartActor(SmartActor& rhs);
+	SmartActor& operator=(SmartActor& rhs);
+	~SmartActor();
 	void update();
 };

@@ -5,6 +5,8 @@
 #define SUBTILE_STEPS 5
 #define SUBTILE_MASK 2 // 10/5 (integer value, MASK / STEPS)
 
+class Rect;
+
 class Point {
 public:
 	int _x;

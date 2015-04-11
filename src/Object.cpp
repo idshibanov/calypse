@@ -260,3 +260,46 @@ SmallObject::~SmallObject() {
 void SmallObject::pickUp(const Actor* act) {
 	_dragged = true;
 }
+
+
+
+SmartActor::SmartActor(short type, const Point& pos, int defaultSprite, 
+	                   weak_ptr<ResourceCtl> res, weak_ptr<AStarSearch> pf)
+	                   : Actor(type, pos, defaultSprite) {
+	_res = res;
+	_pf = pf;
+}
+
+SmartActor::SmartActor(SmartActor& rhs) : Actor(rhs) {
+	_res = rhs._res;
+	_pf = rhs._pf;
+}
+
+SmartActor& SmartActor::operator=(SmartActor& rhs) {
+	Actor::operator=(rhs);
+	_res = rhs._res;
+	_pf = rhs._pf;
+	return *this;
+}
+
+SmartActor::~SmartActor() {
+
+}
+
+void SmartActor::update() {
+	if (_action) {
+		if (_action->isActive()) {
+			_action->update();
+		} else {
+			auto next = _action->getNext();
+			if (next) {
+				_action = next;
+				_action->start();
+			} else {
+				_action = nullptr;
+			}
+		}
+	} else {
+		//auto newAct = MoveAction(ACTION_END, _res, this, 1, 1, Point(1, 1), _pf);
+	}
+}

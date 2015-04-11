@@ -59,8 +59,8 @@ ActionType Action::getType() const {
 
 
 
-MoveAction::MoveAction(ActionType type, weak_ptr<ResourceCtl> res, std::weak_ptr<Actor> actor, int cycles, int steps,
-	                   const Point& pos, std::weak_ptr<AStarSearch> pf)
+MoveAction::MoveAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor, int cycles, int steps,
+	                   const Point& pos, weak_ptr<AStarSearch> pf)
                        : Action(type, res, actor, cycles, steps) {
 	_target = pos - (pos % 2);
 	_pf = pf;
@@ -153,8 +153,8 @@ bool MoveAction::update() {
 
 
 
-ObjectAction::ObjectAction(ActionType type, weak_ptr<ResourceCtl> res, std::weak_ptr<Actor> actor, int cycles, int steps,
-	                       std::weak_ptr<MapObject> obj, std::weak_ptr<LocalMap> map)
+ObjectAction::ObjectAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor, int cycles, int steps,
+	                       weak_ptr<MapObject> obj, weak_ptr<LocalMap> map)
 	                       : Action(type, res, actor, cycles, steps) {
 	_target = obj;
 	_map = map;
@@ -216,7 +216,7 @@ bool ObjectAction::update() {
 
 
 
-PointAction::PointAction(ActionType type, weak_ptr<ResourceCtl> res, std::weak_ptr<Actor> actor, 
+PointAction::PointAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor, 
 	                     int cycles, int steps, const Point& pos, weak_ptr<LocalMap> map)
 	                     : Action(type, res, actor, cycles, steps) {
 	_targetPos = pos;

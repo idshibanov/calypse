@@ -14,10 +14,10 @@ void ScreenBuffer::reset () {
 
 void ScreenBuffer::setElement(shared_ptr<ScreenArea> area) {
 	// TODO: better algo for setting Z level
-	auto elem = getElementArea(area->_pos);
-	if (elem != _items.end()) {
-		area->_zlevel = elem->get()->_zlevel  + 1;
-	}
+	//auto elem = getElementArea(area->_pos);
+	//if (elem != _items.end()) {
+	//	area->_zlevel = elem->get()->_zlevel  + 1;
+	//}
 	_items.emplace(area);
 }
 
