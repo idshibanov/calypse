@@ -1,8 +1,8 @@
 #include "ObjectInfo.h"
 
 
-ObjectInfo::ObjectInfo(int type, const Point& mapSize, const Point& sprSize, const Point& offset, 
-	                   int spriteID, int frames, bool lift) {
+ObjectInfo::ObjectInfo(int type, const Point& mapSize, const Point& sprSize, const Point& offset,
+	int spriteID, int frames, bool lift) {
 	_type = type;
 	_mapSize = mapSize;
 	_sprSize = sprSize;
@@ -35,6 +35,19 @@ ObjectInfo& ObjectInfo::operator= (ObjectInfo& rhs) {
 
 ObjectInfo::~ObjectInfo() {
 
+}
+
+void ObjectInfo::addActionArea(shared_ptr<ObjectActionArea> area) {
+	_subAreas.push_back(area);
+}
+
+const shared_ptr<ObjectActionArea> ObjectInfo::getSubArea(const Point& pos) const {
+	for (auto it = _subAreas.begin(); it != _subAreas.end(); it++) {
+		if (it->get()->_area.contain(pos)) {
+			return *it;
+		}
+	}
+	return nullptr;
 }
 
 int ObjectInfo::type() const {

@@ -43,14 +43,6 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	_animation_speed = 100;
 	_animation_frame = 0;
-
-	for (int i = 0; i < 5; i++) {
-		auto newOption = make_shared<UIButton>(Point(111, 111), nullptr, Point(100, 50), -1, nullptr,
-			nullptr, _font, std::string("Item ") + std::to_string(i), true, false);
-
-		_options.push_back(newOption);
-		_menu->addOption(newOption);
-	}
 }
 
 ScreenCtl::~ScreenCtl() {
@@ -61,7 +53,6 @@ bool ScreenCtl::draw() {
 	bool retval = false;
 	if (_render || _lastTimestamp < _state->_appTime) {
 		_buffer.reset();
-		_buffer.setElement(_button);
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
 		ALLEGRO_COLOR obj_color = al_map_rgb(155, 155, 255);
 		// map size
@@ -162,12 +153,12 @@ bool ScreenCtl::draw() {
 				if (objInfo->frames() == 0) {
 					objSprite->drawScaled(coord, objSize);
 
-					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSprite));
+					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSprite, objInfo));
 				} else {
 					auto objSpriteSheet = std::dynamic_pointer_cast<SpriteSheet>(objSprite);
 					objSpriteSheet->drawScaled(coord, obj.second->getSprite(), _zoom);
 
-					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSpriteSheet));
+					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSpriteSheet, objInfo));
 				}
 				//al_draw_rectangle(coord._x, coord._y, coord._x + objSize._x, coord._y + objSize._y,
 					//al_map_rgb(255, 100, 100), 1.0);
@@ -178,9 +169,10 @@ bool ScreenCtl::draw() {
 				_font->draw(std::to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
-		_button->draw();
 		for (auto it = _options.begin(); it != _options.end(); it++) {
-			it->get()->draw();
+			auto button = *it;
+			button->draw();
+			_buffer.setElement(button);
 		}
 
 		std::string timeSTR("App time: " + std::to_string(_state->_appTime));
@@ -262,6 +254,22 @@ void ScreenCtl::updateTimers() {
 
 shared_ptr<ScreenArea> ScreenCtl::processAction(const Point& pos) {
 	return _buffer.getElement(pos);
+}
+
+void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> options) {
+	convertMapCoords(objPos).modAdd(0,0);
+	_menu->setPos(objPos);
+	for (auto it = options->_acts.begin(); it != options->_acts.end(); it++) {
+		auto newOption = make_shared<UIButton>(objPos, nullptr, Point(100, 25), -1, nullptr,
+			nullptr, _font, std::string("Item ") + std::to_string(*it), true, false);
+
+		_options.push_back(newOption);
+		_menu->addOption(newOption);
+	}	
+}
+
+void ScreenCtl::hideOptions() {
+	_options.clear();
 }
 
 int ScreenCtl::XtoISO(int x, int y) {

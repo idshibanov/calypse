@@ -1,19 +1,14 @@
 #pragma once
-#include "ScreenArea.h"
 #include "Object.h"
-#include "ActionType.h"
-
-struct ObjectActionArea {
-	Rect _area;
-	std::vector<ActionType> _acts;
-};
+#include "ObjectInfo.h"
+#include "ScreenArea.h"
 
 class ObjectArea : public ScreenArea {
-public:
-	std::vector<shared_ptr<ObjectActionArea>> _subAreas;
-	std::shared_ptr<MapObject> _obj;
+	shared_ptr<ObjectInfo> _info;
 	weak_ptr<Sprite> _sprite;
-	ObjectArea(const Point&, const Point&, std::shared_ptr<MapObject>, weak_ptr<Sprite>);
+public:
+	shared_ptr<MapObject> _obj;
+	ObjectArea(const Point&, const Point&, shared_ptr<MapObject>, weak_ptr<Sprite>, shared_ptr<ObjectInfo>);
 	~ObjectArea();
 	shared_ptr<SpriteSheet> castSprite() const;
 	const shared_ptr<ObjectActionArea> getSubArea(const Point& pos) const;

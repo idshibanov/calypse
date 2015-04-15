@@ -13,14 +13,14 @@ TaskTimer::TaskTimer(const TaskTimer& rhs) {
 	_maxTicks = rhs._maxTicks;
 }
 
-TaskTimer::~TaskTimer(){
+TaskTimer::~TaskTimer() {
 
 }
 
 TaskTimer& TaskTimer::operator= (const TaskTimer& rhs) {
-		_ticks = rhs._ticks;
-		_maxTicks = rhs._maxTicks;
-		return *this;
+	_ticks = rhs._ticks;
+	_maxTicks = rhs._maxTicks;
+	return *this;
 }
 
 /* TaskTimer::check() function to check the timer in control loop

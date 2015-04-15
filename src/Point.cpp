@@ -254,12 +254,27 @@ bool Point::in(const Point& center, double radius) const {
 
 
 
+Rect::Rect() {
+
+}
+
 Rect::Rect(const Point& pos, const Point& size) {
 	_pos = pos;
 	_size = size;
 }
 
 Rect::~Rect() {
+}
+
+Rect::Rect(const Rect& rhs) {
+	_pos = rhs._pos;
+	_size = rhs._size;
+}
+
+Rect& Rect::operator=(const Rect& rhs) {
+	_pos = rhs._pos;
+	_size = rhs._size;
+	return *this;
 }
 
 bool Rect::contain(const Point& pos) const {

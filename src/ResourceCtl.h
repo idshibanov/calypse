@@ -8,8 +8,8 @@
 // Configuration files (XML?) are planned
 
 class ResourceCtl {
-	std::map<int, std::shared_ptr<ObjectInfo>> _info;
-	std::map<int, std::shared_ptr<Sprite>> _sprites;
+	std::map<int, shared_ptr<ObjectInfo>> _info;
+	std::map<int, shared_ptr<Sprite>> _sprites;
 public:
 	ResourceCtl();
 	~ResourceCtl();

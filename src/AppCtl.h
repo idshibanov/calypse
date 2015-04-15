@@ -47,6 +47,7 @@ class AppCtl {
 public:
 	AppCtl();
 	~AppCtl();
+	void processMouseAction();
 	void render();
 	void update();
 	void controlLoop();

@@ -146,8 +146,8 @@ void UIButton::draw() {
 
 
 CarouselMenu::CarouselMenu(Point pos, Point size, UIFrame* parent, bool active, bool visible)
-	                       : UIElement(pos, size, parent, active, visible), 
-						   _updateTimer(CAROUSEL_UPDATE), _progress(CAROUSEL_DURATION / CAROUSEL_UPDATE) {
+	: UIElement(pos, size, parent, active, visible),
+	_updateTimer(CAROUSEL_UPDATE), _progress(CAROUSEL_DURATION / CAROUSEL_UPDATE) {
 	_spawnRate = 100;
 	_lastItem = 0;
 }

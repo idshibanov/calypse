@@ -1,5 +1,13 @@
 #pragma once
+#include <vector>
+
+#include "ActionType.h"
 #include "Point.h"
+
+struct ObjectActionArea {
+	Rect _area;
+	std::vector<ActionType> _acts;
+};
 
 // Will be extended soon with derived classes.
 // Basically works as a resource entry, holding all now-hardcoded parameters.
@@ -25,11 +33,15 @@ class ObjectInfo {
 
 	// Object can be lifted
 	bool _liftable;
+	
+	std::vector<shared_ptr<ObjectActionArea>> _subAreas;
 public:
 	ObjectInfo(int, const Point&, const Point&, const Point&, int, int, bool);
 	ObjectInfo(ObjectInfo& rhs);
 	ObjectInfo& operator=(ObjectInfo& rhs);
 	~ObjectInfo();
+	void addActionArea(shared_ptr<ObjectActionArea> area);
+	const shared_ptr<ObjectActionArea> getSubArea(const Point& pos) const;
 	int type() const;
 	Point mapSize() const;
 	Point sprSize() const;

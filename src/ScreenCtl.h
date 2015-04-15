@@ -56,6 +56,8 @@ public:
 	void update();
 	void updateTimers();
 	shared_ptr<ScreenArea> processAction(const Point&);
+	void displayOptions(Point, const shared_ptr<ObjectActionArea>);
+	void hideOptions();
 	int XtoISO(int, int);
 	int YtoISO(int, int);
 	int isoXtoMap(int, int);

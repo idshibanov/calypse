@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include "Main.h"
 
 #define TILE_MASK 10
 #define SUBTILE_STEPS 5
@@ -61,8 +62,11 @@ public:
 
 class Rect {
 public:
+	Rect();
 	Rect(const Point&, const Point&);
 	~Rect();
+	Rect(const Rect&);
+	Rect& operator= (const Rect&);
 	Point _pos;
 	Point _size;
 	bool contain(const Point& pos) const;

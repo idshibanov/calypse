@@ -85,7 +85,7 @@ void AppCtl::controlLoop() {
 	while (_isRunning) {
 		ALLEGRO_EVENT ev;
 		al_wait_for_event(_eventQueue, &ev);
-		if (ev.type == ALLEGRO_EVENT_KEY_DOWN){
+		if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
 			switch (ev.keyboard.keycode) {
 			case ALLEGRO_KEY_ESCAPE:
 				_isRunning = false;
@@ -134,6 +134,7 @@ void AppCtl::controlLoop() {
 				_keys[DOWN] = false;
 				break;
 			}
+
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
 			if (_mouse->set(Point(ev.mouse.x, ev.mouse.y))) {
 				_screen->redraw();
@@ -144,62 +145,14 @@ void AppCtl::controlLoop() {
 			} else if (ev.mouse.dz > 0) {
 				_screen->zoomIn();
 			}
+
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-			Point absPos(ev.mouse.x, ev.mouse.y);
-			_mouse->set(absPos, ev.mouse.button, true);
-			Point clickPos = _screen->convertCoords(absPos);
-			auto actor = _map->getActor();
+			_mouse->set(Point(ev.mouse.x, ev.mouse.y), ev.mouse.button, true);
+			processMouseAction();
 
-			auto elem = _screen->processAction(absPos);
-			cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
-			if (ev.mouse.button == MOUSE_BUTTON_LEFT) {
-				if (elem) {
-					if (elem->getType() == AREA_TYPE_OBJECT) {
-						auto obj = std::dynamic_pointer_cast<ObjectArea>(elem)->_obj;
-
-						Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());
-						Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
-
-						if (target._x >= 0 && target._y >= 0) {
-							auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
-							if (_res->getObjectInfo(obj->getType())->liftable()) {
-								auto act2 = make_shared<ObjectAction>(ACTION_DRAG, _res, actor, 1, 1, obj, _map);
-								act1->chainAction(act2);
-							} else {
-								auto act2 = make_shared<ObjectAction>(ACTION_CUT, _res, actor, 20, 8, obj, _map);
-								act1->chainAction(act2);
-							}
-							actor->setAction(act1);
-						}
-					} else {
-						auto button = std::dynamic_pointer_cast<UIButton>(elem);
-						button->launchTimer();
-					}
-				} else {
-					cout << clickPos._x << "," << clickPos._y << endl;
-					if (clickPos._x > 0 && clickPos._y > 0) {
-						auto act = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, clickPos, _pFinder);
-						actor->setAction(act);
-					}
-				}
-			} else if (ev.mouse.button == MOUSE_BUTTON_RIGHT) {
-				if (clickPos._x > 0 && clickPos._y > 0 && actor->isHolding()) {
-					Rect clickArea(clickPos, Point(2, 2));
-					Point target = _pFinder->findAdjacent(actor->getPos(), clickArea);
-
-					if (target._x >= 0 && target._y >= 0) {
-						auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
-						auto act2 = make_shared<PointAction>(ACTION_DROP, _res, actor, 1, 1, clickPos, _map);
-						act1->chainAction(act2);
-						actor->setAction(act1);
-					}
-				} else {
-					auto act1 = make_shared<PointAction>(ACTION_CRAFT, _res, actor, 8, 15, clickPos, _map);
-					actor->setAction(act1);
-				}
-			}
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 			_mouse->setPressed(false);
+
 		} else if (ev.type == ALLEGRO_EVENT_TIMER) {
 			_cycles++;
 
@@ -227,6 +180,68 @@ void AppCtl::controlLoop() {
 				al_flip_display();
 				al_clear_to_color(al_map_rgb(0, 0, 0));
 			}
+		}
+	}
+}
+
+
+void AppCtl::processMouseAction() {
+	Point absPos = _mouse->getPos();
+	Point clickPos = _screen->convertCoords(absPos);
+	auto actor = _map->getActor();
+
+	auto elem = _screen->processAction(absPos);
+	cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
+	if (_mouse->getButton() == MOUSE_BUTTON_LEFT) {
+		if (elem) {
+			if (elem->getType() == AREA_TYPE_OBJECT) {
+				auto objArea = std::dynamic_pointer_cast<ObjectArea>(elem);
+				auto obj = objArea->_obj;
+				auto subAreas = objArea->getSubArea(absPos);
+
+				if (subAreas) {
+					_screen->displayOptions(obj->getPos(), subAreas);
+				} else {
+					Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());
+					Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
+
+					if (target._x >= 0 && target._y >= 0) {
+						auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
+						if (_res->getObjectInfo(obj->getType())->liftable()) {
+							auto act2 = make_shared<ObjectAction>(ACTION_DRAG, _res, actor, 1, 1, obj, _map);
+							act1->chainAction(act2);
+						} else {
+							auto act2 = make_shared<ObjectAction>(ACTION_CUT, _res, actor, 20, 8, obj, _map);
+							act1->chainAction(act2);
+						}
+						actor->setAction(act1);
+					}
+				}
+			} else {
+				auto button = std::dynamic_pointer_cast<UIButton>(elem);
+				button->launchTimer();
+			}
+		} else {
+			cout << clickPos._x << "," << clickPos._y << endl;
+			if (clickPos._x > 0 && clickPos._y > 0) {
+				auto act = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, clickPos, _pFinder);
+				actor->setAction(act);
+			}
+		}
+	} else if (_mouse->getButton() == MOUSE_BUTTON_RIGHT) {
+		if (clickPos._x > 0 && clickPos._y > 0 && actor->isHolding()) {
+			Rect clickArea(clickPos, Point(2, 2));
+			Point target = _pFinder->findAdjacent(actor->getPos(), clickArea);
+
+			if (target._x >= 0 && target._y >= 0) {
+				auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
+				auto act2 = make_shared<PointAction>(ACTION_DROP, _res, actor, 1, 1, clickPos, _map);
+				act1->chainAction(act2);
+				actor->setAction(act1);
+			}
+		} else {
+			auto act1 = make_shared<PointAction>(ACTION_CRAFT, _res, actor, 8, 15, clickPos, _map);
+			actor->setAction(act1);
 		}
 	}
 }
