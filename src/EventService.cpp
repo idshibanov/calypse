@@ -10,6 +10,7 @@ EventService::EventService(shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map
 	_map = map;
 	_pFinder = pf;
 	_state = state;
+	srand(time(NULL));
 }
 
 EventService::~EventService() {
@@ -20,7 +21,6 @@ void EventService::spawnAction(int actID) {
 	auto actor = std::dynamic_pointer_cast<SmartActor>(_map->getObject(actID));
 	if (actor) {
 		Point pos = actor->getPos();
-		srand(time(NULL));
 		int modX = rand() % 11 - 5;
 		int modY = rand() % 11 - 5;
 		pos.modAdd(modX * TILE_MASK, modY * TILE_MASK);

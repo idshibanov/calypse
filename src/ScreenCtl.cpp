@@ -7,7 +7,7 @@
 
 ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, shared_ptr<Camera> cam, 
 	                  shared_ptr<Mouse> mouse, shared_ptr<AppState> stats)
-	                 : frame_t(ANIMATION_TICKS) {
+					  : frame_t(ANIMATION_TICKS) {
 	//al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
 	//al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_REQUIRE);
 
@@ -34,6 +34,8 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	_zoom = 1.0;
 
+	_menu = make_shared<CarouselMenu>(Point(300, 200), Point(100, 100), nullptr);
+
 	_font = make_shared<SpriteText>("res/arialbd.ttf", 12);
 
 	_button = make_shared<UIButton>(Point(700, 0), nullptr, Point(100, 50), -1, _res->getSprite(6),
@@ -41,6 +43,14 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	_animation_speed = 100;
 	_animation_frame = 0;
+
+	for (int i = 0; i < 5; i++) {
+		auto newOption = make_shared<UIButton>(Point(111, 111), nullptr, Point(100, 50), -1, nullptr,
+			nullptr, _font, std::string("Item ") + std::to_string(i), true, false);
+
+		_options.push_back(newOption);
+		_menu->addOption(newOption);
+	}
 }
 
 ScreenCtl::~ScreenCtl() {
@@ -169,7 +179,9 @@ bool ScreenCtl::draw() {
 			}
 		}
 		_button->draw();
-
+		for (auto it = _options.begin(); it != _options.end(); it++) {
+			it->get()->draw();
+		}
 
 		std::string timeSTR("App time: " + std::to_string(_state->_appTime));
 		std::string cpsSTR("Cycles per second: " + std::to_string(_state->_CPS));
@@ -245,6 +257,7 @@ void ScreenCtl::updateTimers() {
 		frame_t.relaunch();
 		_button->update();
 	}
+	_menu->update();
 }
 
 shared_ptr<ScreenArea> ScreenCtl::processAction(const Point& pos) {

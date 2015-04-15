@@ -28,6 +28,8 @@ class ScreenCtl {
 	shared_ptr<AppState> _state;
 
 	shared_ptr<UIButton> _button;
+	std::vector<shared_ptr<UIButton>> _options;
+	shared_ptr<CarouselMenu> _menu;
 
 	bool _render;
 	int _lastTimestamp;

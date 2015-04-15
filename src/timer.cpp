@@ -45,7 +45,7 @@ unsigned TaskTimer::getTicks() const {
 	return _ticks;
 }
 
-unsigned TaskTimer::getProgress() const {
+double TaskTimer::getProgress() const {
 	return (_maxTicks - _ticks) * 100 / _maxTicks;
 }
 

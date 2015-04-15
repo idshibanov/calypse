@@ -23,9 +23,11 @@ protected:
 public:
 	virtual ~UIElement();
 	Point getPos();
+	void setPos(const Point& pos);
 	int getElementType();
 	bool isActive();
 	bool isVisible();
+	void visibility(bool val);
 	virtual void update() = 0;
 	virtual void draw() = 0;
 };
@@ -61,6 +63,29 @@ public:
 	std::string& getText();
 	void launchTimer();
 	bool checkTimer();
+	void update();
+	void draw();
+};
+
+#define CAROUSEL_UPDATE 50
+#define CAROUSEL_DURATION 1400
+
+class CarouselMenu : public UIElement {
+	std::vector<shared_ptr<UIButton>> _options;
+	TaskTimer _updateTimer;
+	TaskTimer _progress;
+	double _spawnRate;
+	int _lastItem;
+
+	void animationStep();
+	void spawnItem();
+	double cubicBezierEasing(int max, int id);
+	void updateElement(int idx, int order);
+public:
+	CarouselMenu(Point pos, Point size, UIFrame* parent, bool active = true, bool visible = true);
+	~CarouselMenu();
+	void addOption(shared_ptr<UIButton> opt);
+	void reset();
 	void update();
 	void draw();
 };
