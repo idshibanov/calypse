@@ -169,6 +169,8 @@ void CarouselMenu::reset() {
 	_options.clear();
 	_spawnRate = 0;
 	_lastItem = 0;
+	_updateTimer.relaunch();
+	_progress.relaunch();
 }
 
 void CarouselMenu::update() {
@@ -214,7 +216,7 @@ double CarouselMenu::cubicBezierEasing(int max, int id) {
 void CarouselMenu::updateElement(int idx, int order) {
 	double degrees = cubicBezierEasing(130, order) + 25;
 	double angle = C_PI * degrees / 180;
-	Point pos(std::sin(angle) * 125, 200 - std::cos(angle) * 125);
+	Point pos(std::sin(angle) * 65, -(std::cos(angle) * 65));
 
 	_options.at(idx)->setPos(_pos + pos);
 }

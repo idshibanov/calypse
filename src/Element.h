@@ -67,8 +67,8 @@ public:
 	void draw();
 };
 
-#define CAROUSEL_UPDATE 50
-#define CAROUSEL_DURATION 1400
+#define CAROUSEL_UPDATE 20
+#define CAROUSEL_DURATION 1100
 
 class CarouselMenu : public UIElement {
 	std::vector<shared_ptr<UIButton>> _options;
