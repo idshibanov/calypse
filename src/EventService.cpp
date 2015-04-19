@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "EventService.h"
-#include "Action.h"
 #include "Map.h"
 
 EventService::EventService(shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, 
@@ -15,6 +14,24 @@ EventService::EventService(shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map
 
 EventService::~EventService() {
 
+}
+
+void EventService::process(shared_ptr<MapObject> obj) {
+	auto actor = _map->getActor();
+	Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());
+	Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
+
+	if (target._x >= 0 && target._y >= 0) {
+		auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
+		if (_res->getObjectInfo(obj->getType())->liftable()) {
+			auto act2 = make_shared<ObjectAction>(ACTION_DRAG, _res, actor, 1, 1, obj, _map);
+			act1->chainAction(act2);
+		} else {
+			auto act2 = make_shared<ObjectAction>(ACTION_CUT, _res, actor, 20, 8, obj, _map);
+			act1->chainAction(act2);
+		}
+		actor->setAction(act1);
+	}
 }
 
 void EventService::spawnAction(int actID) {

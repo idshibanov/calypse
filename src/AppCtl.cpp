@@ -195,27 +195,14 @@ void AppCtl::processMouseAction() {
 	if (_mouse->getButton() == MOUSE_BUTTON_LEFT) {
 		if (elem) {
 			if (elem->getType() == AREA_TYPE_OBJECT) {
-				auto objArea = std::dynamic_pointer_cast<ObjectArea>(elem);
-				auto obj = objArea->_obj;
-				auto subAreas = objArea->getSubArea(absPos);
+				auto obj_ptr = std::dynamic_pointer_cast<ObjectArea>(elem);
+				auto obj = obj_ptr->_obj;
+				auto subAreas = obj_ptr->getSubArea(absPos);
 
 				if (subAreas) {
 					_screen->displayOptions(obj->getPos(), subAreas);
 				} else {
-					Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());
-					Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
-
-					if (target._x >= 0 && target._y >= 0) {
-						auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
-						if (_res->getObjectInfo(obj->getType())->liftable()) {
-							auto act2 = make_shared<ObjectAction>(ACTION_DRAG, _res, actor, 1, 1, obj, _map);
-							act1->chainAction(act2);
-						} else {
-							auto act2 = make_shared<ObjectAction>(ACTION_CUT, _res, actor, 20, 8, obj, _map);
-							act1->chainAction(act2);
-						}
-						actor->setAction(act1);
-					}
+					_events->process(obj);
 				}
 			} else {
 				auto button = std::dynamic_pointer_cast<UIButton>(elem);

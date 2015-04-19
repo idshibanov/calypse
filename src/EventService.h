@@ -1,6 +1,7 @@
 #pragma once
 #include "AppState.h"
 #include "ResourceCtl.h"
+#include "Action.h"
 
 class LocalMap;
 class AStarSearch;
@@ -13,5 +14,7 @@ class EventService {
 public:
 	EventService(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<AStarSearch>, shared_ptr<AppState>);
 	~EventService();
+	shared_ptr<Action> createAction();
+	void process(shared_ptr<MapObject> obj);
 	void spawnAction(int actID);
 };
