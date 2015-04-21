@@ -52,6 +52,9 @@ public:
 	void draw(const char* str, const Point& pos, ALLEGRO_COLOR color);
 	void draw(std::string& str, const Point& pos, ALLEGRO_COLOR color);
 	void draw(const Point& text, const Point& pos, ALLEGRO_COLOR color);
+	int getHeight() const;
+	int getWidth(const std::string& str) const;
+	int getWidth(const char* str) const;
 };
 
 class RawSprite : public Sprite {

@@ -60,3 +60,29 @@ shared_ptr<Sprite> ResourceCtl::getSprite(int id) {
 	}
 	return nullptr;
 }
+
+std::string ResourceCtl::getActionName(ActionType id) {
+	switch (id) {
+	case ACTION_MOVE:
+		return "Move here";
+		break;
+	case ACTION_CUT:
+		return "Cut the tree";
+		break;
+	case ACTION_DRAG:
+		return "Pick up the object";
+		break;
+	case ACTION_DROP:
+		return "Drop the object";
+		break;
+	case ACTION_CRAFT:
+		return "Craft the object";
+		break;
+	case ACTION_PICK_BRANCH:
+		return "Pick branch";
+		break;
+	default:
+		break;
+	}
+	return "ERR";
+}

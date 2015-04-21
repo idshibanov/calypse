@@ -16,6 +16,13 @@ EventService::~EventService() {
 
 }
 
+void EventService::process(ActionType id) {
+	if (id == ACTION_CUT) {
+		auto obj = _map->getObject(_state->_selectedObject);
+		process(obj);
+	}
+}
+
 void EventService::process(shared_ptr<MapObject> obj) {
 	auto actor = _map->getActor();
 	Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());

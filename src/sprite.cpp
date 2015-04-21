@@ -199,6 +199,18 @@ void SpriteText::draw(const Point& text, const Point& pos, ALLEGRO_COLOR color) 
 	draw(objectCoords.c_str(), pos, color);
 }
 
+int SpriteText::getHeight() const {
+	return al_get_font_line_height(_font);
+}
+
+int SpriteText::getWidth(const std::string& str) const {
+	return getWidth(str.c_str());
+}
+
+int SpriteText::getWidth(const char* str) const {
+	return al_get_text_width(_font, str);
+}
+
 
 // RawSprite class
 // Useful for drawing parts of unformatted images

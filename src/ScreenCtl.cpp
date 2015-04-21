@@ -262,7 +262,7 @@ void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> 
 	_menu->setPos(objPos);
 	for (auto it = options->_acts.begin(); it != options->_acts.end(); it++) {
 		auto newOption = make_shared<UIButton>(objPos, nullptr, Point(100, 25), *it, nullptr,
-			nullptr, _font, std::string("Item ") + std::to_string(*it), true, false);
+			nullptr, _font, _res->getActionName(*it), true, false);
 
 		_options.push_back(newOption);
 		_menu->addOption(newOption);

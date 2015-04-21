@@ -15,6 +15,7 @@ public:
 	EventService(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<AStarSearch>, shared_ptr<AppState>);
 	~EventService();
 	shared_ptr<Action> createAction();
+	void process(ActionType id);
 	void process(shared_ptr<MapObject> obj);
 	void spawnAction(int actID);
 };

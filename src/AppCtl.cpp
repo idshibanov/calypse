@@ -39,6 +39,8 @@ AppCtl::AppCtl() {
 	_state->_drawGrid = false;
 	_state->_drawCoords = false;
 	_state->_drawMasks = false;
+
+	_state->_selectedObject = -1;
 	_keys = new bool[7];
 	for (int i = 0; i < 7; i++) _keys[i] = false;
 }
@@ -200,12 +202,18 @@ void AppCtl::processMouseAction() {
 				auto subAreas = obj_ptr->getSubArea(absPos);
 
 				if (subAreas) {
+					_state->_selectedObject = obj->getID();
 					_screen->displayOptions(obj->getPos(), subAreas);
 				} else {
 					_events->process(obj);
 				}
 			} else {
 				auto button = std::dynamic_pointer_cast<UIButton>(elem);
+				int actionID = button->getActionID();
+				if (actionID >= 0 && actionID < ACTION_END) {
+					_screen->hideOptions();
+					_events->process((ActionType)actionID);
+				}
 				button->launchTimer();
 			}
 		} else {

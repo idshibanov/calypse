@@ -11,4 +11,7 @@ struct AppState {
 	bool _drawCoords;
 	bool _drawMasks;
 	int _appSpeed;
+
+	// state
+	int _selectedObject;
 };

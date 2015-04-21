@@ -134,12 +134,17 @@ void UIButton::draw() {
 				_sprite->draw(drawPos);
 			}
 		} else {
-			al_draw_filled_rectangle(drawPos._x, drawPos._y, drawPos._x + _size._x, drawPos._y + _size._y, al_map_rgb(230, 30, 30));
-		}
+			int width = _font->getWidth(_text);
+			int height = _font->getHeight();
+			Point size;
+			size.set(width + 30, height + 10);
 
-		// add text positioning
-		if (!_text.empty())
-			_font->draw(_text, drawPos, al_map_rgb(20, 20, 20));
+			al_draw_filled_rectangle(drawPos._x, drawPos._y, drawPos._x + size._x, drawPos._y + size._y, al_map_rgb(18, 43, 82));
+
+			// add text positioning
+			if (!_text.empty())
+				_font->draw(_text, drawPos.add(15, 5), al_map_rgb(160, 150, 93));
+		}
 	}
 }
 

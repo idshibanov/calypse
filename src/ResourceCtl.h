@@ -16,4 +16,5 @@ public:
 	void loadSprites();
 	shared_ptr<ObjectInfo> getObjectInfo(int type);
 	shared_ptr<Sprite> getSprite(int id);
+	std::string getActionName (ActionType id);
 };
