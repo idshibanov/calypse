@@ -281,19 +281,19 @@ bool Rect::contain(const Point& pos) const {
 	return pos.in(_pos, _size);
 }
 
-void Rect::iterate(std::function<void(const Point&)>& action) {
+void Rect::iterate(std::function<void(const Point&)>& action, int step) {
 	Point last = _pos + _size, current;
 
-	for (current = _pos; current < last; current.iterate(last._x, _pos._x)) {
+	for (current = _pos; current < last; current.iterate(last._x, _pos._x, step)) {
 		action(current);
 	}
 }
 
-bool Rect::iterate(std::function<bool(const Point&)>& action, bool defaultVal) {
+bool Rect::iterate(std::function<bool(const Point&)>& action, bool defaultVal, int step) {
 	bool retval = defaultVal;
 	Point last = _pos + _size, current;
 
-	for (current = _pos; current < last; current.iterate(last._x, _pos._x)) {
+	for (current = _pos; current < last; current.iterate(last._x, _pos._x, step)) {
 		if (action(current) != defaultVal) {
 			retval = !retval;
 			break;

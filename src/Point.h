@@ -70,6 +70,6 @@ public:
 	Point _pos;
 	Point _size;
 	bool contain(const Point& pos) const;
-	void iterate(std::function<void(const Point&)>& action);
-	bool iterate(std::function<bool(const Point&)>& action, bool defaultVal);
+	void iterate(std::function<void(const Point&)>& action, int step = SUBTILE_MASK);
+	bool iterate(std::function<bool(const Point&)>& action, bool defaultVal, int step = SUBTILE_MASK);
 };

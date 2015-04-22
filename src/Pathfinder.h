@@ -38,7 +38,7 @@ class AStarSearch {
 public:
 	AStarSearch(std::shared_ptr<LocalMap> map);
 	~AStarSearch();
-	std::vector<std::shared_ptr<AStarNode>> getNeighbors(AStarNode& node, AStarNode& goal);
+	std::vector<std::shared_ptr<AStarNode>> getNeighbors(const AStarNode& node);
 	size_t heuristicCost(const AStarNode& start, const AStarNode& goal) const;
 	void recursePath(std::shared_ptr<AStarNode>& node);
 	Point findAdjacent(const Point& start, const Rect& target) const;

@@ -120,7 +120,7 @@ bool ScreenCtl::draw() {
 			}
 		}
 
-		shared_ptr<Actor> _actor = _map->getActor();
+		shared_ptr<Actor> _actor = _map->getPrimaryActor();
 		auto renderedObjects = _map->getObjects(_firstTile, _lastTile);
 
 		for (auto obj : renderedObjects) {

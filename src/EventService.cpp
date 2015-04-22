@@ -24,7 +24,7 @@ void EventService::process(ActionType id) {
 }
 
 void EventService::process(shared_ptr<MapObject> obj) {
-	auto actor = _map->getActor();
+	auto actor = _map->getPrimaryActor();
 	Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());
 	Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
 

@@ -50,57 +50,17 @@ AStarSearch::~AStarSearch() {
 
 }
 
-std::vector<shared_ptr<AStarNode>> AStarSearch::getNeighbors(AStarNode& node, AStarNode& goal) {
+std::vector<shared_ptr<AStarNode>> AStarSearch::getNeighbors(const AStarNode& node) {
 	std::vector<shared_ptr<AStarNode>> nodesFound;
 
+	std::function<void(const Point&)> nSearch = [this, &nodesFound, &node](const Point& neighbor) {
+		if (neighbor != node._pos && _map->tileIsFree(neighbor)) {
+			nodesFound.push_back(make_shared<AStarNode>(neighbor));
+		}
+	};
 
-	// WEST NODE (4)
-	Point neighbor = node._pos + Point(-1, 0);
-	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
-		nodesFound.push_back(make_shared<AStarNode>(neighbor));
-	}
-
-	// EAST NODE (6)
-	neighbor = node._pos + Point(1, 0);
-	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
-		nodesFound.push_back(make_shared<AStarNode>(neighbor));
-	}
-
-	// NORTH-WEST NODE (7)
-	neighbor = node._pos + Point(-1, -1);
-	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
-		nodesFound.push_back(make_shared<AStarNode>(neighbor));
-	}
-
-	// NORTH NODE (8)
-	neighbor = node._pos + Point(0, -1);
-	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
-		nodesFound.push_back(make_shared<AStarNode>(neighbor));
-	}
-
-	// NORTH-EAST NODE (9)
-	neighbor = node._pos + Point(1, -1);
-	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
-		nodesFound.push_back(make_shared<AStarNode>(neighbor));
-	}
-
-	// SOUTH-WEST NODE (1)
-	neighbor = node._pos + Point(-1, 1);
-	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
-		nodesFound.push_back(make_shared<AStarNode>(neighbor));
-	}
-
-	// SOUTH NODE (2)
-	neighbor = node._pos + Point(0, 1);
-	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
-		nodesFound.push_back(make_shared<AStarNode>(neighbor));
-	}
-
-	// SOUTH-EAST NODE (3)
-	neighbor = node._pos + Point(1, 1);
-	if (_map->tileIsFree(neighbor._x, neighbor._y)) {
-		nodesFound.push_back(make_shared<AStarNode>(neighbor));
-	}
+	Rect area(node._pos.sub(1, 1), Point(3, 3));
+	area.iterate(nSearch, 1);
 
 	return nodesFound;
 }
@@ -172,7 +132,7 @@ std::vector<AStarNode> AStarSearch::searchPath(const Point& start, const Point& 
 			current->_closed = true;
 			_visitedSet.push_back(current);
 			_openSet.pop();
-			std::vector<shared_ptr<AStarNode>>& neighbors = getNeighbors(*current, goalNode);
+			std::vector<shared_ptr<AStarNode>>& neighbors = getNeighbors(*current);
 
 			for (auto it = neighbors.begin(); it != neighbors.end(); ++it) {
 				shared_ptr<AStarNode> n = (*it);

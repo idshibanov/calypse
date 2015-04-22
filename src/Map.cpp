@@ -60,12 +60,8 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
 	}
 }
 
-short LocalMap::getTileType(unsigned x, unsigned y) const {
-	return getTileType(y*_colmax + x);
-}
-
-short LocalMap::getTileType(unsigned id) const {
-	return _tiles[id].getType();
+short LocalMap::getTileType(const Point& mapPos) const {
+	return _tiles[mapPos.toID(_colmax)].getType();
 }
 
 unsigned int LocalMap::getRowMax() const {
@@ -91,7 +87,7 @@ shared_ptr<MapObject> LocalMap::getObject(int id) {
 	return _objects.getObject(id);
 }
 
-shared_ptr<Actor> LocalMap::getActor() {
+shared_ptr<Actor> LocalMap::getPrimaryActor() {
 	return _actor;
 }
 
@@ -107,29 +103,15 @@ bool LocalMap::addObject(shared_ptr<MapObject> obj) {
 	return _objects.setObject(obj);
 }
 
-bool LocalMap::tileExists(unsigned mapID) const {
-	return mapID < (_rowmax * _colmax);
+bool LocalMap::tileExists(const Point& mapPos) const {
+	return mapPos._x < _rowmax && mapPos._y < _colmax;
 }
 
-bool LocalMap::tileExists(unsigned tileX, unsigned tileY) const {
-	return tileY < _rowmax && tileX < _colmax;
-}
-
-bool LocalMap::tileIsFree(unsigned mapID) const {
-	if (tileExists(mapID)) {
-		//int pos = (mapID / _colmax * TILE_MASK) * _xmax + (mapID % _colmax) * TILE_MASK;
-		Point pos((mapID % _colmax) * TILE_MASK, mapID / _colmax * TILE_MASK);
-
-		return _objects.isFree(pos);
+bool LocalMap::tileIsFree(const Point& mapPos) const {
+	if (tileExists(mapPos)) {
+		return _objects.isFree(mapPos);
 	}
 	return false;
-}
-
-bool LocalMap::tileIsFree(unsigned tileX, unsigned tileY) const {
-	bool retval = false;
-	if (tileX < _colmax && tileY < _rowmax)
-		retval = tileIsFree(tileY * _colmax + tileX);
-	return retval;
 }
 
 bool LocalMap::isFree(const Point& pos) const {
@@ -140,11 +122,11 @@ bool LocalMap::isFree(const Point& pos) const {
 	return false;
 }
 
-void LocalMap::setTile(unsigned id, unsigned value) {
-	_tiles[id].setType(value);
+void LocalMap::setTile(const Point& mapPos, unsigned value) {
+	_tiles[mapPos.toID(_colmax)].setType(value);
 }
 
-void LocalMap::processAction(int x, int y, int id) {
+void LocalMap::processAction(const Point& mapPos, int id) {
 
 }
 

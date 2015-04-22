@@ -190,7 +190,7 @@ void AppCtl::controlLoop() {
 void AppCtl::processMouseAction() {
 	Point absPos = _mouse->getPos();
 	Point clickPos = _screen->convertCoords(absPos);
-	auto actor = _map->getActor();
+	auto actor = _map->getPrimaryActor();
 
 	auto elem = _screen->processAction(absPos);
 	cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
