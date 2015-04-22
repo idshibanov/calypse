@@ -257,7 +257,9 @@ shared_ptr<ScreenArea> ScreenCtl::processAction(const Point& pos) {
 }
 
 void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> options) {
-	hideOptions();
+	//hideOptions();
+	_menu->reset();
+	_options.clear();
 	convertMapCoords(objPos).modAdd(0,-20);
 	_menu->setPos(objPos);
 	for (auto it = options->_acts.begin(); it != options->_acts.end(); it++) {
@@ -270,8 +272,7 @@ void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> 
 }
 
 void ScreenCtl::hideOptions() {
-	_menu->reset();
-	_options.clear();
+	_menu->closeAnimation();
 }
 
 int ScreenCtl::XtoISO(int x, int y) {

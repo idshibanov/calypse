@@ -23,6 +23,12 @@ TaskTimer& TaskTimer::operator= (const TaskTimer& rhs) {
 	return *this;
 }
 
+bool TaskTimer::backwards() {
+	if (_ticks != _maxTicks)
+		_ticks++;
+	return _ticks == _maxTicks;
+}
+
 /* TaskTimer::check() function to check the timer in control loop
  * decrements the counter
  * returns true if timer is finished

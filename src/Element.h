@@ -76,6 +76,7 @@ class CarouselMenu : public UIElement {
 	TaskTimer _progress;
 	double _spawnRate;
 	int _lastItem;
+	bool _closing;
 
 	void animationStep();
 	void spawnItem();
@@ -88,4 +89,5 @@ public:
 	void reset();
 	void update();
 	void draw();
+	void closeAnimation();
 };

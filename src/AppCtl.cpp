@@ -212,7 +212,7 @@ void AppCtl::processMouseAction() {
 				int actionID = button->getActionID();
 				if (actionID >= 0 && actionID < ACTION_END) {
 					_screen->hideOptions();
-					_events->process((ActionType)actionID);
+					//_events->process((ActionType)actionID);
 				}
 				button->launchTimer();
 			}

@@ -155,6 +155,7 @@ CarouselMenu::CarouselMenu(Point pos, Point size, UIFrame* parent, bool active, 
 	_updateTimer(CAROUSEL_UPDATE), _progress(CAROUSEL_DURATION / CAROUSEL_UPDATE) {
 	_spawnRate = 100;
 	_lastItem = 0;
+	_closing = false;
 }
 
 CarouselMenu::~CarouselMenu() {
@@ -174,6 +175,7 @@ void CarouselMenu::reset() {
 	_options.clear();
 	_spawnRate = 0;
 	_lastItem = 0;
+	_closing = false;
 	_updateTimer.relaunch();
 	_progress.relaunch();
 }
@@ -181,14 +183,26 @@ void CarouselMenu::reset() {
 void CarouselMenu::update() {
 	if (_updateTimer.check()) {
 		animationStep();
-		if (!_progress.check()) {
-			_updateTimer.relaunch();
+		if (_closing) {
+			if (!_progress.backwards()) {
+				_updateTimer.relaunch();
+			}
+		} else {
+			if (!_progress.check()) {
+				_updateTimer.relaunch();
+			}
 		}
 	}
 }
 
 void CarouselMenu::draw() {
 	// do nothing
+}
+
+void CarouselMenu::closeAnimation() {
+	if (!_progress.isActive()) {
+		_closing = true;
+	}
 }
 
 void CarouselMenu::spawnItem() {
@@ -199,8 +213,15 @@ void CarouselMenu::spawnItem() {
 }
 
 void CarouselMenu::animationStep() {
-	if (_spawnRate*_lastItem <= _progress.getProgress()) {
-		spawnItem();
+	if (_closing) {
+		if (_closing && _lastItem > 0 && _progress.getProgress() <= _spawnRate*(_lastItem-1)) {
+			_options.at(_options.size() - _lastItem)->visibility(false);
+			_lastItem--;
+		}
+	} else {
+		if (_spawnRate*_lastItem <= _progress.getProgress()) {
+			spawnItem();
+		}
 	}
 
 	for (auto it = _options.begin(); it != _options.end(); it++) {

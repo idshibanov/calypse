@@ -9,6 +9,7 @@ public:
 	TaskTimer(unsigned int maxTicks);
 	~TaskTimer();
 	TaskTimer& operator= (const TaskTimer& rhs);
+	bool backwards();
 	bool check();
 	void relaunch();
 	bool isActive() const;
