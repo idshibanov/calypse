@@ -41,6 +41,8 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_button = make_shared<UIButton>(Point(700, 0), nullptr, Point(100, 50), -1, _res->getSprite(6),
 		_res->getSprite(7), _font, std::string("Label"));
 
+	_frame = make_shared<UIFrame>(Point(300, 200), Point(200, 77));
+
 	_animation_speed = 100;
 	_animation_frame = 0;
 }
@@ -169,6 +171,9 @@ bool ScreenCtl::draw() {
 				_font->draw(std::to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
+		_frame->draw();
+		_buffer.setElement(_frame);
+
 		for (auto it = _options.begin(); it != _options.end(); it++) {
 			auto button = *it;
 			button->draw();

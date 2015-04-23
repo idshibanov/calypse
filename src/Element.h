@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include "ScreenArea.h"
 #include "Main.h"
 #include "Frame.h"
