@@ -209,12 +209,17 @@ void AppCtl::processMouseAction() {
 				}
 			} else {
 				auto button = std::dynamic_pointer_cast<UIButton>(elem);
-				int actionID = button->getActionID();
-				if (actionID >= 0 && actionID < ACTION_END) {
-					_screen->hideOptions();
-					//_events->process((ActionType)actionID);
+				if (button) {
+					int actionID = button->getActionID();
+					if (actionID >= 0 && actionID < ACTION_END) {
+						_screen->hideOptions();
+						_events->process((ActionType)actionID);
+					}
+					button->launchTimer();
+				} else {
+					Point current = elem->_pos;
+
 				}
-				button->launchTimer();
 			}
 		} else {
 			cout << clickPos._x << "," << clickPos._y << endl;

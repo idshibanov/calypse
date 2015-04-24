@@ -3,6 +3,7 @@
 #include "Main.h"
 #include "Point.h"
 #include "Action.h"
+#include "ObjectState.h"
 
 class EventService;
 
@@ -37,6 +38,7 @@ public:
 
 class Actor : public MapObject {
 protected:
+	ActorState _state;
 	bool _static;
 	int _dir;
 	int _timer;

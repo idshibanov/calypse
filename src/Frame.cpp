@@ -59,6 +59,8 @@ void UIFrame::setVisible(bool value) {
 
 void UIFrame::draw() {
 	if (_visible) {
-		al_draw_filled_rectangle(_pos._x, _pos._y, _pos._x + _size._x, _pos._y + _size._y, al_map_rgb(18, 43, 82));
+		Point last = _pos + _size;
+		al_draw_filled_rectangle(_pos._x, _pos._y, last._x, last._y, al_map_rgb(18, 43, 82));
+		al_draw_rectangle(_pos._x, _pos._y, last._x, last._y, al_map_rgb(160, 150, 93), 2);
 	}
 }
