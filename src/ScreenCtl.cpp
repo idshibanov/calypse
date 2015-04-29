@@ -42,6 +42,8 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 		_res->getSprite(7));
 
 	_frame = make_shared<UIFrame>(Point(300, 200), Point(200, 77));
+	auto closeFrame = make_shared<UIButton>(Point(155,5), nullptr, -1, _font, std::string("X"));
+	_frame->addElement(closeFrame);
 
 	_animation_speed = 100;
 	_animation_frame = 0;

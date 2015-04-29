@@ -18,6 +18,13 @@ void ScreenBuffer::setElement(shared_ptr<ScreenArea> area) {
 	//if (elem != _items.end()) {
 	//	area->_zlevel = elem->get()->_zlevel  + 1;
 	//}
+	if (area->getType() == AREA_TYPE_FRAME) {
+		auto frame = std::dynamic_pointer_cast<UIFrame>(area);
+		auto subEl = frame->getElements();
+		for (auto it = subEl.begin(); it != subEl.end(); it++) {
+			_items.emplace(*it);
+		}
+	}
 	_items.emplace(area);
 }
 

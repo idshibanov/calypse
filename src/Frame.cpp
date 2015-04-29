@@ -23,6 +23,15 @@ UIFrame::~UIFrame() {
 
 }
 
+void UIFrame::addElement(shared_ptr<UIElement> el) {
+	el->setParent(this);
+	_elements.push_back(el);
+}
+
+std::vector<shared_ptr<UIElement>> UIFrame::getElements() const {
+	return _elements;
+}
+
 Point UIFrame::getPos() const {
 	return _pos;
 }
@@ -64,5 +73,9 @@ void UIFrame::draw() {
 		Point last = _pos + _size;
 		al_draw_filled_rectangle(_pos._x, _pos._y, last._x, last._y, al_map_rgb(18, 43, 82));
 		al_draw_rectangle(_pos._x, _pos._y, last._x, last._y, al_map_rgb(160, 150, 93), 2);
+
+		for (auto it = _elements.begin(); it != _elements.end(); it++) {
+			(*(*it)).draw();
+		}
 	}
 }

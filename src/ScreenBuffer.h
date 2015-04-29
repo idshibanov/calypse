@@ -3,6 +3,7 @@
 #include <set>
 #include <unordered_set>
 #include "Element.h"
+#include "Frame.h"
 #include "ObjectArea.h"
 
 // basically a frame 0 for now

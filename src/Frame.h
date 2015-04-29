@@ -1,15 +1,18 @@
 #pragma once
-#include "ScreenArea.h"
+#include "Element.h"
 
 class UIFrame : public ScreenArea {
 	bool _draggable;
 	bool _visible;
 	UIFrame* _parent;
+	std::vector<shared_ptr<UIElement>> _elements;
 public:
 	UIFrame();
 	UIFrame(const Point& pos, const Point& size, int zlevel = 0, 
 		    bool draggable = false, bool visible = true, UIFrame* parent = 0);
 	virtual ~UIFrame();
+	void addElement(shared_ptr<UIElement> el);
+	std::vector<shared_ptr<UIElement>> getElements() const;
 	Point getPos() const;
 	Point getAbsPos() const;
 	int getZLevel() const;

@@ -1,3 +1,3 @@
-Calypse 0.1
+Calypse 0.2
 -------
 Details coming up soon.

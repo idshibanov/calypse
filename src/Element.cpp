@@ -1,6 +1,7 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include "Element.h"
+#include "Frame.h"
 #include "Utils.h"
 
 // Abstract UI Element class
@@ -31,6 +32,10 @@ int UIElement::getElementType() {
 
 UIFrame* UIElement::getParent() {
 	return _parent;
+}
+
+void UIElement::setParent(UIFrame* fr) {
+	_parent = fr;
 }
 
 bool UIElement::isActive() {

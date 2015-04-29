@@ -3,10 +3,11 @@
 #include <vector>
 #include "ScreenArea.h"
 #include "Main.h"
-#include "Frame.h"
 #include "Timer.h"
 
 #define UIBUTTON_DEFAULT_CLICKED_TICKS 10
+
+class UIFrame;
 
 enum UIElementType {
 	UIELEMENT_TYPE_BUTTON,
@@ -27,6 +28,7 @@ public:
 	void setPos(const Point& pos);
 	int getElementType();
 	UIFrame* getParent();
+	void setParent(UIFrame*);
 	bool isActive();
 	bool isVisible();
 	void visibility(bool val);
