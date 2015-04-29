@@ -29,6 +29,10 @@ int UIElement::getElementType() {
 	return _elType;
 }
 
+UIFrame* UIElement::getParent() {
+	return _parent;
+}
+
 bool UIElement::isActive() {
 	return _active;
 }
@@ -76,16 +80,27 @@ void UILabel::draw() {
 
 
 // Button class
+UIButton::UIButton(Point pos, UIFrame* parent, int action_id, shared_ptr<SpriteText> font, 
+                   std::string& text, bool active, bool visible, bool state, unsigned clickedTicks)
+	               : UIElement(pos, Point(0,0), parent, active, visible), _clickTimer(clickedTicks) {
+	_action_id = action_id;
+	_font = font;
+	_text = text; 
+	_state = state;
+	_elType = UIELEMENT_TYPE_BUTTON;
+
+	int width = _font->getWidth(text);
+	int height = _font->getHeight();
+	_size.set(width + 30, height + 10);
+}
+
 UIButton::UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared_ptr<Sprite> spr,
-	shared_ptr<Sprite> sprOn, shared_ptr<SpriteText> font, std::string& text,
-	bool active, bool visible, bool state, unsigned clickedTicks)
+	shared_ptr<Sprite> sprOn, bool active, bool visible, bool state, unsigned clickedTicks)
 	: UIElement(pos, size, parent, active, visible), _clickTimer(clickedTicks) {
 	_action_id = action_id;
 	_sprite = spr;
 	_spriteClicked = sprOn;
-	_text = text;
 	_state = state;
-	_font = font;
 	_elType = UIELEMENT_TYPE_BUTTON;
 }
 
@@ -134,12 +149,7 @@ void UIButton::draw() {
 				_sprite->draw(drawPos);
 			}
 		} else {
-			int width = _font->getWidth(_text);
-			int height = _font->getHeight();
-			Point size;
-			size.set(width + 30, height + 10);
-
-			al_draw_filled_rectangle(drawPos._x, drawPos._y, drawPos._x + size._x, drawPos._y + size._y, al_map_rgb(18, 43, 82));
+			al_draw_filled_rectangle(drawPos._x, drawPos._y, drawPos._x + _size._x, drawPos._y + _size._y, al_map_rgb(18, 43, 82));
 
 			// add text positioning
 			if (!_text.empty())

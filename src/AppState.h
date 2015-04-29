@@ -1,4 +1,5 @@
 #pragma once
+class UIFrame;
 
 struct AppState {
 	// statistics
@@ -14,4 +15,5 @@ struct AppState {
 
 	// state
 	int _selectedObject;
+	UIFrame* _selectedFrame;
 };

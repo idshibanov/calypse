@@ -39,7 +39,7 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_font = make_shared<SpriteText>("res/arialbd.ttf", 12);
 
 	_button = make_shared<UIButton>(Point(700, 0), nullptr, Point(100, 50), -1, _res->getSprite(6),
-		_res->getSprite(7), _font, std::string("Label"));
+		_res->getSprite(7));
 
 	_frame = make_shared<UIFrame>(Point(300, 200), Point(200, 77));
 
@@ -268,8 +268,7 @@ void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> 
 	convertMapCoords(objPos).modAdd(0,-20);
 	_menu->setPos(objPos);
 	for (auto it = options->_acts.begin(); it != options->_acts.end(); it++) {
-		auto newOption = make_shared<UIButton>(objPos, nullptr, Point(100, 25), *it, nullptr,
-			nullptr, _font, _res->getActionName(*it), true, false);
+		auto newOption = make_shared<UIButton>(objPos, nullptr, *it, _font, _res->getActionName(*it), true, false);
 
 		_options.push_back(newOption);
 		_menu->addOption(newOption);

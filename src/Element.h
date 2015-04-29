@@ -26,6 +26,7 @@ public:
 	Point getPos();
 	void setPos(const Point& pos);
 	int getElementType();
+	UIFrame* getParent();
 	bool isActive();
 	bool isVisible();
 	void visibility(bool val);
@@ -55,9 +56,11 @@ class UIButton : public UIElement {
 	shared_ptr<SpriteText> _font;
 public:
 	UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared_ptr<Sprite> spr,
-		shared_ptr<Sprite> sprOn, shared_ptr<SpriteText> font, std::string& text,
-		bool active = true, bool visible = true, bool state = false,
-		unsigned clickedTicks = UIBUTTON_DEFAULT_CLICKED_TICKS);
+	         shared_ptr<Sprite> sprOn, bool active = true, bool visible = true, bool state = false,
+	         unsigned clickedTicks = UIBUTTON_DEFAULT_CLICKED_TICKS);
+	UIButton(Point pos, UIFrame* parent, int action_id, shared_ptr<SpriteText> font, std::string& text,
+	         bool active = true, bool visible = true, bool state = false,
+	         unsigned clickedTicks = UIBUTTON_DEFAULT_CLICKED_TICKS);
 	~UIButton();
 	int getActionID();
 	bool getState();

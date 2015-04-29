@@ -6,18 +6,9 @@
 
 #include "ScreenCtl.h"
 #include "EventService.h"
+#include "Keyboard.h"
 
 #define CLOCK_SPEED 1000
-
-enum KEYS{
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	SHIFT,
-	CTRL,
-	ALT
-};
 
 class AppCtl {
 	ScreenCtl* _screen;

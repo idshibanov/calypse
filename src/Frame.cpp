@@ -3,6 +3,7 @@
 #include "Frame.h"
 
 UIFrame::UIFrame() : ScreenArea(Point(0,0), Point(0,0)) {
+	_type = AREA_TYPE_FRAME;
 	_visible = true;
 	_draggable = false;
 	_parent = 0;
@@ -10,7 +11,8 @@ UIFrame::UIFrame() : ScreenArea(Point(0,0), Point(0,0)) {
 
 UIFrame::UIFrame(const Point& pos, const Point& size, int zlevel, 
 	             bool draggable, bool visible, UIFrame* parent)
-                 : ScreenArea(pos, size) {
+				 : ScreenArea(pos, size) {
+	_type = AREA_TYPE_FRAME;
 	_zlevel = zlevel;
 	_draggable = draggable;
 	_visible = visible;
@@ -41,8 +43,8 @@ bool UIFrame::isVisible() const {
 	return _visible;
 }
 
-void UIFrame::move(const Point& pos) {
-	_pos = pos;
+void UIFrame::move(const Point& delta) {
+	_pos += delta;
 }
 
 void UIFrame::setParent(UIFrame* p) {

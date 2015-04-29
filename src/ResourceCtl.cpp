@@ -10,6 +10,7 @@ ResourceCtl::ResourceCtl() {
 	reet_map->_acts.push_back(ACTION_CUT);
 	reet_map->_acts.push_back(ACTION_PICK_BRANCH);
 	reet_map->_acts.push_back(ACTION_CUT);
+	reet_map->_acts.push_back(ACTION_PICK_BRANCH);
 	reet_info->addActionArea(reet_map);
 	_info.emplace(id++, reet_info); 	// reet
 

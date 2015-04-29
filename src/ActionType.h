@@ -1,6 +1,7 @@
 #pragma once
 
 enum ActionType {
+	ACTION_CLOSE_PARENT,
 	ACTION_MOVE,
 	ACTION_CUT,
 	ACTION_DRAG,

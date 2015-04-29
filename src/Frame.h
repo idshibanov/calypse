@@ -14,7 +14,7 @@ public:
 	Point getAbsPos() const;
 	int getZLevel() const;
 	bool isVisible() const;
-	void move(const Point& pos);
+	void move(const Point& delta);
 	void setParent(UIFrame* p);
 	void setZLevel(unsigned z);
 	void setVisible(bool value);

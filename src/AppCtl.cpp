@@ -41,8 +41,9 @@ AppCtl::AppCtl() {
 	_state->_drawMasks = false;
 
 	_state->_selectedObject = -1;
-	_keys = new bool[7];
-	for (int i = 0; i < 7; i++) _keys[i] = false;
+	_state->_selectedFrame = nullptr;
+	_keys = new bool[CALYPSE_KEYS_LAST];
+	for (int i = 0; i < CALYPSE_KEYS_LAST; i++) _keys[i] = false;
 }
 
 AppCtl::~AppCtl() {
@@ -139,6 +140,9 @@ void AppCtl::controlLoop() {
 
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_AXES) {
 			if (_mouse->set(Point(ev.mouse.x, ev.mouse.y))) {
+				if (_state->_selectedFrame) {
+					_state->_selectedFrame->move(_mouse->getDelta());
+				}
 				_screen->redraw();
 			}
 
@@ -154,6 +158,7 @@ void AppCtl::controlLoop() {
 
 		} else if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
 			_mouse->setPressed(false);
+			_state->_selectedFrame = nullptr;
 
 		} else if (ev.type == ALLEGRO_EVENT_TIMER) {
 			_cycles++;
@@ -212,13 +217,20 @@ void AppCtl::processMouseAction() {
 				if (button) {
 					int actionID = button->getActionID();
 					if (actionID >= 0 && actionID < ACTION_END) {
-						_screen->hideOptions();
-						_events->process((ActionType)actionID);
+						auto parentFrame = button->getParent();
+						if (parentFrame) {
+							if (actionID == ACTION_CLOSE_PARENT) {
+								parentFrame->setVisible(false);
+							}
+						} else {
+							_screen->hideOptions();
+							_events->process((ActionType)actionID);
+						}
 					}
 					button->launchTimer();
-				} else {
-					Point current = elem->_pos;
-
+				} else if (elem->getType() == AREA_TYPE_FRAME) {
+					auto selFrame = std::dynamic_pointer_cast<UIFrame>(elem);
+					_state->_selectedFrame = selFrame.get();
 				}
 			}
 		} else {
