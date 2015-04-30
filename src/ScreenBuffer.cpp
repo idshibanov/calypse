@@ -34,18 +34,19 @@ std::unordered_set<shared_ptr<ScreenArea>>::iterator ScreenBuffer::getElementAre
 
 	for (auto it = _items.begin(); it != _items.end(); it++) {
 		auto it_ptr = it->get();
-		if (pos > it_ptr->_pos && pos < it_ptr->getMax()) {
+		if (pos > it_ptr->getPos() && pos < it_ptr->getMax()) {
 			if (it_ptr->getType() == AREA_TYPE_OBJECT) {
 				auto area = std::dynamic_pointer_cast<ObjectArea>(*it);
 
 				auto sp = area->castSprite();
-				if (sp && sp->checkAlpha(pos - area->_pos, area->_obj->getSprite())) {
-					if (area->_zlevel > maxZ) {
+				if (sp && sp->checkAlpha(pos - area->getPos(), area->_obj->getSprite())) {
+					if (area->getZlevel() > maxZ) {
 						retval = it;
-						maxZ = area->_zlevel;
+						maxZ = area->getZlevel();
 					}
 				}
 			} else {
+				cout << (*it)->getType() << " hit!" << endl;
 				retval = it;
 			}
 		}

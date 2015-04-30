@@ -15,22 +15,30 @@ ScreenAreaType ScreenArea::getType() const {
 	return _type;
 }
 
+Point ScreenArea::getPos() const {
+	return _pos;
+}
+
 Point ScreenArea::getMax() const {
-	return _pos + _size;
+	return getPos() + _size;
+}
+
+int ScreenArea::getZlevel() const {
+	return _zlevel;
 }
 
 bool ScreenArea::operator< (const ScreenArea& area) const {
-	return _pos.toRenderPriority() < area._pos.toRenderPriority();
+	return getPos().toRenderPriority() < area.getPos().toRenderPriority();
 }
 
 bool ScreenArea::operator< (const Point& pos) const {
-	return _pos.toRenderPriority() < pos.toRenderPriority();
+	return getPos().toRenderPriority() < pos.toRenderPriority();
 }
 
 bool ScreenArea::operator== (const ScreenArea& area) const {
-	return _pos == area._pos && _size == area._size;
+	return getPos() == area.getPos() && _size == area._size;
 }
 
 size_t ScreenArea::operator() (const ScreenArea& area) const {
-	return area._pos.toRenderPriority();
+	return area.getPos().toRenderPriority();
 }

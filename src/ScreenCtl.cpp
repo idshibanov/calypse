@@ -42,7 +42,7 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 		_res->getSprite(7));
 
 	_frame = make_shared<UIFrame>(Point(300, 200), Point(200, 77));
-	auto closeFrame = make_shared<UIButton>(Point(155,5), nullptr, -1, _font, std::string("X"));
+	auto closeFrame = make_shared<UIButton>(Point(155, 5), nullptr, ACTION_CLOSE_PARENT, _font, std::string("X"));
 	_frame->addElement(closeFrame);
 
 	_animation_speed = 100;
@@ -165,7 +165,7 @@ bool ScreenCtl::draw() {
 					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSpriteSheet, objInfo));
 				}
 				//al_draw_rectangle(coord._x, coord._y, coord._x + objSize._x, coord._y + objSize._y,
-					//al_map_rgb(255, 100, 100), 1.0);
+				//	al_map_rgb(255, 100, 100), 1.0);
 
 				//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
 				//_font->draw(tileCoords, coord.add(12, 30), color);
@@ -173,14 +173,17 @@ bool ScreenCtl::draw() {
 				_font->draw(std::to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
-		_frame->draw();
-		_buffer.setElement(_frame);
+		if (_frame->isVisible()) {
+			_frame->draw();
+			_buffer.setElement(_frame);
+		}
 
 		for (auto it = _options.begin(); it != _options.end(); it++) {
 			auto button = *it;
 			button->draw();
 			_buffer.setElement(button);
 		}
+		
 
 		std::string timeSTR("App time: " + std::to_string(_state->_appTime));
 		std::string cpsSTR("Cycles per second: " + std::to_string(_state->_CPS));

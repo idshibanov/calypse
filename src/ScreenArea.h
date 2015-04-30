@@ -11,15 +11,17 @@ enum ScreenAreaType {
 
 class ScreenArea {
 protected:
-	ScreenAreaType _type;
-public:
 	Point _pos;
 	Point _size;
 	int _zlevel;
+	ScreenAreaType _type;
+public:
 	ScreenArea(const Point& pos, const Point& size);
 	virtual ~ScreenArea();
 	ScreenAreaType getType() const;
+	virtual Point getPos() const;
 	Point getMax() const;
+	int getZlevel() const;
 	bool operator< (const ScreenArea& area) const;
 	bool operator< (const Point& pos) const;
 	bool operator== (const ScreenArea&) const;
@@ -30,7 +32,7 @@ namespace std {
 	template <>
 	struct hash<shared_ptr<ScreenArea>> {
 		size_t operator() (const shared_ptr<ScreenArea>& area) const {
-			return area->_pos.toRenderPriority();
+			return area->getPos().toRenderPriority();
 		}
 	};
 }
