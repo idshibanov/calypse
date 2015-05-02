@@ -27,6 +27,10 @@ int ScreenArea::getZlevel() const {
 	return _zlevel;
 }
 
+void ScreenArea::setZlevel(int z) {
+	_zlevel = z;
+}
+
 bool ScreenArea::operator< (const ScreenArea& area) const {
 	return getPos().toRenderPriority() < area.getPos().toRenderPriority();
 }

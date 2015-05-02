@@ -8,7 +8,7 @@ class UIFrame : public ScreenArea {
 	std::vector<shared_ptr<UIElement>> _elements;
 public:
 	UIFrame();
-	UIFrame(const Point& pos, const Point& size, int zlevel = 0, 
+	UIFrame(const Point& pos, const Point& size, int zlevel = 1, 
 		    bool draggable = false, bool visible = true, UIFrame* parent = 0);
 	virtual ~UIFrame();
 	void addElement(shared_ptr<UIElement> el);

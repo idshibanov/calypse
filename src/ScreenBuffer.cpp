@@ -47,7 +47,10 @@ std::unordered_set<shared_ptr<ScreenArea>>::iterator ScreenBuffer::getElementAre
 				}
 			} else {
 				cout << (*it)->getType() << " hit!" << endl;
-				retval = it;
+				if ((*it)->getZlevel() > maxZ) {
+					retval = it;
+					maxZ = (*it)->getZlevel();
+				}
 			}
 		}
 	}

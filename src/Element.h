@@ -24,7 +24,7 @@ protected:
 	UIElement(Point pos, Point size, UIFrame* parent, bool active = true, bool visible = true);
 public:
 	virtual ~UIElement();
-	Point getPos();
+	Point getPos() const;
 	void setPos(const Point& pos);
 	int getElementType();
 	UIFrame* getParent();
@@ -74,7 +74,7 @@ public:
 };
 
 #define CAROUSEL_UPDATE 20
-#define CAROUSEL_DURATION 1100
+#define CAROUSEL_DURATION 800
 
 class CarouselMenu : public UIElement {
 	std::vector<shared_ptr<UIButton>> _options;

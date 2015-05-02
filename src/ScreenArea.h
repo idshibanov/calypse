@@ -22,6 +22,7 @@ public:
 	virtual Point getPos() const;
 	Point getMax() const;
 	int getZlevel() const;
+	void setZlevel(int z);
 	bool operator< (const ScreenArea& area) const;
 	bool operator< (const Point& pos) const;
 	bool operator== (const ScreenArea&) const;

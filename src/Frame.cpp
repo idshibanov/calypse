@@ -13,7 +13,6 @@ UIFrame::UIFrame(const Point& pos, const Point& size, int zlevel,
 	             bool draggable, bool visible, UIFrame* parent)
 				 : ScreenArea(pos, size) {
 	_type = AREA_TYPE_FRAME;
-	_zlevel = zlevel;
 	_draggable = draggable;
 	_visible = visible;
 	_parent = parent;
@@ -25,6 +24,7 @@ UIFrame::~UIFrame() {
 
 void UIFrame::addElement(shared_ptr<UIElement> el) {
 	el->setParent(this);
+	el->setZlevel(_zlevel + 1);
 	_elements.push_back(el);
 }
 

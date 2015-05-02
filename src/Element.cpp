@@ -18,8 +18,11 @@ UIElement::~UIElement() {
 
 }
 
-Point UIElement::getPos() {
-	return _pos;
+Point UIElement::getPos() const {
+	Point retval = _pos;
+	if (_parent != NULL)
+		retval += _parent->getAbsPos();
+	return retval;
 }
 
 void UIElement::setPos(const Point& pos) {
