@@ -82,6 +82,7 @@ void MapObject::lift(Point* pos) {
 
 Actor::Actor(short type, const Point& pos, int defaultSprite)
 	: MapObject(type, pos) {
+	_state = make_shared<ActorState>();
 	_spriteID = defaultSprite;
 	_dir = 1;
 	_static = true;
@@ -89,6 +90,7 @@ Actor::Actor(short type, const Point& pos, int defaultSprite)
 }
 
 Actor::Actor(Actor& rhs) : MapObject(rhs) {
+	_state = rhs._state;
 	_spriteID = rhs._spriteID;
 	_dir = rhs._dir;
 	_static = rhs._static;
@@ -97,6 +99,7 @@ Actor::Actor(Actor& rhs) : MapObject(rhs) {
 
 Actor& Actor::operator=(Actor& rhs) {
 	MapObject::operator=(rhs);
+	_state = rhs._state;
 	_spriteID = rhs._spriteID;
 	_dir = rhs._dir;
 	_static = rhs._static;
@@ -106,6 +109,10 @@ Actor& Actor::operator=(Actor& rhs) {
 
 Actor::~Actor() {
 
+}
+
+shared_ptr<ActorState> Actor::getState() const {
+	return _state;
 }
 
 void Actor::setXPos(int x) {

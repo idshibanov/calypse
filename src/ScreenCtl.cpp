@@ -36,14 +36,13 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	_menu = make_shared<CarouselMenu>(Point(300, 200), Point(100, 100), nullptr);
 
-	_font = make_shared<SpriteText>("res/arialbd.ttf", 12);
+	_font = _res->getFont(12);
 
 	_button = make_shared<UIButton>(Point(700, 0), nullptr, Point(100, 50), -1, _res->getSprite(6),
-		_res->getSprite(7));
+		                  _res->getSprite(7));
 
-	_frame = make_shared<UIFrame>(Point(300, 200), Point(200, 77));
-	auto closeFrame = make_shared<UIButton>(Point(155, 5), nullptr, ACTION_CLOSE_PARENT, _font, std::string("X"));
-	_frame->addElement(closeFrame);
+	_frame = make_shared<ObjectInfoFrame>(Point(300, 200), Point(200, 90), _res, 
+                         std::string("Character Sheet"), _map->getPrimaryActor()->getState());
 
 	_animation_speed = 100;
 	_animation_frame = 0;
@@ -174,15 +173,16 @@ bool ScreenCtl::draw() {
 				_font->draw(std::to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
-		if (_frame->isVisible()) {
-			_frame->draw();
-			_buffer.setElement(_frame);
-		}
 
 		for (auto it = _options.begin(); it != _options.end(); it++) {
 			auto button = *it;
 			button->draw();
 			_buffer.setElement(button);
+		}
+
+		if (_frame->isVisible()) {
+			_frame->draw();
+			_buffer.setElement(_frame);
 		}
 		
 		if (_state->_drawStats) {
@@ -354,4 +354,8 @@ void ScreenCtl::zoomOut() {
 		_tileHeight = TD_TILESIZE_Y * _zoom;
 		update();
 	}
+}
+
+void ScreenCtl::toggleInfoScreen() {
+	_frame->setVisible(!_frame->isVisible());
 }

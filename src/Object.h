@@ -38,7 +38,7 @@ public:
 
 class Actor : public MapObject {
 protected:
-	ActorState _state;
+	shared_ptr<ActorState> _state;
 	bool _static;
 	int _dir;
 	int _timer;
@@ -49,6 +49,7 @@ public:
 	Actor(Actor& rhs);
 	Actor& operator=(Actor& rhs);
 	virtual ~Actor();
+	shared_ptr<ActorState> getState() const;
 	void setXPos(int);
 	void setYPos(int);
 	void setAction(std::shared_ptr<Action>);

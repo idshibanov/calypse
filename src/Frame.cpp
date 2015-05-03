@@ -2,20 +2,40 @@
 #include <allegro5/allegro_primitives.h>
 #include "Frame.h"
 
-UIFrame::UIFrame() : ScreenArea(Point(0,0), Point(0,0)) {
-	_type = AREA_TYPE_FRAME;
-	_visible = true;
-	_draggable = false;
-	_parent = 0;
-}
+UIFrame::UIFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res, const std::string& title,
+	             int zlevel, bool draggable, bool visible, UIFrame* parent) : ScreenArea(pos, size) {
 
-UIFrame::UIFrame(const Point& pos, const Point& size, int zlevel, 
-	             bool draggable, bool visible, UIFrame* parent)
-				 : ScreenArea(pos, size) {
+	_res = res;
+	auto resCtl = _res.lock();
+
+	if (resCtl) {
+		auto font = resCtl->getFont(12);
+
+		_titleHeight = font->getHeight() + 4; // padding
+		int titleWidth = font->getWidth(title) + 10; // padding
+
+		int buttonWidth = 20;
+		int totalWidth = titleWidth + buttonWidth;
+
+		_size._y += titleWidth;
+		if (_size._x < totalWidth) {
+			_size._x = totalWidth;
+		} else {
+			totalWidth = _size._x;
+		}
+
+		auto closeFrame = make_shared<UIButton>(Point(totalWidth - buttonWidth, 2), this, ACTION_CLOSE_PARENT, font, std::string("X"));
+		addElement(closeFrame);
+
+		auto frameTitle = make_shared<UILabel>(Point((totalWidth - titleWidth) / 2, 2), this, font, title);
+		addElement(frameTitle);
+	}
+
 	_type = AREA_TYPE_FRAME;
 	_draggable = draggable;
 	_visible = visible;
 	_parent = parent;
+	_res = res;
 }
 
 UIFrame::~UIFrame() {
@@ -72,10 +92,52 @@ void UIFrame::draw() {
 	if (_visible) {
 		Point last = _pos + _size;
 		al_draw_filled_rectangle(_pos._x, _pos._y, last._x, last._y, al_map_rgb(18, 43, 82));
+		al_draw_filled_rectangle(_pos._x, _pos._y, last._x, _pos._y + _titleHeight, al_map_rgb(160, 150, 93));
 		al_draw_rectangle(_pos._x, _pos._y, last._x, last._y, al_map_rgb(160, 150, 93), 2);
 
 		for (auto it = _elements.begin(); it != _elements.end(); it++) {
 			(*(*it)).draw();
+		}
+	}
+}
+
+
+
+ObjectInfoFrame::ObjectInfoFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res, const std::string& title,
+                                 shared_ptr<ActorState> state) : UIFrame(pos, size, res, title) {
+	_state = state;
+	auto resCtl = _res.lock();
+	if (resCtl) {
+		auto font = resCtl->getFont(10);
+
+		if (font) {
+			for (int i = 0; i < STAT_SCORE_LAST; i++) {
+				_statLabels[i] = make_shared<UILabel>(Point(10, _titleHeight + (i * 15)), this, font, resCtl->getStatName((StatScoreID)i));
+			}
+
+			for (int i = 0; i < SKILL_SCORE_LAST; i++) {
+				_skillLabels[i] = make_shared<UILabel>(Point(100, _titleHeight + (i * 15)), this, font, resCtl->getSkillName((SkillScoreID)i));
+			}
+		}
+	}
+}
+
+ObjectInfoFrame::~ObjectInfoFrame() {
+
+}
+
+void ObjectInfoFrame::draw() {
+	UIFrame::draw();
+
+	for (int i = 0; i < STAT_SCORE_LAST; i++) {
+		if (_statLabels[i]) {
+			_statLabels[i]->draw(std::to_string(_state->getStat((StatScoreID)i)));
+		}
+	}
+
+	for (int i = 0; i < SKILL_SCORE_LAST; i++) {
+		if (_skillLabels[i]) {
+			_skillLabels[i]->draw(std::to_string(_state->getSkill((SkillScoreID)i)));
 		}
 	}
 }

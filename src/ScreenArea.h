@@ -16,6 +16,7 @@ protected:
 	int _zlevel;
 	ScreenAreaType _type;
 public:
+	ScreenArea(const Point& pos);
 	ScreenArea(const Point& pos, const Point& size);
 	virtual ~ScreenArea();
 	ScreenAreaType getType() const;

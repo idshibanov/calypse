@@ -16,12 +16,15 @@ enum UIElementType {
 };
 
 class UIElement : public ScreenArea {
+	UIElement() = delete;
+	UIElement(const UIElement&) = delete;
+	UIElement& operator=(const UIElement&) = delete;
 protected:
 	UIFrame* _parent;
-	bool _active;
 	bool _visible;
 	UIElementType _elType;
-	UIElement(Point pos, Point size, UIFrame* parent, bool active = true, bool visible = true);
+	UIElement(Point pos, UIFrame* parent, bool visible = true);
+	UIElement(Point pos, Point size, UIFrame* parent, bool visible = true);
 public:
 	virtual ~UIElement();
 	Point getPos() const;
@@ -29,7 +32,6 @@ public:
 	int getElementType();
 	UIFrame* getParent();
 	void setParent(UIFrame*);
-	bool isActive();
 	bool isVisible();
 	void visibility(bool val);
 	virtual void update() = 0;
@@ -40,15 +42,17 @@ class UILabel : public UIElement {
 	std::string _text;
 	shared_ptr<SpriteText> _font;
 public:
-	UILabel(Point pos, Point size, UIFrame* parent, shared_ptr<SpriteText> font,
-		std::string& text, bool active = true, bool visible = true);
+	UILabel(Point pos, UIFrame* parent, shared_ptr<SpriteText> font, const std::string& text, bool visible = true);
 	~UILabel();
 	std::string& getText();
+	void setText(const std::string& text);
 	void update();
 	void draw();
+	void draw(const std::string& value);
 };
 
 class UIButton : public UIElement {
+	bool _active;
 	int _action_id;
 	bool _state;
 	shared_ptr<Sprite> _sprite;
@@ -64,6 +68,7 @@ public:
 	         bool active = true, bool visible = true, bool state = false,
 	         unsigned clickedTicks = UIBUTTON_DEFAULT_CLICKED_TICKS);
 	~UIButton();
+	bool isActive();
 	int getActionID();
 	bool getState();
 	std::string& getText();
@@ -89,7 +94,7 @@ class CarouselMenu : public UIElement {
 	double cubicBezierEasing(int max, int id);
 	void updateElement(int idx, int order);
 public:
-	CarouselMenu(Point pos, Point size, UIFrame* parent, bool active = true, bool visible = true);
+	CarouselMenu(Point pos, Point size, UIFrame* parent, bool visible = true);
 	~CarouselMenu();
 	void addOption(shared_ptr<UIButton> opt);
 	void reset();

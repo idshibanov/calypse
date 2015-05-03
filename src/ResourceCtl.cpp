@@ -43,9 +43,13 @@ void ResourceCtl::loadSprites() {
 
 	_sprites.emplace(id++, make_shared<Sprite>(id, "res/buttonG32.png"));
 	_sprites.emplace(id++, make_shared<Sprite>(id, "res/buttonR32.png"));
+
+	// fonts map, specified as a map
+	_arialFonts.emplace(12, make_shared<SpriteText>("res/arialbd.ttf", 12));
 }
 
-shared_ptr<ObjectInfo> ResourceCtl::getObjectInfo(int type) {
+
+shared_ptr<ObjectInfo> ResourceCtl::getObjectInfo(int type) const {
 	auto ptr = _info.find(type);
 	if (ptr != _info.end()) {
 		return ptr->second;
@@ -53,7 +57,8 @@ shared_ptr<ObjectInfo> ResourceCtl::getObjectInfo(int type) {
 	return shared_ptr<ObjectInfo>();
 }
 
-shared_ptr<Sprite> ResourceCtl::getSprite(int id) {
+
+shared_ptr<Sprite> ResourceCtl::getSprite(int id) const {
 	auto ptr = _sprites.find(id);
 	if (ptr != _sprites.end()) {
 		return ptr->second;
@@ -61,7 +66,25 @@ shared_ptr<Sprite> ResourceCtl::getSprite(int id) {
 	return nullptr;
 }
 
-std::string ResourceCtl::getActionName(ActionType id) {
+
+shared_ptr<SpriteText> ResourceCtl::getFont(int size) {
+	if (size > 0 && size < 73) {
+		auto ptr = _arialFonts.find(size);
+		if (ptr != _arialFonts.end()) {
+			return ptr->second;
+		} else {
+			// add the requested font if not found (basically a cache)
+
+			auto newFont = make_shared<SpriteText>("res/arialbd.ttf", size);
+			_arialFonts.emplace(size, newFont);
+			return newFont;
+		}
+	}
+	return nullptr;
+}
+
+
+std::string ResourceCtl::getActionName(ActionType id) const {
 	switch (id) {
 	case ACTION_MOVE:
 		return "Move here";
@@ -80,6 +103,67 @@ std::string ResourceCtl::getActionName(ActionType id) {
 		break;
 	case ACTION_PICK_BRANCH:
 		return "Pick branch";
+		break;
+	default:
+		break;
+	}
+	return "ERR";
+}
+
+std::string ResourceCtl::getStatName(StatScoreID id) const {
+	switch (id) {
+	case C_STAT_STR:
+		return "STR";
+		break;
+	case C_STAT_CON:
+		return "CON";
+		break;
+	case C_STAT_DEX:
+		return "DEX";
+		break;
+	case C_STAT_PER:
+		return "PER";
+		break;
+	case C_STAT_INT:
+		return "INT";
+		break;
+	case C_STAT_WILL:
+		return "WILL";
+		break;
+	case C_STAT_LUCK:
+		return "LUCK";
+		break;
+	case C_STAT_BEA:
+		return "BEA";
+		break;
+	case C_STAT_CHA:
+		return "CHA";
+		break;
+	default:
+		break;
+	}
+	return "ERR";
+}
+
+std::string ResourceCtl::getSkillName(SkillScoreID id) const {
+	switch (id) {
+	case C_SKILL_MELEE:
+		return "Melee";
+		break;
+	case C_SKILL_EXPLORE:
+		return "Exploring";
+		break;
+	case C_SKILL_SURVIVAL:
+		return "Survival";
+		break;
+	case C_SKILL_FARM:
+		return "Farming";
+		break;
+	case C_SKILL_SMITH:
+		return "Smithing";
+		break;
+	case C_SKILL_TAILOR:
+		return "Tailoring";
 		break;
 	default:
 		break;

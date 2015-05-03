@@ -5,10 +5,16 @@
 #include "Utils.h"
 
 // Abstract UI Element class
-UIElement::UIElement(Point pos, Point size, UIFrame* parent, bool active, bool visible)
-	: ScreenArea(pos, size) {
+UIElement::UIElement(Point pos, UIFrame* parent, bool visible) : ScreenArea(pos) {
 	_parent = parent;
-	_active = active;
+	_visible = visible;
+	_type = AREA_TYPE_ELEMENT;
+	_elType = UIELEMENT_TYPE_INVALID;
+}
+
+UIElement::UIElement(Point pos, Point size, UIFrame* parent, bool visible)
+	                 : ScreenArea(pos, size) {
+	_parent = parent;
 	_visible = visible;
 	_type = AREA_TYPE_ELEMENT;
 	_elType = UIELEMENT_TYPE_INVALID;
@@ -41,10 +47,6 @@ void UIElement::setParent(UIFrame* fr) {
 	_parent = fr;
 }
 
-bool UIElement::isActive() {
-	return _active;
-}
-
 bool UIElement::isVisible() {
 	return _visible;
 }
@@ -55,12 +57,15 @@ void UIElement::visibility(bool val) {
 
 
 // Label class
-UILabel::UILabel(Point pos, Point size, UIFrame* parent, shared_ptr<SpriteText> font,
-	std::string& text, bool active, bool visible)
-	: UIElement(pos, size, parent, active, visible) {
+UILabel::UILabel(Point pos, UIFrame* parent, shared_ptr<SpriteText> font, const std::string& text,
+	             bool visible) : UIElement(pos, parent, visible) {
 	_text = text;
 	_font = font;
 	_elType = UIELEMENT_TYPE_LABEL;
+
+	int width = _font->getWidth(text);
+	int height = _font->getHeight();
+	_size.set(width, height);
 }
 
 UILabel::~UILabel() {
@@ -71,26 +76,29 @@ std::string& UILabel::getText() {
 	return _text;
 }
 
+void UILabel::setText(const std::string& text) {
+	_text = text;
+}
+
 void UILabel::update() {
 
 }
 
 void UILabel::draw() {
-	Point drawPos(_pos);
-	if (_parent) {
-		drawPos += _parent->getAbsPos();
-	}
-
 	// add text positioning
 	if (!_text.empty())
-		_font->draw(_text, drawPos, al_map_rgb(20, 20, 20));
+		_font->draw(_text, getPos(), al_map_rgb(255, 255, 255));
+}
+
+void UILabel::draw(const std::string& value) {
+	_font->draw(_text + ": " + value, getPos(), al_map_rgb(255, 255, 255));
 }
 
 
 // Button class
 UIButton::UIButton(Point pos, UIFrame* parent, int action_id, shared_ptr<SpriteText> font, 
                    std::string& text, bool active, bool visible, bool state, unsigned clickedTicks)
-	               : UIElement(pos, Point(0,0), parent, active, visible), _clickTimer(clickedTicks) {
+	               : UIElement(pos, parent, visible), _clickTimer(clickedTicks) {
 	_action_id = action_id;
 	_font = font;
 	_text = text; 
@@ -99,12 +107,12 @@ UIButton::UIButton(Point pos, UIFrame* parent, int action_id, shared_ptr<SpriteT
 
 	int width = _font->getWidth(text);
 	int height = _font->getHeight();
-	_size.set(width + 30, height + 10);
+	_size.set(width + 10, height + 4);
 }
 
 UIButton::UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared_ptr<Sprite> spr,
-	shared_ptr<Sprite> sprOn, bool active, bool visible, bool state, unsigned clickedTicks)
-	: UIElement(pos, size, parent, active, visible), _clickTimer(clickedTicks) {
+	               shared_ptr<Sprite> sprOn, bool active, bool visible, bool state, unsigned clickedTicks)
+	               : UIElement(pos, size, parent, visible), _clickTimer(clickedTicks) {
 	_action_id = action_id;
 	_sprite = spr;
 	_spriteClicked = sprOn;
@@ -114,6 +122,10 @@ UIButton::UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared
 
 UIButton::~UIButton() {
 
+}
+
+bool UIButton::isActive() {
+	return _active;
 }
 
 int UIButton::getActionID() {
@@ -157,19 +169,19 @@ void UIButton::draw() {
 				_sprite->draw(drawPos);
 			}
 		} else {
-			al_draw_filled_rectangle(drawPos._x, drawPos._y, drawPos._x + _size._x, drawPos._y + _size._y, al_map_rgb(18, 43, 82));
+			//al_draw_filled_rectangle(drawPos._x, drawPos._y, drawPos._x + _size._x, drawPos._y + _size._y, al_map_rgb(18, 43, 82));
 
 			// add text positioning
 			if (!_text.empty())
-				_font->draw(_text, drawPos.add(15, 5), al_map_rgb(160, 150, 93));
+				_font->draw(_text, drawPos.add(5, 0), al_map_rgb(18, 43, 82));
 		}
 	}
 }
 
 
 
-CarouselMenu::CarouselMenu(Point pos, Point size, UIFrame* parent, bool active, bool visible)
-	: UIElement(pos, size, parent, active, visible),
+CarouselMenu::CarouselMenu(Point pos, Point size, UIFrame* parent, bool visible)
+	                       : UIElement(pos, size, parent, visible),
 	_updateTimer(CAROUSEL_UPDATE), _progress(CAROUSEL_DURATION / CAROUSEL_UPDATE) {
 	_spawnRate = 100;
 	_lastItem = 0;

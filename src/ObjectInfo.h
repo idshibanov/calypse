@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "ActionType.h"
+#include "ObjectState.h"
 #include "Point.h"
 
 struct ObjectActionArea {
