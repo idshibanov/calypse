@@ -36,6 +36,7 @@ public:
 	Point getSpriteSize() { return _size; };
 	void draw(const Point& pos, unsigned int sprite_id);
 	void drawScaled(const Point& pos, unsigned int sprite_id, float zoom);
+	void drawTinted(const Point& pos, unsigned int sprite_id, float zoom, const ALLEGRO_COLOR& tint);
 	void drawRandom(const Point& pos);
 	bool checkAlpha(const Point& pos, unsigned int sprite_id);
 };

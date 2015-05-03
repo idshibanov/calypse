@@ -161,6 +161,7 @@ bool ScreenCtl::draw() {
 				} else {
 					auto objSpriteSheet = std::dynamic_pointer_cast<SpriteSheet>(objSprite);
 					objSpriteSheet->drawScaled(coord, obj.second->getSprite(), _zoom);
+					//objSpriteSheet->drawTinted(coord, obj.second->getSprite(), _zoom, al_map_rgba_f(1, 1, 1, 0.7));
 
 					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSpriteSheet, objInfo));
 				}
@@ -184,17 +185,18 @@ bool ScreenCtl::draw() {
 			_buffer.setElement(button);
 		}
 		
-
-		std::string timeSTR("App time: " + std::to_string(_state->_appTime));
-		std::string cpsSTR("Cycles per second: " + std::to_string(_state->_CPS));
-		std::string fpsSTR("Frames per second: " + std::to_string(_state->_FPS));
-		std::string spdSTR("Animation speed: " + std::to_string(static_cast<int>(_animation_speed)) + "%");
-		std::string frameSTR("Animation frame #" + std::to_string(_actor->getSprite()));
-		_font->draw(timeSTR, Point(5, 5), color);
-		_font->draw(cpsSTR, Point(5, 30), color);
-		_font->draw(fpsSTR, Point(5, 55), color);
-		_font->draw(spdSTR, Point(5, 80), color);
-		_font->draw(frameSTR, Point(5, 105), color);
+		if (_state->_drawStats) {
+			std::string timeSTR("App time: " + std::to_string(_state->_appTime));
+			std::string cpsSTR("Cycles per second: " + std::to_string(_state->_CPS));
+			std::string fpsSTR("Frames per second: " + std::to_string(_state->_FPS));
+			std::string spdSTR("Animation speed: " + std::to_string(static_cast<int>(_animation_speed)) + "%");
+			std::string frameSTR("Animation frame #" + std::to_string(_actor->getSprite()));
+			_font->draw(timeSTR, Point(5, 5), color);
+			_font->draw(cpsSTR, Point(5, 30), color);
+			_font->draw(fpsSTR, Point(5, 55), color);
+			_font->draw(spdSTR, Point(5, 80), color);
+			_font->draw(frameSTR, Point(5, 105), color);
+		}
 
 		// Almost last: mouse cursor
 		auto cur = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(0));

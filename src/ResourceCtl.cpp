@@ -75,8 +75,8 @@ std::string ResourceCtl::getActionName(ActionType id) {
 	case ACTION_DROP:
 		return "Drop the object";
 		break;
-	case ACTION_CRAFT:
-		return "Craft the object";
+	case ACTION_CRAFT_TREE:
+		return "Plant the tree";
 		break;
 	case ACTION_PICK_BRANCH:
 		return "Pick branch";

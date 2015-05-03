@@ -36,10 +36,13 @@ AppCtl::AppCtl() {
 	_state->_appSpeed = 100;
 	_state->_FPS = 0;
 	_state->_CPS = 0;
+	_state->_drawStats = false;
 	_state->_drawGrid = false;
 	_state->_drawCoords = false;
 	_state->_drawMasks = false;
+	_state->_drawUIAreas = false;
 
+	_state->_selectedAction = -1;
 	_state->_selectedObject = -1;
 	_state->_selectedFrame = nullptr;
 	_keys = new bool[CALYPSE_KEYS_LAST];
@@ -59,7 +62,7 @@ void AppCtl::render() {
 
 void AppCtl::update() {
 	unsigned dist = 2;
-	if (_keys[SHIFT]) dist *= 10;
+	if (_keys[SHIFT]) dist *= 3;
 
 	if (_keys[LEFT]) {
 		_camera->move(1, dist);
@@ -107,10 +110,19 @@ void AppCtl::controlLoop() {
 				break;
 			case ALLEGRO_KEY_0:
 				_mouse->setSprite(0);
+				_state->_selectedAction = -1;
 				break;
 			case ALLEGRO_KEY_1:
 				_mouse->setSprite(1);
-				// set certain flag
+				_state->_selectedAction = ACTION_DRAG;
+				break;
+			case ALLEGRO_KEY_2:
+				_mouse->setSprite(0);
+				_state->_selectedAction = ACTION_CRAFT_CAMPFIRE;
+				break;
+			case ALLEGRO_KEY_3:
+				_mouse->setSprite(0);
+				_state->_selectedAction = ACTION_CRAFT_TREE;
 				break;
 			case ALLEGRO_KEY_F8:
 				_state->_drawMasks = !_state->_drawMasks;
@@ -120,6 +132,16 @@ void AppCtl::controlLoop() {
 				break;
 			case ALLEGRO_KEY_F10:
 				_state->_drawCoords = !_state->_drawCoords;
+				break;
+			case ALLEGRO_KEY_F11:
+				_state->_drawUIAreas = !_state->_drawUIAreas;
+				break;
+			case ALLEGRO_KEY_F12:
+				_state->_drawStats = !_state->_drawStats;
+				break;
+			case ALLEGRO_KEY_LSHIFT:
+			case ALLEGRO_KEY_RSHIFT:
+				_keys[SHIFT] = true;
 				break;
 			}
 		} else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
@@ -135,6 +157,10 @@ void AppCtl::controlLoop() {
 				break;
 			case ALLEGRO_KEY_DOWN:
 				_keys[DOWN] = false;
+				break;
+			case ALLEGRO_KEY_LSHIFT:
+			case ALLEGRO_KEY_RSHIFT:
+				_keys[SHIFT] = false;
 				break;
 			}
 
@@ -252,7 +278,7 @@ void AppCtl::processMouseAction() {
 				actor->setAction(act1);
 			}
 		} else {
-			auto act1 = make_shared<PointAction>(ACTION_CRAFT, _res, actor, 8, 15, clickPos, _map);
+			auto act1 = make_shared<PointAction>(ACTION_CRAFT_TREE, _res, actor, 8, 15, clickPos, _map);
 			actor->setAction(act1);
 		}
 	}

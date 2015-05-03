@@ -260,7 +260,7 @@ bool PointAction::update() {
 				if (_type == ACTION_DROP) {
 					_actor.lock()->drop(_targetPos);
 					return true;
-				} else if (_type == ACTION_CRAFT && !_map.expired()) {
+				} else if (_type == ACTION_CRAFT_TREE && !_map.expired()) {
 					auto obj = make_shared<MapObject>(1, Point(16, 16));
 					return _map.lock()->addObject(obj);
 				}

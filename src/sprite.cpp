@@ -136,6 +136,22 @@ void SpriteSheet::drawScaled(const Point& pos, unsigned int sprite_id, float zoo
 	}
 }
 
+void SpriteSheet::drawTinted(const Point& pos, unsigned int sprite_id, float zoom, const ALLEGRO_COLOR& tint) {
+	if (sprite_id > _last) {
+		cout << "Warning: sprite_id " << sprite_id << " is out of bound! Sprite " << _id << endl;
+	}
+	if (_texture != NULL) {
+		Point src(sprite_id % _rowsize, sprite_id / _rowsize);
+		src = src * _size;
+		if (zoom == 1.0) {
+			al_draw_tinted_bitmap_region(_texture, tint, src._x, src._y, _size._x, _size._y, pos._x, pos._y, 0);
+		} else {
+			al_draw_tinted_scaled_bitmap(_texture, tint, src._x, src._y, _size._x, _size._y,
+				pos._x, pos._y, _size._x*zoom, _size._y*zoom, 0);
+		}
+	}
+}
+
 void SpriteSheet::drawRandom(const Point& pos) {
 	unsigned int id = rand() % _last;
 	draw(pos, id);
