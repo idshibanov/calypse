@@ -8,7 +8,7 @@ UIFrame::UIFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res,
 	_res = res;
 	auto resCtl = _res.lock();
 
-	if (resCtl) {
+	if (resCtl && !title.empty()) {
 		auto font = resCtl->getFont(12);
 
 		_titleHeight = font->getHeight() + 4; // padding

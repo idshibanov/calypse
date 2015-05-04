@@ -9,6 +9,16 @@
 
 class UIFrame;
 
+
+class ElementStyle {
+public:
+	bool _background;
+	bool _border;
+	ALLEGRO_COLOR _backColor;
+	ALLEGRO_COLOR _textColor;
+	ALLEGRO_COLOR _borderColor;
+};
+
 enum UIElementType {
 	UIELEMENT_TYPE_BUTTON,
 	UIELEMENT_TYPE_LABEL,

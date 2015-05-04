@@ -170,6 +170,14 @@ bool Point::operator> (const Point& rhs) const {
 	//return toRenderPriority() > rhs.toRenderPriority();
 }
 
+bool Point::operator< (int val) const {
+	return _x < val && _y < val;
+}
+
+bool Point::operator>(int val) const {
+	return _x > val && _y > val;
+}
+
 size_t Point::operator() (const Point& k) const {
 	return summation(_x + _y) + _y;
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include "ActionType.h"
+
 class UIFrame;
 
 struct AppState {
@@ -16,7 +18,7 @@ struct AppState {
 	int _appSpeed;
 
 	// state
-	int _selectedAction;
+	ActionType _selectedAction;
 	int _selectedObject;
 	UIFrame* _selectedFrame;
 };

@@ -42,7 +42,7 @@ AppCtl::AppCtl() {
 	_state->_drawMasks = false;
 	_state->_drawUIAreas = false;
 
-	_state->_selectedAction = -1;
+	_state->_selectedAction = ACTION_NONE;
 	_state->_selectedObject = -1;
 	_state->_selectedFrame = nullptr;
 	_keys = new bool[CALYPSE_KEYS_LAST];
@@ -113,7 +113,7 @@ void AppCtl::controlLoop() {
 				break;
 			case ALLEGRO_KEY_0:
 				_mouse->setSprite(0);
-				_state->_selectedAction = -1;
+				_state->_selectedAction = ACTION_NONE;
 				break;
 			case ALLEGRO_KEY_1:
 				_mouse->setSprite(1);
@@ -229,7 +229,18 @@ void AppCtl::processMouseAction() {
 	auto elem = _screen->processAction(absPos);
 	cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
 	if (_mouse->getButton() == MOUSE_BUTTON_LEFT) {
-		if (elem) {
+		if (_state->_selectedAction > ACTION_NONE) {
+			Point mapClick = clickPos.div(SUBTILE_MASK).mul(SUBTILE_MASK);
+			if (mapClick > 0) {
+				Point mvTarget = _pFinder->findAdjacent(actor->getPos(), Rect(mapClick, Point(10, 10)));
+				auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, mvTarget, _pFinder);
+
+				auto act2 = make_shared<PointAction>(_state->_selectedAction, _res, actor, 15, 8, clickPos, _map);
+				act1->chainAction(act2);
+
+				actor->setAction(act1);
+			}
+		} else if (elem) {
 			if (elem->getType() == AREA_TYPE_OBJECT) {
 				auto obj_ptr = std::dynamic_pointer_cast<ObjectArea>(elem);
 				auto obj = obj_ptr->_obj;
@@ -245,7 +256,7 @@ void AppCtl::processMouseAction() {
 				auto button = std::dynamic_pointer_cast<UIButton>(elem);
 				if (button) {
 					int actionID = button->getActionID();
-					if (actionID >= 0 && actionID < ACTION_END) {
+					if (actionID >= 0 && actionID < ACTION_LAST) {
 						auto parentFrame = button->getParent();
 						if (parentFrame) {
 							if (actionID == ACTION_CLOSE_PARENT) {
@@ -264,7 +275,7 @@ void AppCtl::processMouseAction() {
 			}
 		} else {
 			cout << clickPos._x << "," << clickPos._y << endl;
-			if (clickPos._x > 0 && clickPos._y > 0) {
+			if (clickPos > 0) {
 				auto act = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, clickPos, _pFinder);
 				actor->setAction(act);
 			}

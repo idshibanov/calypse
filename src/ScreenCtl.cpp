@@ -160,7 +160,6 @@ bool ScreenCtl::draw() {
 				} else {
 					auto objSpriteSheet = std::dynamic_pointer_cast<SpriteSheet>(objSprite);
 					objSpriteSheet->drawScaled(coord, obj.second->getSprite(), _zoom);
-					//objSpriteSheet->drawTinted(coord, obj.second->getSprite(), _zoom, al_map_rgba_f(1, 1, 1, 0.7));
 
 					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSpriteSheet, objInfo));
 				}
@@ -173,6 +172,24 @@ bool ScreenCtl::draw() {
 				_font->draw(std::to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
+
+		if (_state->_selectedAction == ACTION_CRAFT_TREE) {
+			Point actCoord = convertCoords(_mouse->getPos()).modDiv(SUBTILE_MASK).modMul(SUBTILE_MASK);
+
+			if (actCoord > 0) {
+				actCoord = (actCoord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
+				actCoord = actCoord.toIso() + _screenOffset;
+
+				auto reetSprite = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(2));
+				actCoord += _res->getObjectInfo(1)->offset() * _zoom;
+
+				reetSprite->drawTinted(actCoord, 0, _zoom, al_map_rgba_f(1, 1, 1, 0.7));
+			}
+		} else if (_state->_selectedAction == ACTION_CRAFT_CAMPFIRE) {
+
+		}
+
+		// UI rendering
 
 		for (auto it = _options.begin(); it != _options.end(); it++) {
 			auto button = *it;
