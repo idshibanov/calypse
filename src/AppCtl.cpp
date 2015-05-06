@@ -250,13 +250,13 @@ void AppCtl::processMouseAction() {
 					_state->_selectedObject = obj->getID();
 					_screen->displayOptions(obj->getPos(), subAreas);
 				} else {
-					_events->process(obj);
+					_events->process(obj, ACTION_DRAG);
 				}
 			} else {
 				auto button = std::dynamic_pointer_cast<UIButton>(elem);
 				if (button) {
 					int actionID = button->getActionID();
-					if (actionID >= 0 && actionID < ACTION_LAST) {
+					if (actionID > ACTION_NONE && actionID < ACTION_LAST) {
 						auto parentFrame = button->getParent();
 						if (parentFrame) {
 							if (actionID == ACTION_CLOSE_PARENT) {
@@ -281,7 +281,9 @@ void AppCtl::processMouseAction() {
 			}
 		}
 	} else if (_mouse->getButton() == MOUSE_BUTTON_RIGHT) {
-		if (clickPos._x > 0 && clickPos._y > 0 && actor->isHolding()) {
+		if (_state->_selectedAction > ACTION_NONE) {
+			_state->_selectedAction = ACTION_NONE;
+		} else if (clickPos._x > 0 && clickPos._y > 0 && actor->isHolding()) {
 			Rect clickArea(clickPos, Point(2, 2));
 			Point target = _pFinder->findAdjacent(actor->getPos(), clickArea);
 

@@ -16,6 +16,6 @@ public:
 	~EventService();
 	shared_ptr<Action> createAction();
 	void process(ActionType id);
-	void process(shared_ptr<MapObject> obj);
+	void process(shared_ptr<MapObject> obj, ActionType id);
 	void spawnAction(int actID);
 };

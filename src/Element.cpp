@@ -140,6 +140,10 @@ std::string& UIButton::getText() {
 	return _text;
 }
 
+void UIButton::setStyle(const ElementStyle& st) {
+	_style = st;
+}
+
 void UIButton::launchTimer() {
 	_clickTimer.relaunch();
 }
@@ -169,11 +173,17 @@ void UIButton::draw() {
 				_sprite->draw(drawPos);
 			}
 		} else {
-			//al_draw_filled_rectangle(drawPos._x, drawPos._y, drawPos._x + _size._x, drawPos._y + _size._y, al_map_rgb(18, 43, 82));
+			Point last = drawPos + _size + _style._padding;
+			if (_style._background) {
+				al_draw_filled_rectangle(drawPos._x, drawPos._y, last._x, last._y, _style._backColor);
+			}
+			if (_style._border) {
+				al_draw_rectangle(drawPos._x, drawPos._y, last._x, last._y, _style._borderColor, 1);
+			}
 
 			// add text positioning
 			if (!_text.empty())
-				_font->draw(_text, drawPos.add(5, 0), al_map_rgb(18, 43, 82));
+				_font->draw(_text, drawPos + _style._padding, _style._textColor);
 		}
 	}
 }

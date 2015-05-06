@@ -4,20 +4,11 @@
 #include "ScreenArea.h"
 #include "Main.h"
 #include "Timer.h"
+#include "ElementStyle.h"
 
 #define UIBUTTON_DEFAULT_CLICKED_TICKS 10
 
 class UIFrame;
-
-
-class ElementStyle {
-public:
-	bool _background;
-	bool _border;
-	ALLEGRO_COLOR _backColor;
-	ALLEGRO_COLOR _textColor;
-	ALLEGRO_COLOR _borderColor;
-};
 
 enum UIElementType {
 	UIELEMENT_TYPE_BUTTON,
@@ -70,6 +61,7 @@ class UIButton : public UIElement {
 	TaskTimer _clickTimer;
 	std::string _text;
 	shared_ptr<SpriteText> _font;
+	ElementStyle _style;
 public:
 	UIButton(Point pos, UIFrame* parent, Point size, int action_id, shared_ptr<Sprite> spr,
 	         shared_ptr<Sprite> sprOn, bool active = true, bool visible = true, bool state = false,
@@ -82,6 +74,7 @@ public:
 	int getActionID();
 	bool getState();
 	std::string& getText();
+	void setStyle(const ElementStyle& st);
 	void launchTimer();
 	bool checkTimer();
 	void update();

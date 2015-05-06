@@ -201,6 +201,9 @@ bool ObjectAction::update() {
 			if (!_map.expired() && !_target.expired()) {
 				if (_type == ACTION_CUT) {
 					return _map.lock()->toggleObject(_target.lock()->getPos());
+				} else if (_type == ACTION_PICK_BRANCH) {
+					_actor.lock()->getState()->addItem(C_ITEM_BRANCH);
+					return true;
 				} else if (_type == ACTION_DRAG && !_actor.expired()) {
 					_actor.lock()->pickUp(_target);
 					_target.lock()->dragged(true);
@@ -263,6 +266,14 @@ bool PointAction::update() {
 				} else if (_type == ACTION_CRAFT_TREE && !_map.expired()) {
 					auto obj = make_shared<MapObject>(1, _targetPos);
 					return _map.lock()->addObject(obj);
+				} else if (_type == ACTION_CRAFT_CAMPFIRE && !_map.expired()) {
+					auto actorState = _actor.lock()->getState();
+					cout << actorState->getItemCount(C_ITEM_BRANCH) << " items left!" << endl;
+					if (actorState->useItem(C_ITEM_BRANCH)) {
+						auto obj = make_shared<MapObject>(4, _targetPos);
+						return _map.lock()->addObject(obj);
+					}
+					return false;
 				}
 			}
 		}

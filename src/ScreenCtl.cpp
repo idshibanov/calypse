@@ -186,7 +186,17 @@ bool ScreenCtl::draw() {
 				reetSprite->drawTinted(actCoord, 0, _zoom, al_map_rgba_f(1, 1, 1, 0.7));
 			}
 		} else if (_state->_selectedAction == ACTION_CRAFT_CAMPFIRE) {
+			Point actCoord = convertCoords(_mouse->getPos()).modDiv(SUBTILE_MASK).modMul(SUBTILE_MASK);
 
+			if (actCoord > 0) {
+				actCoord = (actCoord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
+				actCoord = actCoord.toIso() + _screenOffset;
+
+				auto reetSprite = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(6));
+				actCoord += _res->getObjectInfo(4)->offset() * _zoom;
+
+				reetSprite->drawTinted(actCoord, 0, _zoom, al_map_rgba_f(1, 1, 1, 0.7));
+			}
 		}
 
 		// UI rendering

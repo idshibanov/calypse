@@ -25,6 +25,12 @@ UIFrame::UIFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res,
 		}
 
 		auto closeFrame = make_shared<UIButton>(Point(totalWidth - buttonWidth, 2), this, ACTION_CLOSE_PARENT, font, std::string("X"));
+		ElementStyle closeStyle;
+		closeStyle._border = false;
+		closeStyle._background = false;
+		closeStyle._padding = Point(5, 0);
+		closeStyle._textColor = al_map_rgb(255,255,255);
+		closeFrame->setStyle(closeStyle);
 		addElement(closeFrame);
 
 		auto frameTitle = make_shared<UILabel>(Point((totalWidth - titleWidth) / 2, 2), this, font, title);

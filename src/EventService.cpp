@@ -17,24 +17,24 @@ EventService::~EventService() {
 }
 
 void EventService::process(ActionType id) {
-	if (id == ACTION_CUT) {
+	if (id == ACTION_CUT || id == ACTION_PICK_BRANCH) {
 		auto obj = _map->getObject(_state->_selectedObject);
-		process(obj);
+		process(obj, id);
 	}
 }
 
-void EventService::process(shared_ptr<MapObject> obj) {
+void EventService::process(shared_ptr<MapObject> obj, ActionType id) {
 	auto actor = _map->getPrimaryActor();
 	Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());
 	Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
 
 	if (target._x >= 0 && target._y >= 0) {
 		auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
-		if (_res->getObjectInfo(obj->getType())->liftable()) {
+		if (_res->getObjectInfo(obj->getType())->liftable() && id == ACTION_DRAG) {
 			auto act2 = make_shared<ObjectAction>(ACTION_DRAG, _res, actor, 1, 1, obj, _map);
 			act1->chainAction(act2);
 		} else {
-			auto act2 = make_shared<ObjectAction>(ACTION_CUT, _res, actor, 20, 8, obj, _map);
+			auto act2 = make_shared<ObjectAction>(id, _res, actor, 20, 8, obj, _map);
 			act1->chainAction(act2);
 		}
 		actor->setAction(act1);
