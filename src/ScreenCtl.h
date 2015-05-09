@@ -56,6 +56,7 @@ public:
 	void redraw(bool cameraMoved = false);
 	void update();
 	void updateTimers();
+	void drawSelectedObject(shared_ptr<ObjectInfo> obj);
 	shared_ptr<ScreenArea> processAction(const Point&);
 	void displayOptions(Point, const shared_ptr<ObjectActionArea>);
 	void hideOptions();

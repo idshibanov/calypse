@@ -174,3 +174,18 @@ std::string ResourceCtl::getSkillName(SkillScoreID id) const {
 	}
 	return "ERR";
 }
+
+std::string ResourceCtl::getItemName(ItemID id) const {
+	switch (id) {
+	case C_ITEM_BRANCH:
+		return "Branches";
+		break;
+	case C_ITEM_CONE:
+		return "Cones";
+		break;
+	case C_ITEM_APPLE:
+		return "Apples";
+		break;
+	}
+	return "ERR";
+}

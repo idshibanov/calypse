@@ -21,4 +21,5 @@ public:
 	std::string getActionName (ActionType id) const;
 	std::string getStatName(StatScoreID id) const;
 	std::string getSkillName(SkillScoreID id) const;
+	std::string getItemName(ItemID id) const;
 };

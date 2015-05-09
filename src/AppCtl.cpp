@@ -250,7 +250,7 @@ void AppCtl::processMouseAction() {
 					_state->_selectedObject = obj->getID();
 					_screen->displayOptions(obj->getPos(), subAreas);
 				} else {
-					_events->process(obj, ACTION_DRAG);
+					//_events->process(obj, ACTION_DRAG);
 				}
 			} else {
 				auto button = std::dynamic_pointer_cast<UIButton>(elem);
@@ -293,9 +293,6 @@ void AppCtl::processMouseAction() {
 				act1->chainAction(act2);
 				actor->setAction(act1);
 			}
-		} else {
-			auto act1 = make_shared<PointAction>(ACTION_CRAFT_TREE, _res, actor, 8, 15, clickPos, _map);
-			actor->setAction(act1);
 		}
 	}
 }

@@ -146,12 +146,6 @@ bool ScreenCtl::draw() {
 				Point objSize = objInfo->sprSize() * _zoom;
 				coord += objInfo->offset() * _zoom;
 
-				if (type == 0) {
-					if (_actor->isWorking()) {
-						_font->draw(std::to_string(_actor->getProgress()), coord.add(54, 25), color);
-					}
-				}
-
 				auto objSprite = _res->getSprite(objInfo->spriteID());
 				if (objInfo->frames() == 0) {
 					objSprite->drawScaled(coord, objSize);
@@ -163,43 +157,29 @@ bool ScreenCtl::draw() {
 
 					_buffer.setElement(make_shared<ObjectArea>(coord, objSize, obj.second, objSpriteSheet, objInfo));
 				}
-				//al_draw_rectangle(coord._x, coord._y, coord._x + objSize._x, coord._y + objSize._y,
-				//	al_map_rgb(255, 100, 100), 1.0);
 
 				//string tileCoords(to_string(obj.second->getXPos()) + ", " + to_string(obj.second->getYPos()));
 				//_font->draw(tileCoords, coord.add(12, 30), color);
 				//_font->draw(to_string(obj.first), coord.add(12, 30), color);
-				_font->draw(std::to_string(obj.second->getID()), coord.add(12, 30), obj_color);
+				//_font->draw(std::to_string(obj.second->getID()), coord.add(12, 30), obj_color);
 			}
 		}
+
+		// Selected object (craft suggestion)
 
 		if (_state->_selectedAction == ACTION_CRAFT_TREE) {
-			Point actCoord = convertCoords(_mouse->getPos()).modDiv(SUBTILE_MASK).modMul(SUBTILE_MASK);
-
-			if (actCoord > 0) {
-				actCoord = (actCoord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
-				actCoord = actCoord.toIso() + _screenOffset;
-
-				auto reetSprite = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(2));
-				actCoord += _res->getObjectInfo(1)->offset() * _zoom;
-
-				reetSprite->drawTinted(actCoord, 0, _zoom, al_map_rgba_f(1, 1, 1, 0.7));
-			}
+			drawSelectedObject(_res->getObjectInfo(1));
 		} else if (_state->_selectedAction == ACTION_CRAFT_CAMPFIRE) {
-			Point actCoord = convertCoords(_mouse->getPos()).modDiv(SUBTILE_MASK).modMul(SUBTILE_MASK);
-
-			if (actCoord > 0) {
-				actCoord = (actCoord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
-				actCoord = actCoord.toIso() + _screenOffset;
-
-				auto reetSprite = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(6));
-				actCoord += _res->getObjectInfo(4)->offset() * _zoom;
-
-				reetSprite->drawTinted(actCoord, 0, _zoom, al_map_rgba_f(1, 1, 1, 0.7));
-			}
+			drawSelectedObject(_res->getObjectInfo(4));
 		}
 
+
 		// UI rendering
+
+		if (_actor->isWorking()) {
+			Point coord = convertMapCoords(_actor->getPos());
+			_font->draw(std::to_string(_actor->getProgress()), coord.modAdd(25,0) + _res->getObjectInfo(_actor->getType())->offset(), color);
+		}
 
 		for (auto it = _options.begin(); it != _options.end(); it++) {
 			auto button = *it;
@@ -291,9 +271,26 @@ void ScreenCtl::updateTimers() {
 	_menu->update();
 }
 
+
+void ScreenCtl::drawSelectedObject(shared_ptr<ObjectInfo> obj) {
+	Point actCoord = convertCoords(_mouse->getPos()).modDiv(SUBTILE_MASK).modMul(SUBTILE_MASK);
+
+	if (actCoord > 0) {
+		actCoord = (actCoord * _tileSize) / TILE_MASK + _offset - (_firstTile * _tileSize);
+		actCoord = actCoord.toIso() + _screenOffset;
+
+		auto reetSprite = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(obj->spriteID()));
+		actCoord += obj->offset() * _zoom;
+
+		reetSprite->drawTinted(actCoord, 0, _zoom, al_map_rgba_f(1, 1, 1, 0.7));
+	}
+}
+
+
 shared_ptr<ScreenArea> ScreenCtl::processAction(const Point& pos) {
 	return _buffer.getElement(pos);
 }
+
 
 void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> options) {
 	//hideOptions();
@@ -309,9 +306,11 @@ void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> 
 	}	
 }
 
+
 void ScreenCtl::hideOptions() {
 	_menu->closeAnimation();
 }
+
 
 int ScreenCtl::XtoISO(int x, int y) {
 	return x - y;
