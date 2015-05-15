@@ -72,7 +72,7 @@ unsigned int LocalMap::getColMax() const {
 	return _colmax;
 }
 
-std::map<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
+std::multimap<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
 	auto retval = _objects.getObjects(first, last);
 	std::pair<int, shared_ptr<MapObject>> act(_actor->getPos().toRenderPriority()-1, _actor);
 	retval.insert(act);

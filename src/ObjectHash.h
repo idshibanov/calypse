@@ -34,7 +34,7 @@ public:
 	shared_ptr<MapObject> getObject(int);
 	shared_ptr<MapObject> getObject(const Point&);
 	int getObjectID(const Point&);
-	std::map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last) const;
+	std::multimap<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last) const;
 	const std::unordered_map<int, int>* getObjectMasks() const;
 	void update();
 };

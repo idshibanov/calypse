@@ -36,7 +36,7 @@ public:
 	unsigned int getRowMax() const;
 	unsigned int getColMax() const;
 	shared_ptr<Actor> getPrimaryActor();
-	std::map<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
+	std::multimap<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
 	const std::unordered_map<int, int>* getObjectMasks() const;
 	shared_ptr<MapObject> getObject(int);
 	bool toggleObject(const Point& coord);

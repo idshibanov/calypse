@@ -122,8 +122,8 @@ shared_ptr<MapObject> ObjectHash::getObject(const Point& pos) {
 }
 
 
-std::map<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const Point& last) const {
-	std::map<int, shared_ptr<MapObject>> retval;
+std::multimap<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& first, const Point& last) const {
+	std::multimap<int, shared_ptr<MapObject>> retval;
 	Point size = last - first;
 
 	for (auto obj : _objects) {

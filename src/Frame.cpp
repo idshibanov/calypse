@@ -127,7 +127,7 @@ ObjectInfoFrame::ObjectInfoFrame(const Point& pos, const Point& size, weak_ptr<R
 
 			int offset = _titleHeight + (SKILL_SCORE_LAST + 2) * 15;
 			for (int i = 0; i < ITEM_ID_LAST; i++) {
-				_inventory[i] = make_shared<UILabel>(Point(100, offset + (i * 15)), this, font, resCtl->getItemName((ItemID)i));
+				_inventory[i] = make_shared<UILabel>(Point(100, offset + (i * 15)), this, font, resCtl->getItemName((ItemType)i));
 			}
 		}
 	}
@@ -154,7 +154,7 @@ void ObjectInfoFrame::draw() {
 
 	for (int i = 0; i < ITEM_ID_LAST; i++) {
 		if (_inventory[i]) {
-			_inventory[i]->draw(std::to_string(_state->getItemCount((ItemID)i)));
+			_inventory[i]->draw(std::to_string(_state->getItemCount((ItemType)i)));
 		}
 	}
 }

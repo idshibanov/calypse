@@ -35,11 +35,11 @@ void ActorState::recalcStats() {
 	_stats[C_STAT_CHA] = (_stats[C_STAT_INT] + _stats[C_STAT_WILL] + _stats[C_STAT_LUCK]) / 3;
 }
 
-int ActorState::getItemCount(ItemID id) const {
+int ActorState::getItemCount(ItemType id) const {
 	return _inv[id];
 }
 
-bool ActorState::useItem(ItemID id) {
+bool ActorState::useItem(ItemType id) {
 	if(_inv[id] > 0) {
 		_inv[id]--;
 		return true;
@@ -47,7 +47,7 @@ bool ActorState::useItem(ItemID id) {
 	return false;
 }
 
-void ActorState::addItem(ItemID id) {
+void ActorState::addItem(ItemType id) {
 	_inv[id]++;
 }
 

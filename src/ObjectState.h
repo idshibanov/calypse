@@ -1,4 +1,5 @@
 #pragma once
+#include "ItemType.h"
 
 enum StatScoreID {
 	C_STAT_STR = 0,
@@ -23,14 +24,6 @@ enum SkillScoreID {
 	SKILL_SCORE_LAST
 };
 
-enum ItemID {
-	C_ITEM_BRANCH = 0,
-	C_ITEM_CONE,
-	C_ITEM_APPLE,
-	ITEM_ID_LAST
-};
-
-
 class ActorState {
 	int _exp;
 	int _hp;
@@ -52,7 +45,7 @@ public:
 	
 	int getStat(StatScoreID id) const;
 	int getSkill(SkillScoreID id) const;
-	int getItemCount(ItemID id) const;
-	bool useItem(ItemID id);
-	void addItem(ItemID id);
+	int getItemCount(ItemType id) const;
+	bool useItem(ItemType id);
+	void addItem(ItemType id);
 };

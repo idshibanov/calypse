@@ -11,6 +11,7 @@ MapObject::MapObject(short type, const Point& pos)
 }
 
 MapObject::MapObject(MapObject& rhs) {
+	_id = lastID++;
 	_pos = rhs._pos;
 	_type = rhs._type;
 	_dragged = rhs._dragged;

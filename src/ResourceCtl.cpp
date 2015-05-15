@@ -17,6 +17,8 @@ ResourceCtl::ResourceCtl() {
 	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(20, 30), Point(160, 153), Point(-96, -73), 4, 1, false));	// hut
 	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(1, 1), Point(96, 51), Point(-18, -6), 5, 1, true));	// hide
 	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(8, 8), Point(48, 58), Point(8, -26), 6, 1, true));	// fire
+
+	_itemInfo.emplace(C_ITEM_BRANCH, make_shared<ItemInfo>(C_ITEM_BRANCH, Point(32,32), 10));
 }
 
 ResourceCtl::~ResourceCtl() {
@@ -175,7 +177,7 @@ std::string ResourceCtl::getSkillName(SkillScoreID id) const {
 	return "ERR";
 }
 
-std::string ResourceCtl::getItemName(ItemID id) const {
+std::string ResourceCtl::getItemName(ItemType id) const {
 	switch (id) {
 	case C_ITEM_BRANCH:
 		return "Branches";
