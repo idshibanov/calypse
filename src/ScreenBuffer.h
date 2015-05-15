@@ -5,6 +5,7 @@
 #include "Element.h"
 #include "Frame.h"
 #include "ObjectArea.h"
+#include "ItemArea.h"
 
 // basically a frame 0 for now
 // ordered map will be faster to iterate
@@ -18,4 +19,5 @@ public:
 	void reset();
 	void setElement(shared_ptr<ScreenArea>);
 	shared_ptr<ScreenArea> getElement(const Point&);
+	const std::unordered_set<shared_ptr<ScreenArea>>& getAllAreas() const;
 };

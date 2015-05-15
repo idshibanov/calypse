@@ -123,6 +123,31 @@ bool ScreenCtl::draw() {
 			}
 		}
 
+
+
+		auto groundItems = _map->getItems(_firstTile, _lastTile);
+		double itemZoom = _zoom / GROUND_ITEMS_FACTOR;
+
+		for (auto item : groundItems) {
+			Point coord = item.first;
+			convertMapCoords(coord);
+
+			auto itemInfo = _res->getItemInfo(item.second->getType());
+
+			if (itemInfo != nullptr) {
+				Point itemSize = itemInfo->sprSize() * itemZoom;
+				Point itemOffset = itemInfo->offset() * itemZoom;
+				coord -= itemOffset;
+
+				auto itemSprite = _res->getSprite(itemInfo->spriteID());
+				auto itemSpriteSheet = std::dynamic_pointer_cast<SpriteSheet>(itemSprite);
+				itemSpriteSheet->drawScaled(coord, item.second->getType(), itemZoom);
+
+				_buffer.setElement(make_shared<ItemArea>(coord, itemSize, item.second, itemSpriteSheet));
+			}
+		}
+
+
 		shared_ptr<Actor> _actor = _map->getPrimaryActor();
 		auto renderedObjects = _map->getObjects(_firstTile, _lastTile);
 
@@ -190,6 +215,14 @@ bool ScreenCtl::draw() {
 		if (_frame->isVisible()) {
 			_frame->draw();
 			_buffer.setElement(_frame);
+		}
+
+
+		if (_state->_drawUIAreas) {
+			auto bufferItems = _buffer.getAllAreas();
+			for (auto it : bufferItems) {
+				al_draw_rectangle(it->getPos()._x, it->getPos()._y, it->getMax()._x, it->getMax()._y, al_map_rgb(33, 33, 238), 2);
+			}
 		}
 		
 		if (_state->_drawStats) {

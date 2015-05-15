@@ -45,6 +45,17 @@ std::unordered_set<shared_ptr<ScreenArea>>::iterator ScreenBuffer::getElementAre
 						maxZ = area->getZlevel();
 					}
 				}
+			} else if (it_ptr->getType() == AREA_TYPE_ITEM) {
+				auto area = std::dynamic_pointer_cast<ItemArea>(*it);
+
+				auto sp = area->getSprite();
+				if (sp && sp->checkAlpha(pos - area->getPos(), area->_item->getType())) {
+					if (area->getZlevel() > maxZ) {
+						cout << "Got item! " << area->_item->getID() << endl;
+						retval = it;
+						maxZ = area->getZlevel();
+					}
+				}
 			} else {
 				cout << (*it)->getType() << " hit!" << endl;
 				if ((*it)->getZlevel() > maxZ) {
@@ -63,6 +74,10 @@ shared_ptr<ScreenArea> ScreenBuffer::getElement(const Point& pos) {
 		return *area;
 	}
 	return nullptr;
+}
+
+const std::unordered_set<shared_ptr<ScreenArea>>& ScreenBuffer::getAllAreas() const {
+	return _items;
 }
 
 /*

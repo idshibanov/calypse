@@ -1,8 +1,9 @@
 #include "ItemInfo.h"
 
 
-ItemInfo::ItemInfo(ItemType type, const Point& sprSize, int spriteID) {
+ItemInfo::ItemInfo(ItemType type, const Point& offset, const Point& sprSize, int spriteID) {
 	_type = type;
+	_offset = offset;
 	_sprSize = sprSize;
 	_spriteID = spriteID;
 }
@@ -26,6 +27,10 @@ ItemInfo::~ItemInfo() {
 
 int ItemInfo::type() const {
 	return _type;
+}
+
+Point ItemInfo::offset() const {
+	return _offset;
 }
 
 Point ItemInfo::sprSize() const {

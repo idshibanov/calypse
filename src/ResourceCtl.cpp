@@ -18,7 +18,7 @@ ResourceCtl::ResourceCtl() {
 	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(1, 1), Point(96, 51), Point(-18, -6), 5, 1, true));	// hide
 	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(8, 8), Point(48, 58), Point(8, -26), 6, 1, true));	// fire
 
-	_itemInfo.emplace(C_ITEM_BRANCH, make_shared<ItemInfo>(C_ITEM_BRANCH, Point(32,32), 10));
+	_itemInfo.emplace(C_ITEM_BRANCH, make_shared<ItemInfo>(C_ITEM_BRANCH, Point(9,8), Point(32,32), 7));
 }
 
 ResourceCtl::~ResourceCtl() {
@@ -47,6 +47,8 @@ void ResourceCtl::loadSprites() {
 	auto fire_size = getObjectInfo(4)->sprSize();
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/fire.png", 1, 1, fire_size));
 
+	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/items.png", 1, 1, Point(32,32)));
+
 	_sprites.emplace(id++, make_shared<Sprite>(id, "res/buttonG32.png"));
 	_sprites.emplace(id++, make_shared<Sprite>(id, "res/buttonR32.png"));
 
@@ -61,6 +63,15 @@ shared_ptr<ObjectInfo> ResourceCtl::getObjectInfo(int type) const {
 		return ptr->second;
 	}
 	return shared_ptr<ObjectInfo>();
+}
+
+
+shared_ptr<ItemInfo> ResourceCtl::getItemInfo(ItemType t) const {
+	auto ptr = _itemInfo.find(t);
+	if (ptr != _itemInfo.end()) {
+		return ptr->second;
+	}
+	return shared_ptr<ItemInfo>();
 }
 
 

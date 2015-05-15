@@ -1,5 +1,5 @@
 #pragma once
-#include "ItemType.h"
+#include "Inventory.h"
 
 enum StatScoreID {
 	C_STAT_STR = 0,
@@ -34,7 +34,7 @@ class ActorState {
 
 	int _stats[STAT_SCORE_LAST];
 	int _skills[SKILL_SCORE_LAST];
-	int _inv[ITEM_ID_LAST];
+	shared_ptr<Inventory> _inv;
 	
 	// private methods
 	void recalcStats();

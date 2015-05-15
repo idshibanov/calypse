@@ -4,14 +4,16 @@
 
 class ItemInfo {
 	ItemType _type;
+	Point _offset;
 	Point _sprSize;
 	int _spriteID;
 public:
-	ItemInfo(ItemType, const Point&, int);
+	ItemInfo(ItemType, const Point&, const Point&, int);
 	ItemInfo(const ItemInfo&);
 	~ItemInfo();
 	ItemInfo& operator=(const ItemInfo&);
 	int type() const;
+	Point offset() const;
 	Point sprSize() const;
 	int spriteID() const;
 };

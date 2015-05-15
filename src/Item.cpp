@@ -2,7 +2,13 @@
 
 int Item::lastID = 0;
 
-Item::Item(int type, int q) {
+Item::Item(ItemType type) {
+	_id = lastID++;
+	_type = type;
+	_quality = C_DEFAULT_QUALITY;
+}
+
+Item::Item(ItemType type, int q) {
 	_id = lastID++;
 	_type = type;
 	_quality = q;
@@ -28,7 +34,7 @@ int Item::getID() const {
 	return _id;
 }
 
-int Item::getType() const {
+ItemType Item::getType() const {
 	return _type;
 }
 

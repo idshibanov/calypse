@@ -58,6 +58,9 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
 			}
 		}
 	}
+
+	_groundItems.emplace(Point(40, 40), make_shared<Item>(C_ITEM_BRANCH));
+	_groundItems.emplace(Point(48, 48), make_shared<Item>(C_ITEM_BRANCH));
 }
 
 short LocalMap::getTileType(const Point& mapPos) const {
@@ -71,6 +74,7 @@ unsigned int LocalMap::getRowMax() const {
 unsigned int LocalMap::getColMax() const {
 	return _colmax;
 }
+
 
 std::multimap<int, shared_ptr<MapObject>> LocalMap::getObjects(const Point& first, const Point& last) {
 	auto retval = _objects.getObjects(first, last);
@@ -102,6 +106,42 @@ bool LocalMap::resetObject(const Point& coord) {
 bool LocalMap::addObject(shared_ptr<MapObject> obj) {
 	return _objects.setObject(obj);
 }
+
+
+std::multimap<Point, shared_ptr<Item>>::iterator LocalMap::findItem(const Point& pos) {
+	return _groundItems.find(pos);
+}
+
+std::multimap<Point, shared_ptr<Item>> LocalMap::getItems(const Point& first, const Point& last) {
+	std::multimap<Point, shared_ptr<Item>> retval;
+	Point topLeft = first.mul(TILE_MASK);
+	Point botRight = last.mul(TILE_MASK);
+
+	for (auto item : _groundItems) {
+		if (item.first > botRight) {
+			break;
+		} else if (!(item.first < topLeft)) {
+			retval.insert(item);
+		}
+	}
+	return retval;
+}
+
+void LocalMap::putItem(const Point& pos, shared_ptr<Item> item) {
+	_groundItems.emplace(pos, item);
+}
+
+shared_ptr<Item> LocalMap::grabItem(const Point& pos) {
+	shared_ptr<Item> retval;
+	auto it = findItem(pos);
+	if (it != _groundItems.end()) {
+		retval = it->second;
+		_groundItems.erase(it);
+		return retval;
+	}
+	return retval;
+}
+
 
 bool LocalMap::tileExists(const Point& mapPos) const {
 	return mapPos._x < _rowmax && mapPos._y < _colmax;

@@ -4,9 +4,10 @@
 
 
 ActorState::ActorState() {
+	_inv = make_shared<Inventory>();
+
 	std::fill_n(_stats, (int)STAT_SCORE_LAST, 10);
 	std::fill_n(_skills, (int)SKILL_SCORE_LAST, 1);
-	std::fill_n(_inv, (int)ITEM_ID_LAST, 0);
 	
 	_exp = 0;
 	_hunger = 100;
@@ -36,18 +37,14 @@ void ActorState::recalcStats() {
 }
 
 int ActorState::getItemCount(ItemType id) const {
-	return _inv[id];
+	return _inv->getItemCount(id);
 }
 
 bool ActorState::useItem(ItemType id) {
-	if(_inv[id] > 0) {
-		_inv[id]--;
-		return true;
-	}
-	return false;
+	return _inv->useItem(id);
 }
 
 void ActorState::addItem(ItemType id) {
-	_inv[id]++;
+	_inv->addItem(make_shared<Item>(id));
 }
 

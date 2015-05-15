@@ -15,6 +15,7 @@
 
 #define ISO_TILE_SIZE 32
 #define ANIMATION_TICKS 125
+#define GROUND_ITEMS_FACTOR 2
 
 class ScreenCtl {
 	ALLEGRO_DISPLAY* _display;
