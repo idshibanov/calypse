@@ -20,6 +20,10 @@ ActorState::~ActorState() {
 
 }
 
+shared_ptr<Inventory> ActorState::getInventory() const {
+	return _inv;
+}
+
 int ActorState::getStat(StatScoreID id) const {
 	return _stats[id];
 }
@@ -41,7 +45,7 @@ int ActorState::getItemCount(ItemType id) const {
 }
 
 bool ActorState::useItem(ItemType id) {
-	/*
+
 	_inv->putItem(make_shared<Item>(C_ITEM_APPLE), Point(0, 0));
 	_inv->putItem(make_shared<Item>(C_ITEM_APPLE), Point(2, 2));
 	_inv->putItem(make_shared<Item>(C_ITEM_APPLE), Point(2, 3));
@@ -54,7 +58,7 @@ bool ActorState::useItem(ItemType id) {
 	_inv->debug();
 	_inv->putItem(make_shared<Item>(C_ITEM_APPLE), Point(0, 0));
 	_inv->debug();
-	*/
+
 
 	return _inv->useItem(id);
 }

@@ -42,7 +42,8 @@ public:
 	// functions
 	ActorState();
 	~ActorState();
-	
+
+	shared_ptr<Inventory> getInventory() const;
 	int getStat(StatScoreID id) const;
 	int getSkill(SkillScoreID id) const;
 	int getItemCount(ItemType id) const;

@@ -138,23 +138,67 @@ ObjectInfoFrame::~ObjectInfoFrame() {
 }
 
 void ObjectInfoFrame::draw() {
-	UIFrame::draw();
+	if (_visible) {
+		UIFrame::draw();
 
-	for (int i = 0; i < STAT_SCORE_LAST; i++) {
-		if (_statLabels[i]) {
-			_statLabels[i]->draw(std::to_string(_state->getStat((StatScoreID)i)));
+		for (int i = 0; i < STAT_SCORE_LAST; i++) {
+			if (_statLabels[i]) {
+				_statLabels[i]->draw(std::to_string(_state->getStat((StatScoreID)i)));
+			}
+		}
+
+		for (int i = 0; i < SKILL_SCORE_LAST; i++) {
+			if (_skillLabels[i]) {
+				_skillLabels[i]->draw(std::to_string(_state->getSkill((SkillScoreID)i)));
+			}
+		}
+
+		for (int i = 0; i < ITEM_ID_LAST; i++) {
+			if (_inventory[i]) {
+				_inventory[i]->draw(std::to_string(_state->getItemCount((ItemType)i)));
+			}
 		}
 	}
+}
 
-	for (int i = 0; i < SKILL_SCORE_LAST; i++) {
-		if (_skillLabels[i]) {
-			_skillLabels[i]->draw(std::to_string(_state->getSkill((SkillScoreID)i)));
-		}
+
+
+
+ContainerFrame::ContainerFrame(const Point& pos, weak_ptr<ResourceCtl> res, const std::string& title, shared_ptr<Inventory> inv) 
+	                           : UIFrame(pos, inv->getSize().modMul(INVENTORY_ICON_SIZE).modAdd(20, 20), res, title) {
+	_inv = inv;
+	auto resCtl = _res.lock();
+	if (resCtl) {
+
 	}
+}
 
-	for (int i = 0; i < ITEM_ID_LAST; i++) {
-		if (_inventory[i]) {
-			_inventory[i]->draw(std::to_string(_state->getItemCount((ItemType)i)));
+ContainerFrame::~ContainerFrame() {
+
+}
+
+void ContainerFrame::draw() {
+	if (_visible) {
+		UIFrame::draw();
+
+		ALLEGRO_COLOR white = al_map_rgb(255, 255, 255);
+		Point size = _inv->getSize();
+		Point offset = _pos.add(10, 10 + _titleHeight);
+		int xMax = offset._x + size._x * INVENTORY_ICON_SIZE;
+		int yMax = offset._y + size._y * INVENTORY_ICON_SIZE;
+
+		// to get the last lines
+		size.modAdd(1, 1); 
+
+		al_draw_filled_rectangle(offset._x, offset._y, xMax, yMax, al_map_rgb(18, 12, 32));
+		for (int col = 0; col < size._x; col++) {
+			int x = offset._x + col * INVENTORY_ICON_SIZE;
+			al_draw_line(x, offset._y, x, yMax, white, 1);
+		}
+
+		for (int row = 0; row < size._y; row++) {
+			int y = offset._y + row * INVENTORY_ICON_SIZE;
+			al_draw_line(offset._x, y, xMax, y, white, 1);
 		}
 	}
 }

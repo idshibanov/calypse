@@ -28,8 +28,7 @@ class ScreenCtl {
 	shared_ptr<Mouse> _mouse;
 	shared_ptr<AppState> _state;
 
-	shared_ptr<ObjectInfoFrame> _frame;
-	shared_ptr<UIButton> _button;
+	std::vector<shared_ptr<UIFrame>> _frames;
 	std::vector<shared_ptr<UIButton>> _options;
 	shared_ptr<CarouselMenu> _menu;
 
@@ -75,4 +74,5 @@ public:
 	void zoomIn();
 	void zoomOut();
 	void toggleInfoScreen();
+	void toggleInventory();
 };

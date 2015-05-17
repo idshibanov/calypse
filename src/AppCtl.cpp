@@ -111,6 +111,9 @@ void AppCtl::controlLoop() {
 			case ALLEGRO_KEY_C:
 				_screen->toggleInfoScreen();
 				break;
+			case ALLEGRO_KEY_I:
+				_screen->toggleInventory();
+				break;
 			case ALLEGRO_KEY_0:
 				_mouse->setSprite(0);
 				_state->_selectedAction = ACTION_NONE;

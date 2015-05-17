@@ -10,6 +10,9 @@ Inventory::~Inventory() {
 }
 
 
+Point Inventory::getSize() const {
+	return _invArea._size;
+}
 
 shared_ptr<Item> Inventory::findItemByID(int id) {
 	return nullptr;

@@ -27,11 +27,13 @@ class Inventory {
 	void setItem(int id, const Point& cell, const Point& size); // def. private search masks and replace all ids with -1
 	void clearItem(int id); // def. private search masks and replace all ids with -1
 
+	// push item to inventory (find first available spot)
 	// useItem for craft (don't care which one)
 	// takeItem for mouse clicks
 public:
 	Inventory();
 	~Inventory();
+	Point getSize() const;
 	bool resize(Point diff);
 	int getItemCount(ItemType t) const;
 	bool useItem(ItemType t);

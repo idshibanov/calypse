@@ -5,6 +5,8 @@
 #include "ItemInfo.h"
 #include "Sprite.h"
 
+#define INVENTORY_ICON_SIZE 48
+
 // Resource controller that will eventually handle gradual loading
 // Configuration files (XML?) are planned
 

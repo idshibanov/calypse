@@ -43,3 +43,13 @@ public:
 	~ObjectInfoFrame();
 	void draw();
 };
+
+
+class ContainerFrame : public UIFrame {
+	shared_ptr<Inventory> _inv;
+public:
+	ContainerFrame(const Point& pos, weak_ptr<ResourceCtl> res,
+		const std::string& title, shared_ptr<Inventory> inv);
+	~ContainerFrame();
+	void draw();
+};
