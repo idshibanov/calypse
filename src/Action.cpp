@@ -202,7 +202,7 @@ bool ObjectAction::update() {
 				if (_type == ACTION_CUT) {
 					return _map.lock()->toggleObject(_target.lock()->getPos());
 				} else if (_type == ACTION_PICK_BRANCH) {
-					_actor.lock()->getState()->addItem(C_ITEM_BRANCH);
+					_actor.lock()->getState()->addItem(C_ITEM_WOOD);
 					return true;
 				} else if (_type == ACTION_DRAG && !_actor.expired()) {
 					_actor.lock()->pickUp(_target);
@@ -268,8 +268,8 @@ bool PointAction::update() {
 					return _map.lock()->addObject(obj);
 				} else if (_type == ACTION_CRAFT_CAMPFIRE && !_map.expired()) {
 					auto actorState = _actor.lock()->getState();
-					cout << actorState->getItemCount(C_ITEM_BRANCH) << " items left!" << endl;
-					if (actorState->useItem(C_ITEM_BRANCH)) {
+					cout << actorState->getItemCount(C_ITEM_WOOD) << " items left!" << endl;
+					if (actorState->useItem(C_ITEM_WOOD)) {
 						auto obj = make_shared<MapObject>(4, _targetPos);
 						return _map.lock()->addObject(obj);
 					}

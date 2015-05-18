@@ -14,7 +14,33 @@ Point Inventory::getSize() const {
 	return _invArea._size;
 }
 
+
+std::map<Point, shared_ptr<Item>, cmpPointsStrict> Inventory::getItemList() {
+	std::map<Point, shared_ptr<Item>, cmpPointsStrict> retval;
+	std::set<int> found;
+
+	std::function<void(const Point&)> counter = [this, &found, &retval](const Point& pos) {
+		int id = getItem(pos);
+		if (id != -1 && found.insert(id).second) {
+			if (!retval.emplace(pos, findItemByID(id)).second) {
+				cout << "FAIL";
+				//retval.emplace(pos, findItemByID(id));
+			}
+		}
+	};
+
+	_invArea.iterate(counter, 1);
+
+	return retval;
+}
+
+
 shared_ptr<Item> Inventory::findItemByID(int id) {
+	for (auto it : _items) {
+		if (it->getID() == id) {
+			return it;
+		}
+	}
 	return nullptr;
 }
 

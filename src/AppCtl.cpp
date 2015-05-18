@@ -278,7 +278,14 @@ void AppCtl::processMouseAction() {
 						button->launchTimer();
 					}
 				} else if (uiEl->getElementType() == UIELEMENT_TYPE_CONTAINER) {
-					cout << "GOT HERE!" << endl;
+					auto container = std::dynamic_pointer_cast<ContainerArea>(elem);
+
+					Point cell = container->getCell(absPos);
+					cout << "Cell addr: " << cell._x << "," << cell._y << endl;
+					auto inv = actor->getState()->getInventory();
+
+					int itemID = rand() % ITEM_ID_LAST;
+					inv->putItem(make_shared<Item>((ItemType)itemID), cell);
 				}
 			}
 		} else {

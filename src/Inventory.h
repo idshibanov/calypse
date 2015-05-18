@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <set>
 #include <vector>
 
@@ -35,6 +36,8 @@ public:
 	~Inventory();
 	Point getSize() const;
 	bool resize(Point diff);
+	std::map<Point, shared_ptr<Item>, cmpPointsStrict> getItemList();
+
 	int getItemCount(ItemType t) const;
 	bool useItem(ItemType t);
 	void addItem(shared_ptr<Item> item);

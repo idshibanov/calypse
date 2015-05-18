@@ -23,7 +23,7 @@ class LocalMap {
 
 	// containers
 	std::vector<MapTile> _tiles;
-	std::multimap<Point, shared_ptr<Item>> _groundItems;
+	std::multimap<Point, shared_ptr<Item>, cmpPointsStrict> _groundItems;
 	ObjectHash _objects;
 	shared_ptr<Actor> _actor;
 

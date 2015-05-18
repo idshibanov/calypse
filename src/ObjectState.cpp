@@ -45,22 +45,8 @@ int ActorState::getItemCount(ItemType id) const {
 }
 
 bool ActorState::useItem(ItemType id) {
-
-	_inv->putItem(make_shared<Item>(C_ITEM_APPLE), Point(0, 0));
-	_inv->putItem(make_shared<Item>(C_ITEM_APPLE), Point(2, 2));
-	_inv->putItem(make_shared<Item>(C_ITEM_APPLE), Point(2, 3));
 	_inv->debug();
-
-	auto it = _inv->takeItem(3);
-	if (it) {
-		cout << "Type: " << it->getType() << " ID: " << it->getID() << endl;
-	}
-	_inv->debug();
-	_inv->putItem(make_shared<Item>(C_ITEM_APPLE), Point(0, 0));
-	_inv->debug();
-
-
-	return _inv->useItem(id);
+	return true;// _inv->useItem(id);
 }
 
 void ActorState::addItem(ItemType id) {

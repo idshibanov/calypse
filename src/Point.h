@@ -43,7 +43,9 @@ public:
 	Point operator% (int limit) const;
 	bool operator== (const Point&) const;
 	bool operator!= (const Point&) const;
-	bool operator> (const Point&) const;
+	bool rectLessThan(const Point&) const; // it's not a strict weak ordering; handle with care
+	bool rectMoreThan(const Point&) const;
+	bool operator> (const Point&) const; // default lexicographical ordering; suitable for std containers
 	bool operator< (const Point&) const;
 	bool operator> (int) const;
 	bool operator< (int) const;
@@ -74,4 +76,12 @@ public:
 	bool contain(const Point& pos) const;
 	void iterate(std::function<void(const Point&)>& action, int step = SUBTILE_MASK);
 	bool iterate(std::function<bool(const Point&)>& action, bool defaultVal, int step = SUBTILE_MASK);
+};
+
+
+struct cmpPointsStrict {
+	bool operator()(const Point& a, const Point& b) const {
+		if (a._x != b._x) return a._x < b._x;
+		return a._y < b._y;
+	}
 };

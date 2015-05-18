@@ -2,14 +2,13 @@
 #include <allegro5/allegro_primitives.h>
 #include "Frame.h"
 
-UIFrame::UIFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res, const std::string& title,
+UIFrame::UIFrame(const Point& pos, const Point& size, shared_ptr<ResourceCtl> res, const std::string& title,
 	             int zlevel, bool draggable, bool visible, UIFrame* parent) : ScreenArea(pos, size) {
 
 	_res = res;
-	auto resCtl = _res.lock();
 
-	if (resCtl && !title.empty()) {
-		auto font = resCtl->getFont(12);
+	if (!title.empty()) {
+		auto font = _res->getFont(12);
 
 		_titleHeight = font->getHeight() + 4; // padding
 		int titleWidth = font->getWidth(title) + 10; // padding
@@ -110,32 +109,34 @@ void UIFrame::draw() {
 
 
 
-ObjectInfoFrame::ObjectInfoFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res, const std::string& title,
+ObjectInfoFrame::ObjectInfoFrame(const Point& pos, const Point& size, shared_ptr<ResourceCtl> res, const std::string& title,
                                  shared_ptr<ActorState> state) : UIFrame(pos, size, res, title) {
 	_state = state;
-	auto resCtl = _res.lock();
-	if (resCtl) {
-		auto font = resCtl->getFont(10);
 
-		if (font) {
-			for (int i = 0; i < STAT_SCORE_LAST; i++) {
-				_statLabels[i] = make_shared<UILabel>(Point(10, _titleHeight + (i * 15)), this, font, resCtl->getStatName((StatScoreID)i));
-			}
+	auto font = _res->getFont(10);
 
-			for (int i = 0; i < SKILL_SCORE_LAST; i++) {
-				_skillLabels[i] = make_shared<UILabel>(Point(100, _titleHeight + (i * 15)), this, font, resCtl->getSkillName((SkillScoreID)i));
-			}
+	if (font) {
+		for (int i = 0; i < STAT_SCORE_LAST; i++) {
+			_statLabels[i] = make_shared<UILabel>(Point(10, _titleHeight + (i * 15)), this, font, _res->getStatName((StatScoreID)i));
+		}
 
-			int offset = _titleHeight + (SKILL_SCORE_LAST + 2) * 15;
-			for (int i = 0; i < ITEM_ID_LAST; i++) {
-				_inventory[i] = make_shared<UILabel>(Point(100, offset + (i * 15)), this, font, resCtl->getItemName((ItemType)i));
-			}
+		for (int i = 0; i < SKILL_SCORE_LAST; i++) {
+			_skillLabels[i] = make_shared<UILabel>(Point(100, _titleHeight + (i * 15)), this, font, _res->getSkillName((SkillScoreID)i));
+		}
+
+		int offset = _titleHeight + (SKILL_SCORE_LAST + 2) * 15;
+		for (int i = 0; i < ITEM_ID_LAST; i++) {
+			_inventory[i] = make_shared<UILabel>(Point(100, offset + (i * 15)), this, font, _res->getItemName((ItemType)i));
 		}
 	}
 }
 
 ObjectInfoFrame::~ObjectInfoFrame() {
 
+}
+
+std::vector<shared_ptr<UIElement>> ObjectInfoFrame::getElements() const {
+	return _elements;
 }
 
 void ObjectInfoFrame::draw() {
@@ -165,22 +166,34 @@ void ObjectInfoFrame::draw() {
 
 
 
-ContainerFrame::ContainerFrame(const Point& pos, weak_ptr<ResourceCtl> res, const std::string& title, shared_ptr<Inventory> inv) 
+ContainerFrame::ContainerFrame(const Point& pos, shared_ptr<ResourceCtl> res, const std::string& title, shared_ptr<Inventory> inv)
 	                           : UIFrame(pos, inv->getSize().modMul(INVENTORY_ICON_SIZE).modAdd(20, 20), res, title) {
 	
 	_inv = inv;
-	_elements.push_back(make_shared<ContainerArea>(Point(10, 10 + _titleHeight), _inv->getSize(), this));
-
-	auto resCtl = _res.lock();
-	if (resCtl) {
-
-	}
+	_contArea = make_shared<ContainerArea>(Point(10, 10 + _titleHeight), _inv->getSize(), this);
 }
 
 ContainerFrame::~ContainerFrame() {
 
 }
 
+std::vector<shared_ptr<UIElement>> ContainerFrame::getElements() const {
+	std::vector<shared_ptr<UIElement>> retval(_elements);
+	retval.push_back(_contArea);
+	return retval;
+}
+
 void ContainerFrame::draw() {
 	UIFrame::draw();
+	_contArea->draw(_inv);
+
+	double itemZoom = 64 / INVENTORY_ICON_SIZE;
+
+	auto items = _inv->getItemList();
+	for (auto it : items) {
+		auto itInfo = _res->getItemInfo(it.second->getType());
+		auto itemSprite = _res->getSprite(itInfo->spriteID());
+		auto itemSpriteSheet = std::dynamic_pointer_cast<SpriteSheet>(itemSprite);
+		itemSpriteSheet->drawScaled(_contArea->getPos() + it.first.mul(INVENTORY_ICON_SIZE), it.second->getType(), 1);
+	}
 }

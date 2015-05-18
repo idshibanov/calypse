@@ -150,7 +150,7 @@ bool Point::operator!= (const Point& rhs) const {
 	return _x != rhs._x || _y != rhs._y;
 }
 
-bool Point::operator< (const Point& rhs) const {
+bool Point::rectLessThan (const Point& rhs) const {
 	if (_x <= rhs._x && _y < rhs._y) {
 		return true;
 	} else if (_x < rhs._x && _y <= rhs._y) {
@@ -160,7 +160,7 @@ bool Point::operator< (const Point& rhs) const {
 	//return toRenderPriority() < rhs.toRenderPriority();
 }
 
-bool Point::operator> (const Point& rhs) const {
+bool Point::rectMoreThan (const Point& rhs) const {
 	if (_x >= rhs._x && _y > rhs._y) {
 		return true;
 	} else if (_x > rhs._x && _y >= rhs._y) {
@@ -168,6 +168,16 @@ bool Point::operator> (const Point& rhs) const {
 	}
 	return false;
 	//return toRenderPriority() > rhs.toRenderPriority();
+}
+
+bool Point::operator< (const Point& rhs) const {
+	if (_x != rhs._x) return _x < rhs._x;
+	return _y < rhs._y;
+}
+
+bool Point::operator>(const Point& rhs) const {
+	if (_x != rhs._x) return _x > rhs._x;
+	return _y > rhs._y;
 }
 
 bool Point::operator< (int val) const {

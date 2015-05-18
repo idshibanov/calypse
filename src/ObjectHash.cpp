@@ -132,7 +132,7 @@ std::multimap<int, shared_ptr<MapObject>> ObjectHash::getObjects(const Point& fi
 
 		int prio = pos.toRenderPriority(objInfo->mapSize());
 
-		if (pos > first * TILE_MASK && pos < last * TILE_MASK) {
+		if (pos.rectMoreThan(first * TILE_MASK) && pos.rectLessThan(last * TILE_MASK)) {
 			retval.emplace(prio, obj.second);
 		}
 	}

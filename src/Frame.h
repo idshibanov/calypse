@@ -9,17 +9,15 @@ class UIFrame : public ScreenArea {
 	UIFrame& operator=(const UIFrame&) = delete;
 protected:
 	int _titleHeight;
-	weak_ptr<ResourceCtl> _res;
+	shared_ptr<ResourceCtl> _res;
 	bool _draggable;
 	bool _visible;
 	UIFrame* _parent;
 	std::vector<shared_ptr<UIElement>> _elements;
 public:
-	UIFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res, const std::string& title, 
+	UIFrame(const Point& pos, const Point& size, shared_ptr<ResourceCtl> res, const std::string& title,
 		    int zlevel = 100, bool draggable = false, bool visible = false, UIFrame* parent = 0);
 	virtual ~UIFrame();
-	void addElement(shared_ptr<UIElement> el);
-	std::vector<shared_ptr<UIElement>> getElements() const;
 	Point getPos() const;
 	Point getAbsPos() const;
 	int getZLevel() const;
@@ -28,6 +26,8 @@ public:
 	void setParent(UIFrame* p);
 	void setZLevel(unsigned z);
 	void setVisible(bool value);
+	virtual void addElement(shared_ptr<UIElement> el);
+	virtual std::vector<shared_ptr<UIElement>> getElements() const;
 	virtual void draw();
 };
 
@@ -38,18 +38,21 @@ class ObjectInfoFrame : public UIFrame {
 	shared_ptr<UILabel> _skillLabels[SKILL_SCORE_LAST];
 	shared_ptr<UILabel> _inventory[ITEM_ID_LAST];
 public:
-	ObjectInfoFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res, 
+	ObjectInfoFrame(const Point& pos, const Point& size, shared_ptr<ResourceCtl> res,
 		            const std::string& title, shared_ptr<ActorState> state);
 	~ObjectInfoFrame();
+	std::vector<shared_ptr<UIElement>> getElements() const;
 	void draw();
 };
 
 
 class ContainerFrame : public UIFrame {
 	shared_ptr<Inventory> _inv;
+	shared_ptr<ContainerArea> _contArea;
 public:
-	ContainerFrame(const Point& pos, weak_ptr<ResourceCtl> res,
+	ContainerFrame(const Point& pos, shared_ptr<ResourceCtl> res,
 		const std::string& title, shared_ptr<Inventory> inv);
 	~ContainerFrame();
+	std::vector<shared_ptr<UIElement>> getElements() const;
 	void draw();
 };

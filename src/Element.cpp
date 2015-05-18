@@ -193,6 +193,7 @@ ContainerArea::ContainerArea(const Point& pos, const Point& size, UIFrame* paren
 	                        : UIElement(pos, parent), _areaSize(size) {
 
 	_elType = UIELEMENT_TYPE_CONTAINER;
+	_size = size.mul(INVENTORY_ICON_SIZE);
 	if (parent) {
 		_zlevel = parent->getZLevel() + 1;
 	}
@@ -247,6 +248,10 @@ void ContainerArea::draw() {
 
 void ContainerArea::draw(shared_ptr<Inventory> inv) {
 	ContainerArea::draw();
+	auto items = inv->getItemList();
+	for (auto it : items) {
+		it.second->getType();
+	}
 }
 
 
