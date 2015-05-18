@@ -2,17 +2,20 @@
 #include <string>
 #include <vector>
 #include "ScreenArea.h"
-#include "Main.h"
 #include "Timer.h"
 #include "ElementStyle.h"
+#include "Inventory.h"
 
 #define UIBUTTON_DEFAULT_CLICKED_TICKS 10
+#define CAROUSEL_UPDATE 20
+#define CAROUSEL_DURATION 800
 
 class UIFrame;
 
 enum UIElementType {
 	UIELEMENT_TYPE_BUTTON,
 	UIELEMENT_TYPE_LABEL,
+	UIELEMENT_TYPE_CONTAINER,
 	UIELEMENT_TYPE_INVALID
 };
 
@@ -81,8 +84,18 @@ public:
 	void draw();
 };
 
-#define CAROUSEL_UPDATE 20
-#define CAROUSEL_DURATION 800
+
+class ContainerArea : public UIElement {
+	Point _areaSize;
+public:
+	ContainerArea(const Point& pos, const Point& size, UIFrame* parent);
+	~ContainerArea();
+	Point getCell(Point absPos) const;
+	void update();
+	void draw();
+	void draw(shared_ptr<Inventory> inv);
+};
+
 
 class CarouselMenu : public UIElement {
 	std::vector<shared_ptr<UIButton>> _options;

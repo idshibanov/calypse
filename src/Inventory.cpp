@@ -177,23 +177,21 @@ std::set<int> Inventory::getItemsOnArea(const Point& cell, const Point& size) {
 	return found;
 }
 
-int Inventory::forceItem(shared_ptr<Item> item, const Point& cell) {
-	int retval = -1; // fail
-
+shared_ptr<Item> Inventory::forceItem(shared_ptr<Item> item, const Point& cell) {
 	Point size(1, 1);
 	auto found = getItemsOnArea(cell, size);
 
-	if (found.size() == 0 && putItem(item, cell)) {
-		return item->getID();
+	if (found.size() == 0 ) {
+		putItem(item, cell);
 	} else if (found.size() == 1) {
 		int oldID = *found.begin();
 
-		takeItem(oldID);
+		auto ret = takeItem(oldID);
 		putItem(item, cell);
 
-		return oldID;
+		return ret;
 	}
-	return retval;
+	return nullptr;
 }
 
 void Inventory::debug() const {

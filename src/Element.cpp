@@ -189,6 +189,67 @@ void UIButton::draw() {
 }
 
 
+ContainerArea::ContainerArea(const Point& pos, const Point& size, UIFrame* parent) 
+	                        : UIElement(pos, parent), _areaSize(size) {
+
+	_elType = UIELEMENT_TYPE_CONTAINER;
+	if (parent) {
+		_zlevel = parent->getZLevel() + 1;
+	}
+}
+
+ContainerArea::~ContainerArea() {
+
+}
+
+Point ContainerArea::getCell(Point absPos) const {
+	Point pos = absPos - getPos();
+
+	if (pos._x < 0 || pos._y < 0) {
+		return Point(-1, -1);
+	}
+
+	pos.modDiv(INVENTORY_ICON_SIZE);
+	if (pos._x > _areaSize._x) pos._x = _areaSize._x;
+	if (pos._y > _areaSize._y) pos._y = _areaSize._y;
+
+	return pos;
+}
+
+void ContainerArea::update() {
+
+}
+
+void ContainerArea::draw() {
+	if (_visible) {
+
+		ALLEGRO_COLOR white = al_map_rgb(255, 255, 255);
+		Point size(_areaSize);
+		Point offset = getPos();
+		int xMax = offset._x + size._x * INVENTORY_ICON_SIZE;
+		int yMax = offset._y + size._y * INVENTORY_ICON_SIZE;
+
+		// to get the last lines
+		size.modAdd(1, 1);
+
+		al_draw_filled_rectangle(offset._x, offset._y, xMax, yMax, al_map_rgb(18, 12, 32));
+		for (int col = 0; col < size._x; col++) {
+			int x = offset._x + col * INVENTORY_ICON_SIZE;
+			al_draw_line(x, offset._y, x, yMax, white, 1);
+		}
+
+		for (int row = 0; row < size._y; row++) {
+			int y = offset._y + row * INVENTORY_ICON_SIZE;
+			al_draw_line(offset._x, y, xMax, y, white, 1);
+		}
+	}
+}
+
+void ContainerArea::draw(shared_ptr<Inventory> inv) {
+	ContainerArea::draw();
+}
+
+
 
 CarouselMenu::CarouselMenu(Point pos, Point size, UIFrame* parent, bool visible)
 	                       : UIElement(pos, size, parent, visible),

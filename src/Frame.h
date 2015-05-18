@@ -16,7 +16,7 @@ protected:
 	std::vector<shared_ptr<UIElement>> _elements;
 public:
 	UIFrame(const Point& pos, const Point& size, weak_ptr<ResourceCtl> res, const std::string& title, 
-		    int zlevel = 1, bool draggable = false, bool visible = false, UIFrame* parent = 0);
+		    int zlevel = 100, bool draggable = false, bool visible = false, UIFrame* parent = 0);
 	virtual ~UIFrame();
 	void addElement(shared_ptr<UIElement> el);
 	std::vector<shared_ptr<UIElement>> getElements() const;

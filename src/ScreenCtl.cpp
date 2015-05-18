@@ -222,7 +222,7 @@ bool ScreenCtl::draw() {
 		if (_state->_drawUIAreas) {
 			auto bufferItems = _buffer.getAllAreas();
 			for (auto it : bufferItems) {
-				al_draw_rectangle(it->getPos()._x, it->getPos()._y, it->getMax()._x, it->getMax()._y, al_map_rgb(33, 33, 238), 2);
+				al_draw_rectangle(it->getPos()._x, it->getPos()._y, it->getMax()._x, it->getMax()._y, al_map_rgb(238, 33, 238), 2);
 			}
 		}
 		

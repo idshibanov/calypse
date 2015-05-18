@@ -44,7 +44,7 @@ public:
 	bool putItem(shared_ptr<Item> item, const Point& cell); // iterate, check Fits, update masks
 	shared_ptr<Item> takeItem(int id);
 	bool useItems(ItemType t, int count); // search & remove, you better to do something with result
-	int forceItem(shared_ptr<Item> item, const Point& cell); // counts items, if 0 -> return same id, if 1 -> return old, if 2+ -> -1
+	shared_ptr<Item> forceItem(shared_ptr<Item> item, const Point& cell); // counts items, if 0 -> return same id, if 1 -> return old, if 2+ -> -1
 
 	void debug() const;
 };

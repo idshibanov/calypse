@@ -255,25 +255,30 @@ void AppCtl::processMouseAction() {
 				} else {
 					//_events->process(obj, ACTION_DRAG);
 				}
-			} else {
-				auto button = std::dynamic_pointer_cast<UIButton>(elem);
-				if (button) {
-					int actionID = button->getActionID();
-					if (actionID > ACTION_NONE && actionID < ACTION_LAST) {
-						auto parentFrame = button->getParent();
-						if (parentFrame) {
-							if (actionID == ACTION_CLOSE_PARENT) {
-								parentFrame->setVisible(false);
+			} else if (elem->getType() == AREA_TYPE_FRAME) {
+				auto selFrame = std::dynamic_pointer_cast<UIFrame>(elem);
+				_state->_selectedFrame = selFrame.get();
+			} else if (elem->getType() == AREA_TYPE_ELEMENT) {
+				auto uiEl = std::dynamic_pointer_cast<UIElement>(elem);
+				if (uiEl->getElementType() == UIELEMENT_TYPE_BUTTON) {
+					auto button = std::dynamic_pointer_cast<UIButton>(elem);
+					if (button) {
+						int actionID = button->getActionID();
+						if (actionID > ACTION_NONE && actionID < ACTION_LAST) {
+							auto parentFrame = button->getParent();
+							if (parentFrame) {
+								if (actionID == ACTION_CLOSE_PARENT) {
+									parentFrame->setVisible(false);
+								}
+							} else {
+								_screen->hideOptions();
+								_events->process((ActionType)actionID);
 							}
-						} else {
-							_screen->hideOptions();
-							_events->process((ActionType)actionID);
 						}
+						button->launchTimer();
 					}
-					button->launchTimer();
-				} else if (elem->getType() == AREA_TYPE_FRAME) {
-					auto selFrame = std::dynamic_pointer_cast<UIFrame>(elem);
-					_state->_selectedFrame = selFrame.get();
+				} else if (uiEl->getElementType() == UIELEMENT_TYPE_CONTAINER) {
+					cout << "GOT HERE!" << endl;
 				}
 			}
 		} else {
