@@ -38,8 +38,10 @@ class AppCtl {
 public:
 	AppCtl();
 	~AppCtl();
-	void processMouseAction();
 	void render();
 	void update();
 	void controlLoop();
+	void processMouseAction();
+	void selectAction(ActionType t);
+	void selectItem(shared_ptr<Item> it);
 };

@@ -20,7 +20,7 @@ std::map<Point, shared_ptr<Item>, cmpPointsStrict> Inventory::getItemList() {
 	std::set<int> found;
 
 	std::function<void(const Point&)> counter = [this, &found, &retval](const Point& pos) {
-		int id = getItem(pos);
+		int id = checkCell(pos);
 		if (id != -1 && found.insert(id).second) {
 			if (!retval.emplace(pos, findItemByID(id)).second) {
 				cout << "FAIL";
@@ -36,9 +36,11 @@ std::map<Point, shared_ptr<Item>, cmpPointsStrict> Inventory::getItemList() {
 
 
 shared_ptr<Item> Inventory::findItemByID(int id) {
-	for (auto it : _items) {
-		if (it->getID() == id) {
-			return it;
+	if (id != -1) {
+		for (auto it : _items) {
+			if (it->getID() == id) {
+				return it;
+			}
 		}
 	}
 	return nullptr;
@@ -95,6 +97,10 @@ void Inventory::addItem(shared_ptr<Item> item) {
 
 
 
+shared_ptr<Item> Inventory::getItem(const Point& cell) {
+	return findItemByID(checkCell(cell));
+}
+
 bool Inventory::itemFits(const Point& cell, const Point& size) {
 	Rect itemArea(cell, size);
 
@@ -130,7 +136,7 @@ shared_ptr<Item> Inventory::takeItem(int id) {
 
 void Inventory::clearItem(int id) {
 	std::function<void(const Point&)> cleaner = [this, &id](const Point& pos) {
-		if (getItem(pos) == id) {
+		if (checkCell(pos) == id) {
 			clearCell(pos);
 		}
 	};
@@ -154,11 +160,11 @@ bool Inventory::useItems(ItemType t, int count) {
 
 
 bool Inventory::isFree(const Point& cell) {
-	return getItem(cell) == -1;
+	return checkCell(cell) == -1;
 }
 
 
-int Inventory::getItem(const Point& cell) {
+int Inventory::checkCell(const Point& cell) {
 	if (cell > _invArea._size) {
 		return -1;
 	}
@@ -178,7 +184,7 @@ int Inventory::countItems(ItemType t) {
 	int retval = 0;
 
 	std::function<void(const Point&)> counter = [this, &retval, &t](const Point& pos) {
-		auto item = findItemByID(getItem(pos));
+		auto item = findItemByID(checkCell(pos));
 
 		if (item && item->getType() == t) {
 			retval++;
@@ -195,7 +201,7 @@ std::set<int> Inventory::getItemsOnArea(const Point& cell, const Point& size) {
 
 	std::function<void(const Point&)> counter = [this, &found](const Point& pos) {
 		if (!isFree(pos)) {
-			found.insert(getItem(pos));
+			found.insert(checkCell(pos));
 		}
 	};
 

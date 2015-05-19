@@ -17,12 +17,10 @@ class Inventory {
 	std::vector<int> _itemMasks; // init with -1
 	Rect _invArea; // for vector iterations
 
-	bool itemFits(const Point& cell, const Point& size); // check if item will fit
 
 	int countItems(ItemType t);
 	std::set<int> getItemsOnArea(const Point& cell, const Point& size); // check what's going on in the area
 
-	int getItem(const Point& cell); // def. private
 	void setCell(int id, const Point& cell);
 	void clearCell(const Point& cell); // def. private
 	void setItem(int id, const Point& cell, const Point& size); // def. private search masks and replace all ids with -1
@@ -41,8 +39,11 @@ public:
 	int getItemCount(ItemType t) const;
 	bool useItem(ItemType t);
 	void addItem(shared_ptr<Item> item);
-
+	
 	bool isFree(const Point& cell);
+	int checkCell(const Point& cell);
+	shared_ptr<Item> getItem(const Point& cell);
+	bool itemFits(const Point& cell, const Point& size); // check if item will fit
 	shared_ptr<Item> findItemByID(int id);
 	bool putItem(shared_ptr<Item> item, const Point& cell); // iterate, check Fits, update masks
 	shared_ptr<Item> takeItem(int id);

@@ -22,6 +22,7 @@ public:
 	shared_ptr<ObjectInfo> getObjectInfo(int type) const;
 	shared_ptr<ItemInfo> getItemInfo(ItemType t) const;
 	shared_ptr<Sprite> getSprite(int id) const;
+	shared_ptr<SpriteSheet> getSpriteSheet(int id) const;
 	shared_ptr<SpriteText> getFont(int size);
 	std::string getActionName (ActionType id) const;
 	std::string getStatName(StatScoreID id) const;

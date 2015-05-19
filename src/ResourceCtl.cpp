@@ -87,6 +87,15 @@ shared_ptr<Sprite> ResourceCtl::getSprite(int id) const {
 }
 
 
+shared_ptr<SpriteSheet> ResourceCtl::getSpriteSheet(int id) const {
+	auto ptr = _sprites.find(id);
+	if (ptr != _sprites.end()) {
+		return std::dynamic_pointer_cast<SpriteSheet>(ptr->second);
+	}
+	return nullptr;
+}
+
+
 shared_ptr<SpriteText> ResourceCtl::getFont(int size) {
 	if (size > 0 && size < 73) {
 		auto ptr = _arialFonts.find(size);

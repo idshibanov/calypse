@@ -239,7 +239,17 @@ bool ScreenCtl::draw() {
 			_font->draw(frameSTR, Point(5, 105), color);
 		}
 
-		// Almost last: mouse cursor
+		// Almost last: mouse cursor and selected item
+		if (_state->_selectedItem) {
+			auto itInfo = _res->getItemInfo(_state->_selectedItem->getType());
+			auto itSpr = _res->getSpriteSheet(itInfo->spriteID());
+			if (itSpr) {
+				itSpr->draw(_mouse->getPos(), itInfo->type());
+			} else {
+				cout << "ERROR: could not find item sprite #" << itInfo->spriteID() << endl;
+			}
+		}
+
 		auto cur = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(0));
 		cur->draw(_mouse->getPos(), _mouse->getSprite());
 

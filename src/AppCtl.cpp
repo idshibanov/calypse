@@ -115,20 +115,16 @@ void AppCtl::controlLoop() {
 				_screen->toggleInventory();
 				break;
 			case ALLEGRO_KEY_0:
-				_mouse->setSprite(0);
-				_state->_selectedAction = ACTION_NONE;
+				selectAction(ACTION_NONE);
 				break;
 			case ALLEGRO_KEY_1:
-				_mouse->setSprite(1);
-				_state->_selectedAction = ACTION_DRAG;
+				selectAction(ACTION_DRAG);
 				break;
 			case ALLEGRO_KEY_2:
-				_mouse->setSprite(0);
-				_state->_selectedAction = ACTION_CRAFT_CAMPFIRE;
+				selectAction(ACTION_CRAFT_CAMPFIRE);
 				break;
 			case ALLEGRO_KEY_3:
-				_mouse->setSprite(0);
-				_state->_selectedAction = ACTION_CRAFT_TREE;
+				selectAction(ACTION_CRAFT_TREE);
 				break;
 			case ALLEGRO_KEY_F8:
 				_state->_drawMasks = !_state->_drawMasks;
@@ -284,10 +280,22 @@ void AppCtl::processMouseAction() {
 					cout << "Cell addr: " << cell._x << "," << cell._y << endl;
 					auto inv = actor->getState()->getInventory();
 
-					int itemID = rand() % ITEM_ID_LAST;
-					inv->putItem(make_shared<Item>((ItemType)itemID), cell);
+					auto itemID = inv->checkCell(cell);
+
+					if (_state->_selectedItem) {
+						selectItem(inv->forceItem(_state->_selectedItem, cell));
+					} else if (itemID != -1) {
+						selectItem(inv->takeItem(itemID));
+					} else {
+						// TODO: remove later on
+						// generate stuff for debugging purposes
+						int randomID = rand() % ITEM_ID_LAST;
+						inv->putItem(make_shared<Item>((ItemType)randomID), cell);
+					}
 				}
 			}
+		} else if (_state->_selectedItem) {
+			selectItem(nullptr);
 		} else {
 			cout << clickPos._x << "," << clickPos._y << endl;
 			if (clickPos > 0) {
@@ -309,6 +317,23 @@ void AppCtl::processMouseAction() {
 				actor->setAction(act1);
 			}
 		}
+	}
+}
+
+void AppCtl::selectAction(ActionType t) {
+	if (!_state->_selectedItem) {
+		if (t == ACTION_DRAG) {
+			_mouse->setSprite(1);
+		} else {
+			_mouse->setSprite(0);
+		}
+		_state->_selectedAction = t;
+	}
+}
+
+void AppCtl::selectItem(shared_ptr<Item> it) {
+	if (_state->_selectedAction == ACTION_NONE) {
+		_state->_selectedItem = it;
 	}
 }
 

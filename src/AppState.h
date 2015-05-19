@@ -1,7 +1,9 @@
 #pragma once
 #include "ActionType.h"
+#include "Main.h"
 
 class UIFrame;
+class Item;
 
 struct AppState {
 	// statistics
@@ -21,4 +23,5 @@ struct AppState {
 	ActionType _selectedAction;
 	int _selectedObject;
 	UIFrame* _selectedFrame;
+	shared_ptr<Item> _selectedItem;
 };
