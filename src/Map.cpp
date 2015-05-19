@@ -142,6 +142,35 @@ shared_ptr<Item> LocalMap::grabItem(const Point& pos) {
 	return retval;
 }
 
+shared_ptr<Item> LocalMap::getItem(const Point& pos) {
+	shared_ptr<Item> retval;
+	auto it = findItem(pos);
+	if (it != _groundItems.end()) {
+		retval = it->second;
+		return retval;
+	}
+	return retval;
+}
+
+shared_ptr<Item> LocalMap::getItem(int id) {
+	for (auto item : _groundItems) {
+		if (item.second->getID() == id) {
+			return item.second;
+		}
+	}
+	return nullptr;
+}
+
+void LocalMap::removeItem(int id) {
+	for (auto it = _groundItems.begin(); it != _groundItems.end(); it++) {
+		if (it->second->getID() == id) {
+			_groundItems.erase(it);
+			break;
+		}
+	}
+}
+
+
 
 bool LocalMap::tileExists(const Point& mapPos) const {
 	return mapPos._x < _rowmax && mapPos._y < _colmax;

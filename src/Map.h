@@ -23,7 +23,7 @@ class LocalMap {
 
 	// containers
 	std::vector<MapTile> _tiles;
-	std::multimap<Point, shared_ptr<Item>, cmpPointsStrict> _groundItems;
+	std::multimap<Point, shared_ptr<Item>> _groundItems;
 	ObjectHash _objects;
 	shared_ptr<Actor> _actor;
 
@@ -42,9 +42,17 @@ public:
 	LocalMap(shared_ptr<ResourceCtl> res);
 	~LocalMap();
 	void generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev);
+
+	// Map-related methods
 	short getTileType(const Point& mapPos) const;
 	unsigned int getRowMax() const;
 	unsigned int getColMax() const;
+	bool tileExists(const Point& mapPos) const;
+	bool tileIsFree(const Point& mapPos) const;
+	bool isFree(const Point& pos) const;
+	void setTile(const Point& mapPos, unsigned value);
+
+	// Object-related methods
 	shared_ptr<Actor> getPrimaryActor();
 	std::multimap<int, shared_ptr<MapObject>> getObjects(const Point& first, const Point& last);
 	const std::unordered_map<int, int>* getObjectMasks() const;
@@ -52,13 +60,16 @@ public:
 	bool toggleObject(const Point& coord);
 	bool resetObject(const Point& coord);
 	bool addObject(shared_ptr<MapObject> obj);
+
+	// Item-related methods
 	std::multimap<Point, shared_ptr<Item>> getItems(const Point& first, const Point& last);
 	void putItem(const Point& pos, shared_ptr<Item> item);
 	shared_ptr<Item> grabItem(const Point& pos);
-	bool tileExists(const Point& mapPos) const;
-	bool tileIsFree(const Point& mapPos) const;
-	bool isFree(const Point& pos) const;
-	void setTile(const Point& mapPos, unsigned value);
+	shared_ptr<Item> getItem(const Point& pos);
+	shared_ptr<Item> getItem(int id);
+	void removeItem(int id);
+	
+	// Actions/timers/logic
 	void processAction(const Point& mapPos, int id);
 	void update();
 };

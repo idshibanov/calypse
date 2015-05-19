@@ -82,16 +82,20 @@ int Inventory::getItemCount(ItemType t) const {
 }
 
 bool Inventory::useItem(ItemType t) {
-	auto item = findItem(t);
-	if (item != _items.end()) {
-		_items.erase(item);
-		return true;
-	}
 	return false;
 }
 
-void Inventory::addItem(shared_ptr<Item> item) {
-	_items.push_back(item);
+bool Inventory::addItem(shared_ptr<Item> item) {
+	Point size(1, 1);
+
+	for (int i = 0; i < _invArea._size._y; i++) {
+		for(int j = 0; j < _invArea._size._x; j++) {
+			if (putItem(item, Point(j, i), size)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 
@@ -112,10 +116,14 @@ bool Inventory::itemFits(const Point& cell, const Point& size) {
 }
 
 bool Inventory::putItem(shared_ptr<Item> item, const Point& cell) {
+	// TODO: proper size
 	Point size(1, 1);
+	return putItem(item, cell, size);
+}
 
+bool Inventory::putItem(shared_ptr<Item> item, const Point& cell, const Point& size) {
 	if (itemFits(cell, size)) {
-		addItem(item);
+		_items.push_back(item);
 		setItem(item->getID(), cell, size);
 		return true;
 	}
@@ -165,7 +173,7 @@ bool Inventory::isFree(const Point& cell) {
 
 
 int Inventory::checkCell(const Point& cell) {
-	if (cell > _invArea._size) {
+	if (cell.rectMoreThan(_invArea._size)) {
 		return -1;
 	}
 	return _itemMasks[cell.toID(_invArea._size._x)];

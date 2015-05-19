@@ -34,7 +34,7 @@ std::unordered_set<shared_ptr<ScreenArea>>::iterator ScreenBuffer::getElementAre
 
 	for (auto it = _items.begin(); it != _items.end(); it++) {
 		auto it_ptr = it->get();
-		if (pos > it_ptr->getPos() && pos < it_ptr->getMax()) {
+		if (pos.rectMoreThan(it_ptr->getPos()) && pos.rectLessThan(it_ptr->getMax())) {
 			if (it_ptr->getType() == AREA_TYPE_OBJECT) {
 				auto area = std::dynamic_pointer_cast<ObjectArea>(*it);
 

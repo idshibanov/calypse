@@ -3,6 +3,7 @@
 #include "Pathfinder.h"
 #include "ResourceCtl.h"
 #include "ActionType.h"
+#include "Item.h"
 
 class LocalMap;
 class MapObject;
@@ -70,6 +71,20 @@ public:
 	PointAction(const PointAction&);
 	~PointAction();
 	PointAction& operator= (const PointAction&);
+	bool isActive() const;
+	void start();
+	bool update();
+};
+
+
+class ItemAction : public Action {
+	shared_ptr<Item> _target;
+	weak_ptr<LocalMap> _map;
+public:
+	ItemAction(ActionType, weak_ptr<ResourceCtl>, weak_ptr<Actor>, int, int, shared_ptr<Item>, weak_ptr<LocalMap>);
+	ItemAction(const ItemAction&);
+	~ItemAction();
+	ItemAction& operator= (const ItemAction&);
 	bool isActive() const;
 	void start();
 	bool update();

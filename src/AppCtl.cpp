@@ -240,7 +240,29 @@ void AppCtl::processMouseAction() {
 				actor->setAction(act1);
 			}
 		} else if (elem) {
-			if (elem->getType() == AREA_TYPE_OBJECT) {
+			if (elem->getType() == AREA_TYPE_ITEM) {
+				/*
+				auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
+
+				auto gItem = _map->getItem(gItemArea->_item->getID());
+				if (gItem) {
+					if (actor->getState()->getInventory()->addItem(gItem)) {
+						_map->removeItem(gItem->getID());
+					}
+				}
+				*/
+				auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
+				Point mapClick = clickPos.div(SUBTILE_MASK).mul(SUBTILE_MASK);
+				if (mapClick > 0) {
+					Point mvTarget = _pFinder->findAdjacent(actor->getPos(), Rect(mapClick, Point(10, 10)));
+					auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, mvTarget, _pFinder);
+
+					auto act2 = make_shared<ItemAction>(ACTION_PICK_ITEM, _res, actor, 10, 1, gItemArea->_item, _map);
+					act1->chainAction(act2);
+
+					actor->setAction(act1);
+				}
+			} else if (elem->getType() == AREA_TYPE_OBJECT) {
 				auto obj_ptr = std::dynamic_pointer_cast<ObjectArea>(elem);
 				auto obj = obj_ptr->_obj;
 				auto subAreas = obj_ptr->getSubArea(absPos);
@@ -295,6 +317,7 @@ void AppCtl::processMouseAction() {
 				}
 			}
 		} else if (_state->_selectedItem) {
+			_map->putItem(actor->getPos(), _state->_selectedItem);
 			selectItem(nullptr);
 		} else {
 			cout << clickPos._x << "," << clickPos._y << endl;

@@ -38,7 +38,7 @@ public:
 
 	int getItemCount(ItemType t) const;
 	bool useItem(ItemType t);
-	void addItem(shared_ptr<Item> item);
+	bool addItem(shared_ptr<Item> item);
 	
 	bool isFree(const Point& cell);
 	int checkCell(const Point& cell);
@@ -46,6 +46,7 @@ public:
 	bool itemFits(const Point& cell, const Point& size); // check if item will fit
 	shared_ptr<Item> findItemByID(int id);
 	bool putItem(shared_ptr<Item> item, const Point& cell); // iterate, check Fits, update masks
+	bool putItem(shared_ptr<Item> item, const Point& cell, const Point& size); // don't lookup size over and over
 	shared_ptr<Item> takeItem(int id);
 	bool useItems(ItemType t, int count); // search & remove, you better to do something with result
 	shared_ptr<Item> forceItem(shared_ptr<Item> item, const Point& cell); // counts items, if 0 -> return same id, if 1 -> return old, if 2+ -> -1

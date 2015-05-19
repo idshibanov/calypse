@@ -228,6 +228,7 @@ PointAction::PointAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Ac
 
 PointAction::PointAction(const PointAction& act) : Action(act) {
 	_targetPos = act._targetPos;
+	_map = act._map;
 }
 
 PointAction::~PointAction() {
@@ -237,6 +238,7 @@ PointAction::~PointAction() {
 PointAction& PointAction::operator= (const PointAction& act) {
 	Action::operator=(act);
 	_targetPos = act._targetPos;
+	_map = act._map;
 	return *this;
 }
 
@@ -263,6 +265,13 @@ bool PointAction::update() {
 				if (_type == ACTION_DROP) {
 					_actor.lock()->drop(_targetPos);
 					return true;
+				} else if (_type == ACTION_PICK_ITEM && !_map.expired()) {
+					auto gItem = _map.lock()->getItem(_targetPos);
+					if (gItem) {
+						if (_actor.lock()->getState()->getInventory()->addItem(gItem)) {
+							_map.lock()->removeItem(gItem->getID());
+						}
+					}
 				} else if (_type == ACTION_CRAFT_TREE && !_map.expired()) {
 					auto obj = make_shared<MapObject>(1, _targetPos);
 					return _map.lock()->addObject(obj);
@@ -274,6 +283,62 @@ bool PointAction::update() {
 						return _map.lock()->addObject(obj);
 					}
 					return false;
+				}
+			}
+		}
+		_timer.relaunch();
+	}
+	return false;
+}
+
+
+
+
+
+ItemAction::ItemAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor,
+	                   int cycles, int steps, shared_ptr<Item> target, weak_ptr<LocalMap> map)
+	                   : Action(type, res, actor, cycles, steps) {
+	_target = target;
+	_map = map;
+}
+
+ItemAction::ItemAction(const ItemAction& act) : Action(act) {
+	_target = act._target;
+	_map = act._map;
+}
+
+ItemAction::~ItemAction() {
+
+}
+
+ItemAction& ItemAction::operator= (const ItemAction& act) {
+	Action::operator=(act);
+	_target = act._target;
+	return *this;
+}
+
+bool ItemAction::isActive() const {
+	return _state.isActive();
+}
+
+void ItemAction::start() {
+	if (!_actor.expired()) {
+		_timer.relaunch();
+		_state.relaunch();
+	}
+}
+
+bool ItemAction::update() {
+	if (_timer.check()) {
+		if (_state.check()) {
+			if (!_actor.expired() && !_map.expired()) {
+				if (_type == ACTION_PICK_ITEM) {
+					auto gItem = _map.lock()->getItem(_target->getID());
+					if (gItem) {
+						if (_actor.lock()->getState()->getInventory()->addItem(gItem)) {
+							_map.lock()->removeItem(gItem->getID());
+						}
+					}
 				}
 			}
 		}
