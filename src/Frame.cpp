@@ -124,7 +124,7 @@ ObjectInfoFrame::ObjectInfoFrame(const Point& pos, const Point& size, shared_ptr
 			_skillLabels[i] = make_shared<UILabel>(Point(100, _titleHeight + (i * 15)), this, font, _res->getSkillName((SkillScoreID)i));
 		}
 
-		int offset = _titleHeight + (SKILL_SCORE_LAST + 2) * 15;
+		int offset = _titleHeight + (SKILL_SCORE_LAST + 1) * 15;
 		for (int i = 0; i < ITEM_ID_LAST; i++) {
 			_inventory[i] = make_shared<UILabel>(Point(100, offset + (i * 15)), this, font, _res->getItemName((ItemType)i));
 		}

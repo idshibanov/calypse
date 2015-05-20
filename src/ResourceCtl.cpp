@@ -9,8 +9,8 @@ ResourceCtl::ResourceCtl() {
 	reet_map->_area = Rect(Point(), Point(64, 92));
 	reet_map->_acts.push_back(ACTION_CUT);
 	reet_map->_acts.push_back(ACTION_PICK_BRANCH);
-	reet_map->_acts.push_back(ACTION_CUT);
-	reet_map->_acts.push_back(ACTION_PICK_BRANCH);
+	reet_map->_acts.push_back(ACTION_PICK_RED_BERRY);
+	reet_map->_acts.push_back(ACTION_PICK_BLUE_BERRY);
 	reet_info->addActionArea(reet_map);
 	_info.emplace(id++, reet_info); 	// reet
 
@@ -132,6 +132,12 @@ std::string ResourceCtl::getActionName(ActionType id) const {
 		break;
 	case ACTION_PICK_BRANCH:
 		return "Pick branch";
+		break;
+	case ACTION_PICK_RED_BERRY:
+		return "Pick raspberry";
+		break;
+	case ACTION_PICK_BLUE_BERRY:
+		return "Pick blueberry";
 		break;
 	default:
 		break;
