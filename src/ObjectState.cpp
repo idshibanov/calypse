@@ -45,8 +45,7 @@ int ActorState::getItemCount(ItemType id) const {
 }
 
 bool ActorState::useItem(ItemType id) {
-	_inv->debug();
-	return true;// _inv->useItem(id);
+	return _inv->useItems(id, 3);
 }
 
 void ActorState::addItem(ItemType id) {

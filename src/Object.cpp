@@ -125,12 +125,16 @@ void Actor::setYPos(int y) {
 }
 
 void Actor::setAction(shared_ptr<Action> act) {
+	/*
 	if (_action) {
 		_action->chainAction(act);
 	} else {
 		_action = act;
 		_action->start();
 	}
+	*/
+	_action = act;
+	_action->start();
 }
 
 void Actor::update() {

@@ -343,6 +343,7 @@ void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> 
 	_menu->setPos(objPos);
 	for (auto it = options->_acts.begin(); it != options->_acts.end(); it++) {
 		auto newOption = make_shared<UIButton>(objPos, nullptr, *it, _font, _res->getActionName(*it), true, false);
+		newOption->setZlevel(90);
 
 		_options.push_back(newOption);
 		_menu->addOption(newOption);

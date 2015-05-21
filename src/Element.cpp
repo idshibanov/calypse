@@ -279,7 +279,7 @@ void CarouselMenu::reset() {
 		it->get()->visibility(false);
 	}
 	_options.clear();
-	_spawnRate = 0;
+	_spawnRate = 100;
 	_lastItem = 0;
 	_closing = false;
 	_updateTimer.relaunch();

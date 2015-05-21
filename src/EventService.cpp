@@ -17,7 +17,7 @@ EventService::~EventService() {
 }
 
 void EventService::process(ActionType id) {
-	if (id == ACTION_CUT || id == ACTION_PICK_BRANCH) {
+	if (id >= ACTION_CUT && id <= ACTION_PICK_BLUE_BERRY) {
 		auto obj = _map->getObject(_state->_selectedObject);
 		process(obj, id);
 	}

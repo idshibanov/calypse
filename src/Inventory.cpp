@@ -82,6 +82,23 @@ int Inventory::getItemCount(ItemType t) const {
 }
 
 bool Inventory::useItem(ItemType t) {
+	auto it = findItem(t);
+	if (it != _items.end()) {
+		clearItem((*it)->getID());
+		_items.erase(it);
+		return true;
+	}
+	return false;
+}
+
+bool Inventory::useItems(ItemType t, int amount) {
+	auto found = findAllItems(t);
+	if (found.size() >= amount) {
+		for (int i = 0; i < amount; i++) {
+			takeItem(found[i]->getID());
+		}
+		return true;
+	}
 	return false;
 }
 
@@ -162,10 +179,6 @@ void Inventory::setItem(int id, const Point& cell, const Point& size) {
 	return itemArea.iterate(setter, 1);
 }
 
-bool Inventory::useItems(ItemType t, int count) {
-	return false;
-}
-
 
 bool Inventory::isFree(const Point& cell) {
 	return checkCell(cell) == -1;
@@ -186,21 +199,6 @@ void Inventory::setCell(int id, const Point& cell) {
 
 void Inventory::clearCell(const Point& cell) {
 	setCell(-1, cell);
-}
-
-int Inventory::countItems(ItemType t) {
-	int retval = 0;
-
-	std::function<void(const Point&)> counter = [this, &retval, &t](const Point& pos) {
-		auto item = findItemByID(checkCell(pos));
-
-		if (item && item->getType() == t) {
-			retval++;
-		}
-	};
-
-	_invArea.iterate(counter, 1);
-	return retval;
 }
 
 std::set<int> Inventory::getItemsOnArea(const Point& cell, const Point& size) {

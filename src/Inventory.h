@@ -18,7 +18,6 @@ class Inventory {
 	Rect _invArea; // for vector iterations
 
 
-	int countItems(ItemType t);
 	std::set<int> getItemsOnArea(const Point& cell, const Point& size); // check what's going on in the area
 
 	void setCell(int id, const Point& cell);

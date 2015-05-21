@@ -240,15 +240,19 @@ void AppCtl::processMouseAction() {
 				actor->setAction(act1);
 			}
 		} else if (elem) {
-			if (elem->getType() == AREA_TYPE_ITEM) {
+			if (elem->getType() == AREA_TYPE_FRAME) {
+				auto selFrame = std::dynamic_pointer_cast<UIFrame>(elem);
+				_state->_selectedFrame = selFrame.get();
+			} else if (elem->getType() == AREA_TYPE_ELEMENT) {
+			} else if (elem->getType() == AREA_TYPE_ITEM) {
 				/*
 				auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
 
 				auto gItem = _map->getItem(gItemArea->_item->getID());
 				if (gItem) {
-					if (actor->getState()->getInventory()->addItem(gItem)) {
-						_map->removeItem(gItem->getID());
-					}
+				if (actor->getState()->getInventory()->addItem(gItem)) {
+				_map->removeItem(gItem->getID());
+				}
 				}
 				*/
 				auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
@@ -272,48 +276,6 @@ void AppCtl::processMouseAction() {
 					_screen->displayOptions(obj->getPos(), subAreas);
 				} else {
 					//_events->process(obj, ACTION_DRAG);
-				}
-			} else if (elem->getType() == AREA_TYPE_FRAME) {
-				auto selFrame = std::dynamic_pointer_cast<UIFrame>(elem);
-				_state->_selectedFrame = selFrame.get();
-			} else if (elem->getType() == AREA_TYPE_ELEMENT) {
-				auto uiEl = std::dynamic_pointer_cast<UIElement>(elem);
-				if (uiEl->getElementType() == UIELEMENT_TYPE_BUTTON) {
-					auto button = std::dynamic_pointer_cast<UIButton>(elem);
-					if (button) {
-						int actionID = button->getActionID();
-						if (actionID > ACTION_NONE && actionID < ACTION_LAST) {
-							auto parentFrame = button->getParent();
-							if (parentFrame) {
-								if (actionID == ACTION_CLOSE_PARENT) {
-									parentFrame->setVisible(false);
-								}
-							} else {
-								_screen->hideOptions();
-								_events->process((ActionType)actionID);
-							}
-						}
-						button->launchTimer();
-					}
-				} else if (uiEl->getElementType() == UIELEMENT_TYPE_CONTAINER) {
-					auto container = std::dynamic_pointer_cast<ContainerArea>(elem);
-
-					Point cell = container->getCell(absPos);
-					cout << "Cell addr: " << cell._x << "," << cell._y << endl;
-					auto inv = actor->getState()->getInventory();
-
-					auto itemID = inv->checkCell(cell);
-
-					if (_state->_selectedItem) {
-						selectItem(inv->forceItem(_state->_selectedItem, cell));
-					} else if (itemID != -1) {
-						selectItem(inv->takeItem(itemID));
-					} else {
-						// TODO: remove later on
-						// generate stuff for debugging purposes
-						int randomID = rand() % ITEM_ID_LAST;
-						inv->putItem(make_shared<Item>((ItemType)randomID), cell);
-					}
 				}
 			}
 		} else if (_state->_selectedItem) {
@@ -342,6 +304,48 @@ void AppCtl::processMouseAction() {
 		}
 	}
 }
+
+void AppCtl::processUIElement(shared_ptr<UIElement> elem) {
+	auto uiEl = std::dynamic_pointer_cast<UIElement>(elem);
+	if (uiEl->getElementType() == UIELEMENT_TYPE_BUTTON) {
+		auto button = std::dynamic_pointer_cast<UIButton>(elem);
+		if (button) {
+			int actionID = button->getActionID();
+			if (actionID > ACTION_NONE && actionID < ACTION_LAST) {
+				auto parentFrame = button->getParent();
+				if (parentFrame) {
+					if (actionID == ACTION_CLOSE_PARENT) {
+						parentFrame->setVisible(false);
+					}
+				} else {
+					_screen->hideOptions();
+					_events->process((ActionType)actionID);
+				}
+			}
+			button->launchTimer();
+		}
+	} else if (uiEl->getElementType() == UIELEMENT_TYPE_CONTAINER) {
+		auto container = std::dynamic_pointer_cast<ContainerArea>(elem);
+
+		Point cell = container->getCell(_mouse->getPos());
+		cout << "Cell addr: " << cell._x << "," << cell._y << endl;
+		auto inv = actor->getState()->getInventory();
+
+		auto itemID = inv->checkCell(cell);
+
+		if (_state->_selectedItem) {
+			selectItem(inv->forceItem(_state->_selectedItem, cell));
+		} else if (itemID != -1) {
+			selectItem(inv->takeItem(itemID));
+		} else {
+			// TODO: remove later on
+			// generate stuff for debugging purposes
+			int randomID = rand() % ITEM_ID_LAST;
+			inv->putItem(make_shared<Item>((ItemType)randomID), cell);
+		}
+	}
+}
+
 
 void AppCtl::selectAction(ActionType t) {
 	if (!_state->_selectedItem) {

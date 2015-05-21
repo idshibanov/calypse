@@ -42,6 +42,7 @@ public:
 	void update();
 	void controlLoop();
 	void processMouseAction();
+	void processUIElement(shared_ptr<UIElement> elem);
 	void selectAction(ActionType t);
 	void selectItem(shared_ptr<Item> it);
 };

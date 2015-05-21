@@ -204,6 +204,12 @@ bool ObjectAction::update() {
 				} else if (_type == ACTION_PICK_BRANCH) {
 					_actor.lock()->getState()->addItem(C_ITEM_WOOD);
 					return true;
+				} else if (_type == ACTION_PICK_RED_BERRY) {
+					_actor.lock()->getState()->addItem(C_ITEM_BERRY_RED);
+					return true;
+				} else if (_type == ACTION_PICK_BLUE_BERRY) {
+					_actor.lock()->getState()->addItem(C_ITEM_BERRY_BLUE);
+					return true;
 				} else if (_type == ACTION_DRAG && !_actor.expired()) {
 					_actor.lock()->pickUp(_target);
 					_target.lock()->dragged(true);
