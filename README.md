@@ -1,4 +1,4 @@
-Calypse 0.2.1
+Calypse 0.2.2
 -------
 Details coming up soon.
 

@@ -178,7 +178,7 @@ bool LocalMap::tileExists(const Point& mapPos) const {
 
 bool LocalMap::tileIsFree(const Point& mapPos) const {
 	if (tileExists(mapPos)) {
-		return _objects.isFree(mapPos);
+		return _objects.isFree(mapPos.mul(TILE_MASK));
 	}
 	return false;
 }

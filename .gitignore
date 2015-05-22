@@ -9,6 +9,6 @@ allegro.log
 *.opensdf
 *.sln
 *.suo
-*.vcxproj*
+*.vcxproj.user
 *.psess
 *.vsp

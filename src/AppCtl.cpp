@@ -244,6 +244,8 @@ void AppCtl::processMouseAction() {
 				auto selFrame = std::dynamic_pointer_cast<UIFrame>(elem);
 				_state->_selectedFrame = selFrame.get();
 			} else if (elem->getType() == AREA_TYPE_ELEMENT) {
+				auto uiEl = std::dynamic_pointer_cast<UIElement>(elem);
+				processUIElement(uiEl);
 			} else if (elem->getType() == AREA_TYPE_ITEM) {
 				/*
 				auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
@@ -306,8 +308,7 @@ void AppCtl::processMouseAction() {
 }
 
 void AppCtl::processUIElement(shared_ptr<UIElement> elem) {
-	auto uiEl = std::dynamic_pointer_cast<UIElement>(elem);
-	if (uiEl->getElementType() == UIELEMENT_TYPE_BUTTON) {
+	if (elem->getElementType() == UIELEMENT_TYPE_BUTTON) {
 		auto button = std::dynamic_pointer_cast<UIButton>(elem);
 		if (button) {
 			int actionID = button->getActionID();
@@ -324,12 +325,12 @@ void AppCtl::processUIElement(shared_ptr<UIElement> elem) {
 			}
 			button->launchTimer();
 		}
-	} else if (uiEl->getElementType() == UIELEMENT_TYPE_CONTAINER) {
+	} else if (elem->getElementType() == UIELEMENT_TYPE_CONTAINER) {
 		auto container = std::dynamic_pointer_cast<ContainerArea>(elem);
 
 		Point cell = container->getCell(_mouse->getPos());
 		cout << "Cell addr: " << cell._x << "," << cell._y << endl;
-		auto inv = actor->getState()->getInventory();
+		auto inv = _map->getPrimaryActor()->getState()->getInventory();
 
 		auto itemID = inv->checkCell(cell);
 
