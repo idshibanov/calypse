@@ -9,7 +9,7 @@ class ObjectArea : public ScreenArea {
 public:
 	shared_ptr<MapObject> _obj;
 	ObjectArea(const Point&, const Point&, shared_ptr<MapObject>, weak_ptr<Sprite>, shared_ptr<ObjectInfo>);
-	~ObjectArea();
+	virtual ~ObjectArea();
 	shared_ptr<SpriteSheet> castSprite() const;
 	const shared_ptr<ObjectActionArea> getSubArea(const Point& pos) const;
 };

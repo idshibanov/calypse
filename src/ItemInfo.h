@@ -10,7 +10,7 @@ class ItemInfo {
 public:
 	ItemInfo(ItemType, const Point&, const Point&, int);
 	ItemInfo(const ItemInfo&);
-	~ItemInfo();
+	virtual ~ItemInfo();
 	ItemInfo& operator=(const ItemInfo&);
 	int type() const;
 	Point offset() const;

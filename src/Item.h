@@ -12,7 +12,7 @@ public:
 	Item(ItemType type, int q);
 	Item(const Item& rhs);
 	Item& operator=(const Item& rhs);
-	~Item();
+	virtual ~Item();
 	int getID() const;
 	ItemType getType() const;
 	int getQuality() const;

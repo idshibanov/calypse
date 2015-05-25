@@ -40,7 +40,7 @@ class MoveAction : public Action {
 public:
 	MoveAction(ActionType, weak_ptr<ResourceCtl>, weak_ptr<Actor>, int, int, const Point&, weak_ptr<AStarSearch>);
 	MoveAction(const MoveAction&);
-	~MoveAction();
+	virtual ~MoveAction();
 	MoveAction& operator= (const MoveAction&);
 	bool isActive() const;
 	void start();
@@ -55,7 +55,7 @@ class ObjectAction : public Action {
 public:
 	ObjectAction(ActionType, weak_ptr<ResourceCtl>, weak_ptr<Actor>, int, int, weak_ptr<MapObject>, weak_ptr<LocalMap>);
 	ObjectAction(const ObjectAction&);
-	~ObjectAction();
+	virtual ~ObjectAction();
 	ObjectAction& operator= (const ObjectAction&);
 	bool isActive() const;
 	void start();
@@ -69,7 +69,7 @@ class PointAction : public Action {
 public:
 	PointAction(ActionType, weak_ptr<ResourceCtl>, weak_ptr<Actor>, int, int, const Point&, weak_ptr<LocalMap>);
 	PointAction(const PointAction&);
-	~PointAction();
+	virtual ~PointAction();
 	PointAction& operator= (const PointAction&);
 	bool isActive() const;
 	void start();
@@ -83,7 +83,7 @@ class ItemAction : public Action {
 public:
 	ItemAction(ActionType, weak_ptr<ResourceCtl>, weak_ptr<Actor>, int, int, shared_ptr<Item>, weak_ptr<LocalMap>);
 	ItemAction(const ItemAction&);
-	~ItemAction();
+	virtual ~ItemAction();
 	ItemAction& operator= (const ItemAction&);
 	bool isActive() const;
 	void start();

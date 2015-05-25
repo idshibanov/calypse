@@ -7,6 +7,6 @@ class ItemArea : public ScreenArea {
 public:
 	shared_ptr<Item> _item;
 	ItemArea(const Point&, const Point&, shared_ptr<Item>, weak_ptr<SpriteSheet>);
-	~ItemArea();
+	virtual ~ItemArea();
 	shared_ptr<SpriteSheet> getSprite() const;
 };

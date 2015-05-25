@@ -365,6 +365,8 @@ void AppCtl::selectItem(shared_ptr<Item> it) {
 	}
 }
 
+#include <sstream>
+#include "JsonParser.h"
 
 int main(int argc, char **argv) {
 
@@ -385,6 +387,17 @@ int main(int argc, char **argv) {
 	al_init_ttf_addon();
 
 	AppCtl app;
+	JsonValue jv;
+	JsonTValue<std::string> jv2("hello Jason!");
+	JsonObject job;
+	cout << job.getType() << endl;
+	cout << jv2.getValue() << endl;
+	job.add("intro", jv2);
+
+	std::istringstream is(std::string("null"));
+	parseNull(is, std::string("first"), job);
+	//parseInteger(is, std::string("key"), job);
+
 	app.controlLoop();
 
 	return 0;
