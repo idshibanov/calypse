@@ -5,9 +5,14 @@ JsonObject parseJsonString(const std::string& str);
 
 // helper functions
 void skipWhitespace(std::istringstream& is);
-std::string getName(std::istringstream& is);
+void skipWhitespace(std::string& str);
+std::vector<std::string> splitString(std::istringstream& is, const char delim);
+std::string extractString(std::string& str);
 
-bool parseValue(std::istringstream& is, std::string& key, JsonObject& parent);
+bool parsePair(std::string& pair, JsonObject& parent);
+std::string parseName(std::string& key);
+bool parseValue(std::string& str, std::string& key, JsonObject& parent);
+
 bool parseNull(std::istringstream& is, std::string& key, JsonObject& parent);
 bool parseTrue(std::istringstream& is, std::string& key, JsonObject& parent);
 bool parseFalse(std::istringstream& is, std::string& key, JsonObject& parent);
