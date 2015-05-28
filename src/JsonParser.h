@@ -10,13 +10,15 @@ std::vector<std::string> splitString(std::istringstream& is, const char delim);
 std::string extractString(std::string& str);
 
 bool parsePair(std::string& pair, JsonObject& parent);
-std::string parseName(std::string& key);
 bool parseValue(std::string& str, std::string& key, JsonObject& parent);
 
-bool parseNull(std::istringstream& is, std::string& key, JsonObject& parent);
-bool parseTrue(std::istringstream& is, std::string& key, JsonObject& parent);
-bool parseFalse(std::istringstream& is, std::string& key, JsonObject& parent);
-bool parseInteger(std::istringstream& is, std::string& key, JsonObject& parent);
-bool parseString(std::istringstream& is, std::string& key, JsonObject& parent);
-bool parseArray(std::istringstream& is, std::string& key, JsonObject& parent);
-bool parseObject(std::istringstream& is, std::string& key, JsonObject& parent);
+std::string parseName(std::string& key);
+shared_ptr<JsonValue> parseValue(std::string& str);
+
+shared_ptr<JsonValue> parseNull(std::istringstream& is);
+shared_ptr<JsonValue> parseTrue(std::istringstream& is);
+shared_ptr<JsonValue> parseFalse(std::istringstream& is);
+shared_ptr<JsonValue> parseInteger(std::istringstream& is);
+shared_ptr<JsonValue> parseString(std::istringstream& is);
+shared_ptr<JsonValue> parseArray(std::istringstream& is);
+shared_ptr<JsonValue> parseObject(std::istringstream& is);

@@ -71,69 +71,103 @@ bool parsePair(std::string& pair, JsonObject& parent) {
 	return false;
 }
 
+bool parseValue(std::string& str, std::string& key, JsonObject& parent) {
+	shared_ptr<JsonValue> retval = nullptr;
+	std::istringstream is(str);
+
+	skipWhitespace(is);
+	switch (is.peek()) {
+	case 'n':
+		retval = parseNull(is);
+		break;
+	case 't':
+		retval = parseTrue(is);
+		break;
+	case 'f':
+		retval = parseFalse(is);
+		break;
+	case '"':
+		retval = parseString(is);
+		break;
+	case '[':
+		retval = parseArray(is);
+		break;
+	case '{':
+		retval = parseObject(is);
+		break;
+	default:
+		retval = parseInteger(is);
+	}
+
+	if (retval) {
+		parent.add(key, retval);
+		return true;
+	}
+	return false;
+}
+
+
 std::string parseName(std::string& key) {
-	std::istringstream is(key);	
+	std::istringstream is(key);
 	return extractString(is);
 }
 
-bool parseValue(std::string& str, std::string& key, JsonObject& parent) {
+shared_ptr<JsonValue> parseValue(std::string& str) {
 	std::istringstream is(str);
 	skipWhitespace(is);
 
 	switch (is.peek()) {
 	case 'n':
-		return parseNull(is, key, parent);
+		return parseNull(is);
 	case 't':
-		return parseTrue(is, key, parent);
+		return parseTrue(is);
 	case 'f':
-		return parseFalse(is, key, parent);
+		return parseFalse(is);
 	case '"':
-		return parseString(is, key, parent);
+		return parseString(is);
 	case '[':
-		return parseArray(is, key, parent);
+		return parseArray(is);
 	case '{':
-		return parseObject(is, key, parent);
+		return parseObject(is);
 	}
-	return parseInteger(is, key, parent);
+	return parseInteger(is);
 }
 
-bool parseNull(std::istringstream& is, std::string& key, JsonObject& parent) {
+
+shared_ptr<JsonValue> parseNull(std::istringstream& is) {
 	char val[4];
 	is.read(val, 4);
 	std::string value(val);
 
 	if (value.find("null") >= 0) {
-		parent.add(key, make_shared<JsonValue>());
-		return true;
+		return make_shared<JsonValue>();
 	}
-	return false;
+	return nullptr;
 }
 
-bool parseTrue(std::istringstream& is, std::string& key, JsonObject& parent) {
+shared_ptr<JsonValue> parseTrue(std::istringstream& is) {
 	char val[4];
 	is.read(val, 4);
 	std::string value(val);
 
 	if (value.find("true") >= 0) {
-		parent.add(key, make_shared<JsonTValue<bool>>(true));
-		return true;
+		return make_shared<JsonTValue<bool>>(true);
 	}
-	return false;
+	return nullptr;
 }
 
-bool parseFalse(std::istringstream& is, std::string& key, JsonObject& parent) {
+shared_ptr<JsonValue> parseFalse(std::istringstream& is) {
 	char val[5];
 	is.read(val, 5);
 	std::string value(val);
 
 	if (value.find("false") >= 0) {
-		parent.add(key, make_shared<JsonTValue<bool>>(false));
-		return true;
+		return make_shared<JsonTValue<bool>>(false);
 	}
-	return false;
+	return nullptr;
 }
 
-bool parseInteger(std::istringstream& is, std::string& key, JsonObject& parent) {
+shared_ptr<JsonValue> parseInteger(std::istringstream& is) {
 	std::string strValue;
 
 	std::getline(is, strValue);
@@ -141,26 +175,24 @@ bool parseInteger(std::istringstream& is, std::string& key, JsonObject& parent) 
 		// Personally I'm not into C++ exceptions, but this is a fine solution, so bear with this inconsistency
 		try {
 			int value = std::stoi(strValue);
-			parent.add(key, make_shared<JsonTValue<int>>(value));
-			return true;
+			return make_shared<JsonTValue<int>>(value);
 		} catch (...) {
 			// stoi failed, either overflow or illegal characters
 		}
 	}
 
-	return false;
+	return nullptr;
 }
 
-bool parseString(std::istringstream& is, std::string& key, JsonObject& parent) {
+shared_ptr<JsonValue> parseString(std::istringstream& is) {
 	std::string value = extractString(is);
 	if (!value.empty()) {
-		parent.add(key, make_shared<JsonTValue<std::string>>(value));
-		return true;
+		return make_shared<JsonTValue<std::string>>(value);
 	}
-	return false;
+	return nullptr;
 }
 
-bool parseArray(std::istringstream& is, std::string& key, JsonObject& parent) {
+shared_ptr<JsonValue> parseArray(std::istringstream& is) {
 	std::string arrStr;
 	skipWhitespace(is);
 	if (is.peek() == '[') {
@@ -172,23 +204,29 @@ bool parseArray(std::istringstream& is, std::string& key, JsonObject& parent) {
 			std::vector<shared_ptr<JsonValue>> holder;
 			
 			for (auto value : values) {
-				//parseValue(value, )
+				holder.push_back(parseValue(value));
 			}
-
-			return true;
+			return make_shared<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(holder);
 		}
 	}
-	return false;
+	return nullptr;
 }
 
-/*
-std::getline(ss, s, '=');                     // gives me "a"
-std::streampos  save = ss.tellg();
-std::getline(ss, s);                          // gives me "b+c"
-ss.seekg(save);                               // Roll back
-std::getline(ss, s, '+');                     // gives me "b"
-*/
+shared_ptr<JsonValue> parseObject(std::istringstream& is) {
+	shared_ptr<JsonObject> job = nullptr;
 
-bool parseObject(std::istringstream& is, std::string& key, JsonObject& parent) {
-	return false;
+	skipWhitespace(is);
+	if (is.peek() == '{') {
+		is.ignore();
+		job = make_shared<JsonObject>();
+
+		auto tokens = splitString(is, ',');
+		for (auto token : tokens) {
+			if (!parsePair(token, (*job))) {
+				cout << "Could not parse the following name/value pair:" << endl;
+				cout << token << endl;
+			}
+		}
+	}
+	return job;
 }
