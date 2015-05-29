@@ -98,10 +98,14 @@ void JsonTValue<T>::print(std::ostream& out) const {
 	out << _value;
 }
 
+void JsonTValue<std::string>::print(std::ostream& out) const {
+	out << '"' << _value << '"';
+}
+
 void JsonTValue<std::vector<shared_ptr<JsonValue>>>::print(std::ostream& out) const {
 	out << '[';
 	for (auto v : _value) {
-		out << v << ',';
+		out << (*v) << ',';
 	}
 	out << ']';
 }
@@ -170,7 +174,7 @@ const std::map<std::string, shared_ptr<JsonValue>>& JsonObject::getContents() co
 void JsonObject::print(std::ostream& out) const {
 	out << '{' << endl;
 	for (auto pair : _values) {
-		out << pair.first << " : " << (*pair.second) << "," << endl;
+		out << "\t\"" << pair.first << "\" : " << (*pair.second) << "," << endl;
 	}
 	out << '}';
 }

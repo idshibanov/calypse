@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 
+#include "ConfigCtl.h"
 #include "ObjectInfo.h"
 #include "ItemInfo.h"
 #include "Sprite.h"

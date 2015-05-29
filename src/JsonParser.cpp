@@ -6,12 +6,10 @@
 
 JsonObject parseJsonString(const std::string& str) {
 	JsonObject top;
+	size_t start = str.find('{');
 
-	std::istringstream is(str);
-	skipWhitespace(is);
-	if (is.peek() == '{') {
-		is.ignore();
-		auto tokens = splitString(is, ',');
+	if (start != std::string::npos) {
+		auto tokens = splitString(str, start+1);
 		for (auto token : tokens) {
 			if (!parsePair(token, top)) {
 				cout << "Could not parse the following name/value pair:" << endl;
@@ -31,41 +29,67 @@ void skipWhitespace(std::istringstream& is) {
 	}
 }
 
-std::vector<std::string> splitString(std::istringstream& is, const char delim) {
+std::vector<std::string> splitString(const std::string& str, size_t start) {
 	std::vector<std::string> retval;
-	std::string token;
+	int depth = 0;
 
-	while (is.good()) {
-		std::getline(is, token, delim);
-		if (!token.empty()) {
-			retval.push_back(token);
-		}
-	}
-
-	return retval;
-}
-
-std::vector<std::string> extractPairs(std::string& str) {
-	std::vector<std::string> retval;
-	int objDepth = 0;
-	int arrDepth = 0;
-
-	size_t start = 0;
-	size_t end = str.find(',');
+	size_t end = str.find(',', start);
 	while (end != std::string::npos) {
-
 		std::string token = str.substr(start, end - start);
-		if (!token.empty()) {
-			retval.push_back(token);
-			cout << token << endl;
+
+		// Inner array/object search - we have to take them as a whole
+		// and put in the pair - parsePair() will do its work
+		size_t objS = token.find('{');
+		size_t arrS = token.find('[');
+
+		if (objS != arrS) {
+			// Skimming through the original string, looking for nested arrays/objects
+			depth++;
+			size_t curr = start;
+
+			if (objS < arrS) {
+				curr += objS;
+				while (depth > 0 && curr < str.length()) {
+					curr++;
+					if (str.c_str()[curr] == '{') {
+						depth++;
+					} else if (str.c_str()[curr] == '}') {
+						depth--;
+					}
+				}
+			} else {
+				curr += arrS;
+				while (depth > 0 && curr < str.length()) {
+					curr++;
+					if (str.c_str()[curr] == '[') {
+						depth++;
+					} else if (str.c_str()[curr] == ']') {
+						depth--;
+					}
+				}
+			}
+
+			// update the end position with proper value & grab the whole pair
+			end = str.find(',', curr);
+			token = str.substr(start, end - start);
+
+			// start may overflow (end+1), so we take care of that
+			if (end == std::string::npos) {
+				end = str.length();
+			}
 		}
 
-		start = end+1;
+		if (!token.empty()) {
+			retval.push_back(token);
+		}
+
+		start = end + 1;
 		end = str.find(',', start);
 	}
 
-	if (end < str.length()) {
-		retval.push_back(str.substr(start, end - start));
+	// check if there is last pair left
+	if (start < str.length()) {
+		retval.push_back(str.substr(start));
 	}
 	return retval;
 }
@@ -82,15 +106,12 @@ std::string extractString(std::istringstream& is) {
 }
 
 
-bool parsePair(std::string& pair, JsonObject& parent) {
-	std::istringstream is(pair);
-	skipWhitespace(is);
-	auto tokens = splitString(is, ':');
-	
-	if (tokens.size() == 2) {
-		auto name = parseName(tokens[0]);
+bool parsePair(std::string& pair, JsonObject& parent, size_t start) {
+	size_t split = pair.find(':', start);
+	if (split != std::string::npos) {
+		auto name = parseName(pair.substr(start, split));
 		if (!name.empty()) {
-			return parseValue(tokens[1], name, parent);
+			return parseValue(pair.substr(split+1), name, parent);
 		}
 	}
 	return false;
@@ -115,13 +136,13 @@ bool parseValue(std::string& str, std::string& key, JsonObject& parent) {
 		retval = parseString(is);
 		break;
 	case '[':
-		retval = parseArray(is);
+		retval = parseArray(str);
 		break;
 	case '{':
-		retval = parseObject(is);
+		retval = parseObject(str);
 		break;
 	default:
-		retval = parseInteger(is);
+		retval = parseNumber(is);
 	}
 
 	if (retval) {
@@ -151,11 +172,11 @@ shared_ptr<JsonValue> parseValue(std::string& str) {
 	case '"':
 		return parseString(is);
 	case '[':
-		return parseArray(is);
+		return parseArray(str);
 	case '{':
-		return parseObject(is);
+		return parseObject(str);
 	}
-	return parseInteger(is);
+	return parseNumber(is);
 }
 
 
@@ -192,15 +213,21 @@ shared_ptr<JsonValue> parseFalse(std::istringstream& is) {
 	return nullptr;
 }
 
-shared_ptr<JsonValue> parseInteger(std::istringstream& is) {
+shared_ptr<JsonValue> parseNumber(std::istringstream& is) {
 	std::string strValue;
 
 	std::getline(is, strValue);
 	if (!strValue.empty()) {
+		bool decimal = strValue.find(".") != std::string::npos;
 		// Personally I'm not into C++ exceptions, but this is a fine solution, so bear with this inconsistency
 		try {
-			int value = std::stoi(strValue);
-			return make_shared<JsonTValue<int>>(value);
+			if (decimal) {
+				double value = std::stod(strValue);
+				return make_shared<JsonTValue<double>>(value);
+			} else {
+				int value = std::stoi(strValue);
+				return make_shared<JsonTValue<int>>(value);
+			}
 		} catch (...) {
 			// stoi failed, either overflow or illegal characters
 		}
@@ -217,35 +244,29 @@ shared_ptr<JsonValue> parseString(std::istringstream& is) {
 	return nullptr;
 }
 
-shared_ptr<JsonValue> parseArray(std::istringstream& is) {
-	std::string arrStr;
-	skipWhitespace(is);
-	if (is.peek() == '[') {
-		is.ignore();
-		std::getline(is, arrStr, ']');
+shared_ptr<JsonValue> parseArray(const std::string& src) {
+	size_t start = src.find('[');
 
-		if (!arrStr.empty()) {
-			auto values = splitString(std::istringstream(arrStr), ',');
-			std::vector<shared_ptr<JsonValue>> holder;
+	if (start != std::string::npos) {
+		auto tokens = splitString(src, start + 1);
+		std::vector<shared_ptr<JsonValue>> holder;
 			
-			for (auto value : values) {
-				holder.push_back(parseValue(value));
-			}
-			return make_shared<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(holder);
+		for (auto value : tokens) {
+			holder.push_back(parseValue(value));
 		}
+		return make_shared<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(holder);
 	}
 	return nullptr;
 }
 
-shared_ptr<JsonValue> parseObject(std::istringstream& is) {
+shared_ptr<JsonValue> parseObject(const std::string& src) {
 	shared_ptr<JsonObject> job = nullptr;
+	size_t start = src.find('{');
 
-	skipWhitespace(is);
-	if (is.peek() == '{') {
-		is.ignore();
+	if (start != std::string::npos) {
 		job = make_shared<JsonObject>();
 
-		auto tokens = splitString(is, ',');
+		auto tokens = splitString(src, start+1);
 		for (auto token : tokens) {
 			if (!parsePair(token, (*job))) {
 				cout << "Could not parse the following name/value pair:" << endl;

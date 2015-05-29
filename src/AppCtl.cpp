@@ -7,6 +7,7 @@
 #include "Object.h"
 
 AppCtl::AppCtl() {
+	_config = make_shared<ConfigCtl>();
 	_res = make_shared<ResourceCtl>();
 	_map = make_shared<LocalMap>(_res);
 	_pFinder = std::make_shared<AStarSearch>(_map);
@@ -388,15 +389,12 @@ int main(int argc, char **argv) {
 
 	AppCtl app;
 
-	JsonObject job = parseJsonString("{\"first\" : 30, \"second\" : 44, \"third\" : [1, 2,3 ]}");
+	JsonObject job = parseJsonString("{\"first\" : 30, \"second\" : 44, \"third\" : {\"1\":1, \"2\":34,\"3\":98 }}");
 	auto jobValues = job.getContents();
 	for (auto jPair : jobValues) {
 		cout << jPair.first << " : " << (*jPair.second) << "," << endl;
 	}
 	cout << job;
-
-	auto t1 = extractPairs(std::string("{\"first\" : 30, \"second\" : 44,"));
-	auto t2 = extractPairs(std::string(",,,,,30 : 20, "));
 
 	app.controlLoop();
 
