@@ -395,6 +395,9 @@ int main(int argc, char **argv) {
 	}
 	cout << job;
 
+	auto t1 = extractPairs(std::string("{\"first\" : 30, \"second\" : 44,"));
+	auto t2 = extractPairs(std::string(",,,,,30 : 20, "));
+
 	app.controlLoop();
 
 	return 0;

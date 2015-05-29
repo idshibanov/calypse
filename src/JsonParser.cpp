@@ -45,6 +45,31 @@ std::vector<std::string> splitString(std::istringstream& is, const char delim) {
 	return retval;
 }
 
+std::vector<std::string> extractPairs(std::string& str) {
+	std::vector<std::string> retval;
+	int objDepth = 0;
+	int arrDepth = 0;
+
+	size_t start = 0;
+	size_t end = str.find(',');
+	while (end != std::string::npos) {
+
+		std::string token = str.substr(start, end - start);
+		if (!token.empty()) {
+			retval.push_back(token);
+			cout << token << endl;
+		}
+
+		start = end+1;
+		end = str.find(',', start);
+	}
+
+	if (end < str.length()) {
+		retval.push_back(str.substr(start, end - start));
+	}
+	return retval;
+}
+
 std::string extractString(std::istringstream& is) {
 	std::string retval;
 

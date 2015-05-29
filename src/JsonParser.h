@@ -7,6 +7,7 @@ JsonObject parseJsonString(const std::string& str);
 void skipWhitespace(std::istringstream& is);
 void skipWhitespace(std::string& str);
 std::vector<std::string> splitString(std::istringstream& is, const char delim);
+std::vector<std::string> extractPairs(std::string& str);
 std::string extractString(std::string& str);
 
 bool parsePair(std::string& pair, JsonObject& parent);
