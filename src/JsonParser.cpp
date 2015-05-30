@@ -29,9 +29,30 @@ void skipWhitespace(std::istringstream& is) {
 	}
 }
 
+size_t skipNested(const std::string lookup, size_t curr, const char& open, const char& close) {
+	int depth = 1;
+	while (depth > 0 && curr < lookup.length()) {
+		curr++;
+		if (lookup[curr] == open) {
+			// check if we're working with the same element, such as "
+			if (open == close) {
+				// it cannot be nested and it must be escaped
+				// if it's not the case then we close it of
+				if (!curr || lookup[curr - 1] != '\\') {
+					depth--;
+				}
+			} else {
+				depth++;
+			}
+		} else if (lookup[curr] == close) {
+			depth--;
+		}
+	}
+	return curr;
+}
+
 std::vector<std::string> splitString(const std::string& str, size_t start) {
 	std::vector<std::string> retval;
-	int depth = 0;
 
 	size_t end = str.find(',', start);
 	while (end != std::string::npos) {
@@ -41,32 +62,19 @@ std::vector<std::string> splitString(const std::string& str, size_t start) {
 		// and put in the pair - parsePair() will do its work
 		size_t objS = token.find('{');
 		size_t arrS = token.find('[');
+		size_t n = std::count(token.begin(), token.end(), '"');
+		size_t strS = token.find_last_of('"');
 
-		if (objS != arrS) {
-			// Skimming through the original string, looking for nested arrays/objects
-			depth++;
+		if (objS != arrS || n % 2) {
 			size_t curr = start;
 
-			if (objS < arrS) {
-				curr += objS;
-				while (depth > 0 && curr < str.length()) {
-					curr++;
-					if (str.c_str()[curr] == '{') {
-						depth++;
-					} else if (str.c_str()[curr] == '}') {
-						depth--;
-					}
-				}
+			// Skimming through the original string, looking for nested arrays/objects
+			if (objS < arrS && objS < strS) {
+				curr = skipNested(str, curr + objS, '{', '}');
+			} else if (arrS < objS && arrS < strS) {
+				curr = skipNested(str, curr + arrS, '[', ']');
 			} else {
-				curr += arrS;
-				while (depth > 0 && curr < str.length()) {
-					curr++;
-					if (str.c_str()[curr] == '[') {
-						depth++;
-					} else if (str.c_str()[curr] == ']') {
-						depth--;
-					}
-				}
+				curr = skipNested(str, curr + strS, '"', '"');
 			}
 
 			// update the end position with proper value & grab the whole pair

@@ -80,6 +80,12 @@
     <ClInclude Include="src\MapTile.h" />
     <ClInclude Include="src\Timer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="config\app.json" />
+    <None Include="config\item.json" />
+    <None Include="config\obj.json" />
+    <None Include="config\res.json" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{42BD2E34-4DBE-4CCC-B40A-BA6E530BAABA}</ProjectGuid>
     <RootNamespace>Calypse</RootNamespace>

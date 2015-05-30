@@ -12,12 +12,14 @@
 // Configuration files (XML?) are planned
 
 class ResourceCtl {
+	shared_ptr<ConfigCtl> _conf;
+
 	std::map<int, shared_ptr<ObjectInfo>> _info;
 	std::map<int, shared_ptr<ItemInfo>> _itemInfo;
 	std::map<int, shared_ptr<Sprite>> _sprites;
 	std::map<int, shared_ptr<SpriteText>> _arialFonts;
 public:
-	ResourceCtl();
+	ResourceCtl(shared_ptr<ConfigCtl> conf);
 	~ResourceCtl();
 	void loadSprites();
 	shared_ptr<ObjectInfo> getObjectInfo(int type) const;

@@ -54,7 +54,7 @@ ScreenCtl::~ScreenCtl() {
 
 bool ScreenCtl::draw() {
 	bool retval = false;
-	if (false) { //_render || _lastTimestamp < _state->_appTime) {
+	if (_render || _lastTimestamp < _state->_appTime) {
 		_buffer.reset();
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
 		ALLEGRO_COLOR obj_color = al_map_rgb(155, 155, 255);

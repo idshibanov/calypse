@@ -210,4 +210,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="config\obj.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="config\app.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="config\item.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="config\res.json">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

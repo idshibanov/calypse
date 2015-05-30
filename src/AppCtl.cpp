@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <allegro5/allegro_native_dialog.h>
 #include <allegro5/allegro_primitives.h>
 
 #include "AppCtl.h"
@@ -8,7 +9,7 @@
 
 AppCtl::AppCtl() {
 	_config = make_shared<ConfigCtl>();
-	_res = make_shared<ResourceCtl>();
+	_res = make_shared<ResourceCtl>(_config);
 	_map = make_shared<LocalMap>(_res);
 	_pFinder = std::make_shared<AStarSearch>(_map);
 
@@ -366,8 +367,6 @@ void AppCtl::selectItem(shared_ptr<Item> it) {
 	}
 }
 
-#include <sstream>
-#include "JsonParser.h"
 
 int main(int argc, char **argv) {
 
@@ -387,16 +386,20 @@ int main(int argc, char **argv) {
 	al_init_font_addon();
 	al_init_ttf_addon();
 
-	AppCtl app;
-
-	JsonObject job = parseJsonString("{\"first\" : 30, \"second\" : 44, \"third\" : {\"1\":1, \"2\":34,\"3\":98 }}");
-	auto jobValues = job.getContents();
-	for (auto jPair : jobValues) {
-		cout << jPair.first << " : " << (*jPair.second) << "," << endl;
+	try {
+		AppCtl app;
+		app.controlLoop();
+	} catch (std::string& e) {
+		std::cerr << e << endl;
+		al_show_native_message_box(
+			NULL,
+			"Warning",
+			"Are you sure?",
+			e.c_str(),
+			NULL,
+			ALLEGRO_MESSAGEBOX_ERROR
+			);
 	}
-	cout << job;
-
-	app.controlLoop();
 
 	return 0;
 }

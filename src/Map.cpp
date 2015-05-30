@@ -52,8 +52,10 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
 			for (int k = 0; k < objMaxDensity; k++){
 				randOffset = rand() % 100;
 				Point objPos((col + (randOffset % 10)) * TILE_MASK, (row + (randOffset / 10)) * TILE_MASK);
+				/*
 				cout << "OBJ: " << col + (randOffset % 10) << "," << row + (randOffset / 10);
 				cout << "  >> " << objPos._x << "," << objPos._y << " Prio: " << objPos.toRenderPriority() << endl;
+				*/
 				_objects.setObject(make_shared<MapObject>(1, objPos));
 			}
 		}

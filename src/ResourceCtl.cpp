@@ -1,6 +1,17 @@
 #include "ResourceCtl.h"
 
-ResourceCtl::ResourceCtl() {
+ResourceCtl::ResourceCtl(shared_ptr<ConfigCtl> conf) {
+	_conf = conf;
+
+	auto objT = _conf->getSetting(C_CONFIG_OBJECT, "objects");
+	if (objT && objT->getType() == JSON_OBJECT) {
+		auto objConf = std::dynamic_pointer_cast<JsonObject>(objT);
+		auto allObjects = objConf->getContents();
+		for (auto objInfo : allObjects) {
+			cout << (*objInfo.second) << endl << endl;
+		}
+	}
+
 	int id = 0;
 	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(2, 2), Point(44, 69), Point(10, -57), 3, 48, false));	// actor
 

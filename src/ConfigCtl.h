@@ -9,6 +9,7 @@ enum ConfigCategory {
 	C_CONFIG_CATEGORY_LAST
 };
 
+
 class ConfigCtl {
 	JsonObject _app;
 	JsonObject _res;
@@ -18,5 +19,6 @@ class ConfigCtl {
 public:
 	ConfigCtl();
 	~ConfigCtl();
+	bool loadFile(const char* filename, JsonObject& obj);
 	shared_ptr<JsonValue> getSetting(ConfigCategory cat, const std::string& param);
 };

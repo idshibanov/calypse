@@ -1,9 +1,0 @@
-{
-	"type" : "json",
-	"second" : 780,
-	"complex" : {
-		"param1" : 458.12,
-		"param2" : "hw",
-		"param3" : ["generic", 42 ],
-	}
-}

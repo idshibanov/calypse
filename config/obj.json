@@ -1,0 +1,58 @@
+{
+    "version": 1.0,
+    "type": "ObjectInfo",
+    "objects": {
+        "actor": {
+            "name": "actor",
+            "mapSize": "2,2",
+            "sprSize": "44,69",
+            "offset": "10,-57",
+            "spriteID": 3,
+            "frames": 48,
+            "lift": false
+        },
+        "reet": {
+            "name": "reet",
+            "mapSize": "10,10",
+            "sprSize": "64,92",
+            "offset": "0,-60",
+            "spriteID": 2,
+            "frames": 2,
+            "lift": false,
+            "activeAreas": [
+                {
+                    "pos": "0,0",
+                    "size": "64,92",
+                    "actions": [ 8, 9, 10, 11 ]
+                }
+            ]
+        },
+        "hut": {
+            "name": "hut",
+            "mapSize": "20,30",
+            "sprSize": "160,153",
+            "offset": "-96,-73",
+            "spriteID": 4,
+            "frames": 1,
+            "lift": false
+        },
+        "hide": {
+            "name": "hide",
+            "mapSize": "1,1",
+            "sprSize": "96,51",
+            "offset": "-18,-6",
+            "spriteID": 5,
+            "frames": 1,
+            "lift": true
+        },
+        "fire": {
+            "name": "fire",
+            "mapSize": "8,8",
+            "sprSize": "48,58",
+            "offset": "8,-26",
+            "spriteID": 6,
+            "frames": 1,
+            "lift": true
+        },
+    }
+}
