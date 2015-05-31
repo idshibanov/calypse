@@ -22,11 +22,13 @@ class ResourceCtl {
 	std::map<int, shared_ptr<SpriteText>> _arialFonts;
 
 	void loadObjectRecords(shared_ptr<JsonObject> objConf);
+	void loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonObject> actArea);
 public:
 	ResourceCtl(shared_ptr<ConfigCtl> conf);
 	~ResourceCtl();
 	void loadSprites();
 	int getObjectID(const char* name) const;
+	shared_ptr<ObjectInfo> getObjectInfo(const char* name) const;
 	shared_ptr<ObjectInfo> getObjectInfo(int type) const;
 	shared_ptr<ItemInfo> getItemInfo(ItemType t) const;
 	shared_ptr<Sprite> getSprite(int id) const;

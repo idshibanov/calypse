@@ -16,7 +16,7 @@ LocalMap::~LocalMap(){
 void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
 	_events = ev;
 	_pFinder = pf;
-	_actor = make_shared<Actor>(0, Point(54, 54), 24);
+	_actor = make_shared<Actor>(_res->getObjectID("actor"), Point(54, 54), 24);
 	srand((unsigned)time(NULL));
 	_rowmax = TD_MAP_ROWS;
 	_colmax = TD_MAP_COLS;
@@ -44,9 +44,10 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
 	int randOffset = 0;
 	//_objects.reserve(_rowmax * _colmax / 100);
 
-	_objects.setObject(make_shared<MapObject>(2, Point(150, 150)));
-	_objects.setObject(make_shared<MapObject>(3, Point(80, 90)));
-	_objects.setObject(make_shared<SmartActor>(0, Point(110, 110), 24, _events));
+	_objects.setObject(make_shared<MapObject>(_res->getObjectID("hut"), Point(150, 150)));
+	_objects.setObject(make_shared<MapObject>(_res->getObjectID("hide"), Point(80, 90)));
+	_objects.setObject(make_shared<SmartActor>(_res->getObjectID("actor"), Point(110, 110), 24, _events));
+	int reetID = _res->getObjectID("reet");
 	for (unsigned row = 0; row < _rowmax; row += 10){
 		for (unsigned col = 0; col < _colmax; col += 10){
 			for (int k = 0; k < objMaxDensity; k++){
@@ -56,7 +57,7 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
 				cout << "OBJ: " << col + (randOffset % 10) << "," << row + (randOffset / 10);
 				cout << "  >> " << objPos._x << "," << objPos._y << " Prio: " << objPos.toRenderPriority() << endl;
 				*/
-				_objects.setObject(make_shared<MapObject>(1, objPos));
+				_objects.setObject(make_shared<MapObject>(reetID, objPos));
 			}
 		}
 	}

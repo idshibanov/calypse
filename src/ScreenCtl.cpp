@@ -193,9 +193,9 @@ bool ScreenCtl::draw() {
 		// Selected object (craft suggestion)
 
 		if (_state->_selectedAction == ACTION_CRAFT_TREE) {
-			drawSelectedObject(_res->getObjectInfo(1));
+			drawSelectedObject(_res->getObjectInfo("reet"));
 		} else if (_state->_selectedAction == ACTION_CRAFT_CAMPFIRE) {
-			drawSelectedObject(_res->getObjectInfo(4));
+			drawSelectedObject(_res->getObjectInfo("fire"));
 		}
 
 

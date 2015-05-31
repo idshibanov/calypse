@@ -34,14 +34,45 @@ void ResourceCtl::loadObjectRecords(shared_ptr<JsonObject> objConf) {
 			int frames = extractValue<int>(record->getValue("frames"));
 			bool lift = extractValue<bool>(record->getValue("lift"));
 
-			auto actAreas = std::dynamic_pointer_cast<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(record->getValue("activeAreas"));
+			auto info = make_shared<ObjectInfo>(objID, mapSize, sprSize, offset, spriteID, frames, lift);
 
-			_info.emplace(objID, make_shared<ObjectInfo>(objID, mapSize, sprSize, offset, spriteID, frames, lift));
+			auto actPtr = std::dynamic_pointer_cast<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(record->getValue("activeAreas"));
+			if (actPtr) {
+				auto actAreas = actPtr->getValue();
+				for (auto actArea : actAreas) {
+					loadActiveAreas(info, std::dynamic_pointer_cast<JsonObject>(actArea));
+				}
+			}
+
+			_info.emplace(objID, info);
 			_objectLookup.emplace(objInfo.first, objID);
 			objID++;
 		}
 	}
 }
+
+
+void ResourceCtl::loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonObject> actArea) {
+	if (actArea) {
+		auto arrPtr = std::dynamic_pointer_cast<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(actArea->getValue("actions"));
+		if (arrPtr) {
+			Point pos = extractValue<Point>(actArea->getValue("pos"));
+			Point size = extractValue<Point>(actArea->getValue("size"));
+
+			auto act_map = make_shared<ObjectActionArea>();
+			auto actionArr = arrPtr->getValue();
+			for (auto action : actionArr) {
+				int actID = extractValue<int>(action);
+				if (actID > ACTION_NONE && actID < ACTION_LAST) {
+					act_map->_acts.push_back((ActionType)actID);
+				}
+			}
+			act_map->_area = Rect(pos, size);
+			info->addActionArea(act_map);
+		}
+	}
+}
+
 
 // DO NOT CREATE SPRITES BEFORE CREATING DISPLAY
 void ResourceCtl::loadSprites() {
@@ -49,20 +80,20 @@ void ResourceCtl::loadSprites() {
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/cursor_sheet.png", 2, 2, Point(32, 32)));
 	_sprites.emplace(id++, make_shared<Sprite>(id, "res/grass.png"));
 
-	auto reet_size = getObjectInfo(1)->sprSize();
+	auto reet_size = getObjectInfo("reet")->sprSize();
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/reet_sheet.png", 2, 2, reet_size));
 
 	// 44x69, 11-0-11, 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
-	auto walk_size = getObjectInfo(0)->sprSize();
+	auto walk_size = getObjectInfo("actor")->sprSize();
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/f2_walk.png", 48, 8, walk_size));
 
-	auto hut_size = getObjectInfo(2)->sprSize();
+	auto hut_size = getObjectInfo("hut")->sprSize();
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/hut.png", 1, 1, hut_size));
 
-	auto hide_size = getObjectInfo(3)->sprSize();
+	auto hide_size = getObjectInfo("hide")->sprSize();
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/bear_hide.png", 1, 1, hide_size));
 
-	auto fire_size = getObjectInfo(4)->sprSize();
+	auto fire_size = getObjectInfo("fire")->sprSize();
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/fire.png", 1, 1, fire_size));
 
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/itemset.png", 4, 4, Point(48,48)));
@@ -83,6 +114,10 @@ int ResourceCtl::getObjectID(const char* name) const {
 	return -1;
 }
 
+
+shared_ptr<ObjectInfo> ResourceCtl::getObjectInfo(const char* name) const {
+	return getObjectInfo(getObjectID(name));
+}
 
 shared_ptr<ObjectInfo> ResourceCtl::getObjectInfo(int type) const {
 	auto ptr = _info.find(type);

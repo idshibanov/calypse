@@ -1,4 +1,24 @@
 {
     "version": 1.0,
     "type": "Resources",
+    "sprites": {
+        "cursor": {
+            "filename" : "res/cursor_sheet.png",
+            "size" : "32,32",
+            "type": "SpriteSheet",
+            "lastID": 2,
+            "rowSize": 2
+        },
+        "grass": {
+            "filename" : "res/grass.png",
+            "type": "Sprite",
+        },
+        "reet": {
+            "filename" : "res/reet_sheet.png",
+            "object": "reet",
+            "type": "SpriteSheet",
+            "lastID": 2,
+            "rowSize": 2
+        },
+    }
 }
