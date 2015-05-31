@@ -267,7 +267,8 @@ void PointAction::start() {
 bool PointAction::update() {
 	if (_timer.check()) {
 		if (_state.check()) {
-			if (!_actor.expired()) {
+			if (!_actor.expired() && !_res.expired()) {
+				auto resCtl = _res.lock();
 				if (_type == ACTION_DROP) {
 					_actor.lock()->drop(_targetPos);
 					return true;
@@ -279,13 +280,13 @@ bool PointAction::update() {
 						}
 					}
 				} else if (_type == ACTION_CRAFT_TREE && !_map.expired()) {
-					auto obj = make_shared<MapObject>(1, _targetPos);
+					auto obj = make_shared<MapObject>(resCtl->getObjectID("reet"), _targetPos);
 					return _map.lock()->addObject(obj);
 				} else if (_type == ACTION_CRAFT_CAMPFIRE && !_map.expired()) {
 					auto actorState = _actor.lock()->getState();
 					cout << actorState->getItemCount(C_ITEM_WOOD) << " items left!" << endl;
 					if (actorState->useItem(C_ITEM_WOOD)) {
-						auto obj = make_shared<MapObject>(4, _targetPos);
+						auto obj = make_shared<MapObject>(resCtl->getObjectID("fire"), _targetPos);
 						return _map.lock()->addObject(obj);
 					}
 					return false;

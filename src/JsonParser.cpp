@@ -284,3 +284,39 @@ shared_ptr<JsonValue> parseObject(const std::string& src) {
 	}
 	return job;
 }
+
+
+template<typename T>
+T extractValue(shared_ptr<JsonValue> v) {
+	shared_ptr<JsonTValue<T>> ptr = std::dynamic_pointer_cast<JsonTValue<T>>(v);
+	if (ptr) {
+		return ptr->getValue();
+	}
+	return T();
+}
+
+template <>
+Point extractValue<Point>(shared_ptr<JsonValue> v) {
+	auto val = std::dynamic_pointer_cast<JsonTValue<std::string>>(v);
+	if (val) {
+		auto str = val->getValue();
+		size_t pos = str.find(',');
+		if (pos != std::string::npos) {
+			try {
+				int first = std::stoi(str.substr(0, pos));
+				int second = std::stoi(str.substr(pos + 1));
+				return Point(first, second);
+			}
+			catch (...) {
+				// stoi failed, either overflow or illegal characters
+			}
+		}
+	}
+	return Point();
+}
+
+template bool extractValue<bool>(shared_ptr<JsonValue> v);
+template int extractValue<int>(shared_ptr<JsonValue> v);
+template double extractValue<double>(shared_ptr<JsonValue> v);
+template std::string extractValue<std::string>(shared_ptr<JsonValue> v);
+template Point extractValue<Point>(shared_ptr<JsonValue> v);

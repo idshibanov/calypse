@@ -1,5 +1,6 @@
 #pragma once
 #include "JsonValue.h"
+#include "Point.h"
 
 JsonObject parseJsonString(const std::string& str);
 JsonObject parseJsonStream(const std::string& str);
@@ -23,3 +24,6 @@ shared_ptr<JsonValue> parseNumber(std::istringstream& is);
 shared_ptr<JsonValue> parseString(std::istringstream& is);
 shared_ptr<JsonValue> parseArray(const std::string& src);
 shared_ptr<JsonValue> parseObject(const std::string& src);
+
+template<typename T>
+T extractValue(shared_ptr<JsonValue> v);

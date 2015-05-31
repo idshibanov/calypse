@@ -6,28 +6,9 @@ ResourceCtl::ResourceCtl(shared_ptr<ConfigCtl> conf) {
 	auto objT = _conf->getSetting(C_CONFIG_OBJECT, "objects");
 	if (objT && objT->getType() == JSON_OBJECT) {
 		auto objConf = std::dynamic_pointer_cast<JsonObject>(objT);
-		auto allObjects = objConf->getContents();
-		for (auto objInfo : allObjects) {
-			cout << (*objInfo.second) << endl << endl;
-		}
+		if (objConf)
+			loadObjectRecords(objConf);
 	}
-
-	int id = 0;
-	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(2, 2), Point(44, 69), Point(10, -57), 3, 48, false));	// actor
-
-	auto reet_info = make_shared<ObjectInfo>(id, Point(10, 10), Point(64, 92), Point(0, -60), 2, 2, false);
-	auto reet_map = make_shared<ObjectActionArea>();
-	reet_map->_area = Rect(Point(), Point(64, 92));
-	reet_map->_acts.push_back(ACTION_CUT);
-	reet_map->_acts.push_back(ACTION_PICK_BRANCH);
-	reet_map->_acts.push_back(ACTION_PICK_RED_BERRY);
-	reet_map->_acts.push_back(ACTION_PICK_BLUE_BERRY);
-	reet_info->addActionArea(reet_map);
-	_info.emplace(id++, reet_info); 	// reet
-
-	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(20, 30), Point(160, 153), Point(-96, -73), 4, 1, false));	// hut
-	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(1, 1), Point(96, 51), Point(-18, -6), 5, 1, true));	// hide
-	_info.emplace(id++, make_shared<ObjectInfo>(id, Point(8, 8), Point(48, 58), Point(8, -26), 6, 1, true));	// fire
 
 	_itemInfo.emplace(C_ITEM_WOOD, make_shared<ItemInfo>(C_ITEM_WOOD, Point(13, 12), Point(48, 48), 7));
 	_itemInfo.emplace(C_ITEM_BERRY_RED, make_shared<ItemInfo>(C_ITEM_BERRY_RED, Point(13, 12), Point(48, 48), 7));
@@ -37,6 +18,29 @@ ResourceCtl::ResourceCtl(shared_ptr<ConfigCtl> conf) {
 
 ResourceCtl::~ResourceCtl() {
 
+}
+
+void ResourceCtl::loadObjectRecords(shared_ptr<JsonObject> objConf) {
+	auto allObjects = objConf->getContents();
+
+	int objID = 0;
+	for (auto objInfo : allObjects) {
+		auto record = std::dynamic_pointer_cast<JsonObject>(objInfo.second);
+		if (record) {
+			Point mapSize = extractValue<Point>(record->getValue("mapSize"));
+			Point sprSize = extractValue<Point>(record->getValue("sprSize"));
+			Point offset = extractValue<Point>(record->getValue("offset"));
+			int spriteID = extractValue<int>(record->getValue("spriteID"));
+			int frames = extractValue<int>(record->getValue("frames"));
+			bool lift = extractValue<bool>(record->getValue("lift"));
+
+			auto actAreas = std::dynamic_pointer_cast<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(record->getValue("activeAreas"));
+
+			_info.emplace(objID, make_shared<ObjectInfo>(objID, mapSize, sprSize, offset, spriteID, frames, lift));
+			_objectLookup.emplace(objInfo.first, objID);
+			objID++;
+		}
+	}
 }
 
 // DO NOT CREATE SPRITES BEFORE CREATING DISPLAY
@@ -68,6 +72,15 @@ void ResourceCtl::loadSprites() {
 
 	// fonts map, specified as a map
 	_arialFonts.emplace(12, make_shared<SpriteText>("res/arialbd.ttf", 12));
+}
+
+
+int ResourceCtl::getObjectID(const char* name) const {
+	auto it = _objectLookup.find(name);
+	if (it != _objectLookup.end()) {
+		return it->second;
+	}
+	return -1;
 }
 
 

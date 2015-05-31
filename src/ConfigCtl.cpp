@@ -22,9 +22,11 @@ bool ConfigCtl::loadFile(const char* filename, JsonObject& obj) {
 		buffer << tmpfile.rdbuf();
 		obj = parseJsonString(buffer.str());
 		tmpfile.close();
+		return true;
 	} else {
 		throw std::string("Could not load a config file: ").append(filename);
 	}
+	return false;
 }
 
 shared_ptr<JsonValue> ConfigCtl::getSetting(ConfigCategory cat, const std::string& param) {
