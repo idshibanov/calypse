@@ -46,3 +46,15 @@ shared_ptr<JsonValue> ConfigCtl::getSetting(ConfigCategory cat, const std::strin
 	}
 	return nullptr;
 }
+
+
+const std::map<std::string, shared_ptr<JsonValue>>& ConfigCtl::getCollection(ConfigCategory cat, const std::string& param) {
+	auto objT = getSetting(cat, param);
+	if (objT && objT->getType() == JSON_OBJECT) {
+		auto objConf = std::dynamic_pointer_cast<JsonObject>(objT);
+		if (objConf) {
+			return objConf->getContents();
+		}
+	}
+	return std::map<std::string, shared_ptr<JsonValue>>();
+}

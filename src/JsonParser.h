@@ -7,7 +7,7 @@ JsonObject parseJsonStream(const std::string& str);
 
 // helper functions
 void skipWhitespace(std::istringstream& is);
-std::string extractString(std::istringstream& is);
+std::string extractString(std::string& src);
 size_t skipNested(const std::string lookup, size_t curr, const char& open, const char& close);
 std::vector<std::string> splitString(const std::string& str, size_t start = 0);
 
@@ -26,4 +26,4 @@ shared_ptr<JsonValue> parseArray(const std::string& src);
 shared_ptr<JsonValue> parseObject(const std::string& src);
 
 template<typename T>
-T extractValue(shared_ptr<JsonValue> v);
+T extractValue(shared_ptr<JsonValue> v, bool* status = nullptr);

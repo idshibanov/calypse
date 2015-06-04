@@ -3,12 +3,7 @@
 ResourceCtl::ResourceCtl(shared_ptr<ConfigCtl> conf) {
 	_conf = conf;
 
-	auto objT = _conf->getSetting(C_CONFIG_OBJECT, "objects");
-	if (objT && objT->getType() == JSON_OBJECT) {
-		auto objConf = std::dynamic_pointer_cast<JsonObject>(objT);
-		if (objConf)
-			loadObjectRecords(objConf);
-	}
+	loadObjectRecords();
 
 	_itemInfo.emplace(C_ITEM_WOOD, make_shared<ItemInfo>(C_ITEM_WOOD, Point(13, 12), Point(48, 48), 7));
 	_itemInfo.emplace(C_ITEM_BERRY_RED, make_shared<ItemInfo>(C_ITEM_BERRY_RED, Point(13, 12), Point(48, 48), 7));
@@ -20,33 +15,36 @@ ResourceCtl::~ResourceCtl() {
 
 }
 
-void ResourceCtl::loadObjectRecords(shared_ptr<JsonObject> objConf) {
-	auto allObjects = objConf->getContents();
+void ResourceCtl::loadObjectRecords() {
+	auto allObjects = _conf->getCollection(C_CONFIG_OBJECT, "objects");
 
 	int objID = 0;
 	for (auto objInfo : allObjects) {
 		auto record = std::dynamic_pointer_cast<JsonObject>(objInfo.second);
 		if (record) {
-			Point mapSize = extractValue<Point>(record->getValue("mapSize"));
-			Point sprSize = extractValue<Point>(record->getValue("sprSize"));
-			Point offset = extractValue<Point>(record->getValue("offset"));
-			int spriteID = extractValue<int>(record->getValue("spriteID"));
-			int frames = extractValue<int>(record->getValue("frames"));
-			bool lift = extractValue<bool>(record->getValue("lift"));
+			bool status = true;
+			Point mapSize = extractValue<Point>(record->getValue("mapSize"), &status);
+			Point sprSize = extractValue<Point>(record->getValue("sprSize"), &status);
+			Point offset = extractValue<Point>(record->getValue("offset"), &status);
+			int spriteID = extractValue<int>(record->getValue("spriteID"), &status);
+			int frames = extractValue<int>(record->getValue("frames"), &status);
+			bool lift = extractValue<bool>(record->getValue("lift"), &status);
 
-			auto info = make_shared<ObjectInfo>(objID, mapSize, sprSize, offset, spriteID, frames, lift);
+			if (status) {
+				auto info = make_shared<ObjectInfo>(objID, mapSize, sprSize, offset, spriteID, frames, lift);
 
-			auto actPtr = std::dynamic_pointer_cast<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(record->getValue("activeAreas"));
-			if (actPtr) {
-				auto actAreas = actPtr->getValue();
-				for (auto actArea : actAreas) {
-					loadActiveAreas(info, std::dynamic_pointer_cast<JsonObject>(actArea));
+				auto actPtr = std::dynamic_pointer_cast<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(record->getValue("activeAreas"));
+				if (actPtr) {
+					auto actAreas = actPtr->getValue();
+					for (auto actArea : actAreas) {
+						loadActiveAreas(info, std::dynamic_pointer_cast<JsonObject>(actArea));
+					}
 				}
-			}
 
-			_info.emplace(objID, info);
-			_objectLookup.emplace(objInfo.first, objID);
-			objID++;
+				_info.emplace(objID, info);
+				_objectLookup.emplace(objInfo.first, objID);
+				objID++;
+			}
 		}
 	}
 }
@@ -74,8 +72,57 @@ void ResourceCtl::loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonOb
 }
 
 
-// DO NOT CREATE SPRITES BEFORE CREATING DISPLAY
+// DO NOT LOAD BITMAPS (SPRITES) BEFORE CREATING DISPLAY
 void ResourceCtl::loadSprites() {
+	// clear it in case we are reloading (new display is created)
+	_sprites.clear();
+	_spriteLookup.clear();
+
+	auto spriteRecords = _conf->getCollection(C_CONFIG_RESOURCE, "sprites");
+	int sprID = 0;
+
+	for (auto sprRecord : spriteRecords) {
+		auto record = std::dynamic_pointer_cast<JsonObject>(sprRecord.second);
+		if (record) {
+			bool status = true;
+			std::string filename = extractValue<std::string>(record->getValue("filename"), &status);
+			std::string type = extractValue<std::string>(record->getValue("type"), &status);
+			std::string object = extractValue<std::string>(record->getValue("object"));
+			shared_ptr<ObjectInfo> objInfo = nullptr;
+			
+			if (status) {
+				if (!object.empty()) {
+					objInfo = getObjectInfo(object.c_str());
+				}
+
+				if (type.compare("Sprite") == 0) {
+					_sprites.emplace(sprID, make_shared<Sprite>(sprID, filename.c_str()));
+					_spriteLookup.emplace(sprRecord.first, sprID);
+					if (objInfo) {
+						objInfo->_spriteID = sprID;
+					}
+					sprID++;
+				} else if (type.compare("SpriteSheet") == 0) {
+					Point size = extractValue<Point>(record->getValue("size"), &status);
+					int lastID = extractValue<int>(record->getValue("lastID"), &status);
+					int rowSize = extractValue<int>(record->getValue("rowSize"), &status);
+
+					if (status) {
+						_sprites.emplace(sprID, make_shared<SpriteSheet>(sprID, filename.c_str(), lastID, rowSize, size));
+						_spriteLookup.emplace(sprRecord.first, sprID);
+						if (objInfo) {
+							objInfo->_spriteID = sprID;
+						}
+						sprID++;
+					}
+				} else {
+					cout << "ERR: can't recognize sprite type '" << type << "'" << endl;
+				}
+			}
+		}
+	}
+
+	/*
 	int id = 0;
 	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/cursor_sheet.png", 2, 2, Point(32, 32)));
 	_sprites.emplace(id++, make_shared<Sprite>(id, "res/grass.png"));
@@ -103,6 +150,7 @@ void ResourceCtl::loadSprites() {
 
 	// fonts map, specified as a map
 	_arialFonts.emplace(12, make_shared<SpriteText>("res/arialbd.ttf", 12));
+	*/
 }
 
 
@@ -137,6 +185,15 @@ shared_ptr<ItemInfo> ResourceCtl::getItemInfo(ItemType t) const {
 }
 
 
+int ResourceCtl::getSpriteID(const char* name) const {
+	auto it = _spriteLookup.find(name);
+	if (it != _spriteLookup.end()) {
+		return it->second;
+	}
+	return -1;
+}
+
+
 shared_ptr<Sprite> ResourceCtl::getSprite(int id) const {
 	auto ptr = _sprites.find(id);
 	if (ptr != _sprites.end()) {
@@ -146,12 +203,22 @@ shared_ptr<Sprite> ResourceCtl::getSprite(int id) const {
 }
 
 
+shared_ptr<Sprite> ResourceCtl::getSprite(const char* name) const {
+	return getSprite(getSpriteID(name));
+}
+
+
 shared_ptr<SpriteSheet> ResourceCtl::getSpriteSheet(int id) const {
 	auto ptr = _sprites.find(id);
 	if (ptr != _sprites.end()) {
 		return std::dynamic_pointer_cast<SpriteSheet>(ptr->second);
 	}
 	return nullptr;
+}
+
+
+shared_ptr<SpriteSheet> ResourceCtl::getSpriteSheet(const char* name) const {
+	return getSpriteSheet(getSpriteID(name));
 }
 
 

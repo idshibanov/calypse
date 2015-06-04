@@ -21,4 +21,6 @@ public:
 	~ConfigCtl();
 	bool loadFile(const char* filename, JsonObject& obj);
 	shared_ptr<JsonValue> getSetting(ConfigCategory cat, const std::string& param);
+	const std::map<std::string, shared_ptr<JsonValue>>& getCollection(ConfigCategory cat, const std::string& param);
+
 };

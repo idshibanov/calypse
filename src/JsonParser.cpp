@@ -37,7 +37,7 @@ size_t skipNested(const std::string lookup, size_t curr, const char& open, const
 			// check if we're working with the same element, such as "
 			if (open == close) {
 				// it cannot be nested and it must be escaped
-				// if it's not the case then we close it of
+				// if it's not the case then we close it off
 				if (!curr || lookup[curr - 1] != '\\') {
 					depth--;
 				}
@@ -81,7 +81,7 @@ std::vector<std::string> splitString(const std::string& str, size_t start) {
 			end = str.find(',', curr);
 			token = str.substr(start, end - start);
 
-			// start may overflow (end+1), so we take care of that
+			// start pos may overflow (end+1), so we take care of that
 			if (end == std::string::npos) {
 				end = str.length();
 			}
@@ -102,15 +102,13 @@ std::vector<std::string> splitString(const std::string& str, size_t start) {
 	return retval;
 }
 
-std::string extractString(std::istringstream& is) {
-	std::string retval;
-
-	skipWhitespace(is);
-	if (is.peek() == '"') {
-		is.ignore();
-		std::getline(is, retval, '"');
+std::string extractString(std::string& src) {
+	size_t start = src.find_first_of('"');
+	size_t end = src.find_last_of('"');
+	if (start != end) {
+		return src.substr(start+1, end-start-1);
 	}
-	return retval;
+	return std::string();
 }
 
 
@@ -162,8 +160,7 @@ bool parseValue(std::string& str, std::string& key, JsonObject& parent) {
 
 
 std::string parseName(std::string& key) {
-	std::istringstream is(key);
-	return extractString(is);
+	return extractString(key);
 }
 
 shared_ptr<JsonValue> parseValue(std::string& str) {
@@ -245,7 +242,7 @@ shared_ptr<JsonValue> parseNumber(std::istringstream& is) {
 }
 
 shared_ptr<JsonValue> parseString(std::istringstream& is) {
-	std::string value = extractString(is);
+	std::string value = extractString(is.str());
 	if (!value.empty()) {
 		return make_shared<JsonTValue<std::string>>(value);
 	}
@@ -287,16 +284,19 @@ shared_ptr<JsonValue> parseObject(const std::string& src) {
 
 
 template<typename T>
-T extractValue(shared_ptr<JsonValue> v) {
+T extractValue(shared_ptr<JsonValue> v, bool* status) {
 	shared_ptr<JsonTValue<T>> ptr = std::dynamic_pointer_cast<JsonTValue<T>>(v);
 	if (ptr) {
 		return ptr->getValue();
+	}
+	if (status) {
+		*status = false;
 	}
 	return T();
 }
 
 template <>
-Point extractValue<Point>(shared_ptr<JsonValue> v) {
+Point extractValue<Point>(shared_ptr<JsonValue> v, bool* status) {
 	auto val = std::dynamic_pointer_cast<JsonTValue<std::string>>(v);
 	if (val) {
 		auto str = val->getValue();
@@ -312,11 +312,14 @@ Point extractValue<Point>(shared_ptr<JsonValue> v) {
 			}
 		}
 	}
+	if (status) {
+		*status = false;
+	}
 	return Point();
 }
 
-template bool extractValue<bool>(shared_ptr<JsonValue> v);
-template int extractValue<int>(shared_ptr<JsonValue> v);
-template double extractValue<double>(shared_ptr<JsonValue> v);
-template std::string extractValue<std::string>(shared_ptr<JsonValue> v);
-template Point extractValue<Point>(shared_ptr<JsonValue> v);
+template bool extractValue<bool>(shared_ptr<JsonValue> v, bool* status);
+template int extractValue<int>(shared_ptr<JsonValue> v, bool* status);
+template double extractValue<double>(shared_ptr<JsonValue> v, bool* status);
+template std::string extractValue<std::string>(shared_ptr<JsonValue> v, bool* status);
+template Point extractValue<Point>(shared_ptr<JsonValue> v, bool* status);

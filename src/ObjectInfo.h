@@ -5,6 +5,8 @@
 #include "ObjectState.h"
 #include "Point.h"
 
+class ResourceCtl;
+
 struct ObjectActionArea {
 	Rect _area;
 	std::vector<ActionType> _acts;
@@ -36,6 +38,7 @@ class ObjectInfo {
 	bool _liftable;
 	
 	std::vector<shared_ptr<ObjectActionArea>> _subAreas;
+	friend class ResourceCtl;
 public:
 	ObjectInfo(int, const Point&, const Point&, const Point&, int, int, bool);
 	ObjectInfo(ObjectInfo& rhs);

@@ -10,6 +10,7 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 					  : frame_t(ANIMATION_TICKS) {
 	//al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
 	//al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_REQUIRE);
+	//al_set_new_display_flags(ALLEGRO_NOFRAME);
 
 	_display = al_create_display(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
 	al_hide_mouse_cursor(_display);
@@ -64,7 +65,7 @@ bool ScreenCtl::draw() {
 		Point isoTileSize(_tileSize._x * 2, _tileSize._y);
 
 		// Map tiles
-		auto grass = _res->getSprite(1).get();
+		auto grass = _res->getSprite("grass").get();
 		for (int row = _firstTile._y; row < _lastTile._y; row++) {
 			for (int col = _firstTile._x; col < _lastTile._x; col++) {
 				Point coord(col, row);
@@ -250,7 +251,7 @@ bool ScreenCtl::draw() {
 			}
 		}
 
-		auto cur = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite(0));
+		auto cur = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite("cursor"));
 		cur->draw(_mouse->getPos(), _mouse->getSprite());
 
 		_lastTimestamp = _state->_appTime;

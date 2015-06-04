@@ -4,8 +4,8 @@
     "sprites": {
         "cursor": {
             "filename" : "res/cursor_sheet.png",
-            "size" : "32,32",
             "type": "SpriteSheet",
+            "size" : "32,32",
             "lastID": 2,
             "rowSize": 2
         },
@@ -17,8 +17,49 @@
             "filename" : "res/reet_sheet.png",
             "object": "reet",
             "type": "SpriteSheet",
+            "size" : "64,92",
             "lastID": 2,
             "rowSize": 2
+        },
+        "actor": {
+            "filename" : "res/f2_walk.png",
+            "object": "actor",
+            "type": "SpriteSheet",
+            "size" : "44,69",
+            "lastID": 48,
+            "rowSize": 8
+        },
+        "hut": {
+            "filename" : "res/hut.png",
+            "object": "hut",
+            "type": "SpriteSheet",
+            "size" : "160,153",
+            "lastID": 1,
+            "rowSize": 1
+        },
+        "hide": {
+            "filename" : "res/bear_hide.png",
+            "object": "hide",
+            "type": "SpriteSheet",
+            "size" : "96,51",
+            "lastID": 1,
+            "rowSize": 1
+        },
+        "fire": {
+            "filename" : "res/fire.png",
+            "object": "fire",
+            "type": "SpriteSheet",
+            "size" : "48,58",
+            "lastID": 1,
+            "rowSize": 1
+        },
+        "buttonGreen": {
+            "filename" : "res/buttonG32.png",
+            "type": "Sprite",
+        },
+        "buttonRed": {
+            "filename" : "res/buttonR32.png",
+            "type": "Sprite",
         },
     }
 }
