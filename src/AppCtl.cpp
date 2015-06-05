@@ -11,16 +11,19 @@ AppCtl::AppCtl() {
 	_config = make_shared<ConfigCtl>();
 	_res = make_shared<ResourceCtl>(_config);
 	_map = make_shared<LocalMap>(_res);
-	_pFinder = std::make_shared<AStarSearch>(_map);
 
 	_state = make_shared<AppState>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 	_mouse = make_shared<Mouse>();
 
+	_screen = new ScreenCtl(_res, _map, _camera, _mouse, _state);
+
+	_pFinder = std::make_shared<AStarSearch>(_map);
 	_events = make_shared<EventService>(_res, _map, _pFinder, _state);
 	_map->generate(_pFinder, _events);
 
-	_screen = new ScreenCtl(_res, _map, _camera, _mouse, _state);
+
+	_screen->loadScreen();
 
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);

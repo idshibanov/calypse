@@ -52,6 +52,7 @@ class ScreenCtl {
 public:
 	ScreenCtl(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<Camera>, shared_ptr<Mouse>, shared_ptr<AppState>);
 	~ScreenCtl();
+	void loadScreen();
 	bool draw();
 	void redraw(bool cameraMoved = false);
 	void update();

@@ -27,6 +27,7 @@ class ResourceCtl {
 public:
 	ResourceCtl(shared_ptr<ConfigCtl> conf);
 	~ResourceCtl();
+	void loadResources();
 	void loadSprites();
 	int getObjectID(const char* name) const;
 	shared_ptr<ObjectInfo> getObjectInfo(const char* name) const;

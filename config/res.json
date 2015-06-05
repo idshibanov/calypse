@@ -53,6 +53,14 @@
             "lastID": 1,
             "rowSize": 1
         },
+        "itemset_1x1": {
+            "filename" : "res/itemset.png",
+            "itemSize": "1,1",
+            "type": "SpriteSheet",
+            "size" : "48,48",
+            "lastID": 4,
+            "rowSize": 4
+        },
         "buttonGreen": {
             "filename" : "res/buttonG32.png",
             "type": "Sprite",

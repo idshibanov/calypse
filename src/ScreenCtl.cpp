@@ -16,7 +16,8 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	al_hide_mouse_cursor(_display);
 
 	// load sprites only after setting up display
-	res->loadSprites();
+	res->loadResources();
+	//res->loadSprites();
 
 	_screenWidth = TD_DISPLAY_WIDTH;
 	_screenHeight = TD_DISPLAY_HEIGHT;
@@ -29,7 +30,13 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_cam = cam;
 	_mouse = mouse;
 	_state = stats;
+}
 
+ScreenCtl::~ScreenCtl() {
+	al_destroy_display(_display);
+}
+
+void ScreenCtl::loadScreen() {
 	_render = true;
 	_lastTimestamp = _state->_appTime;
 
@@ -39,18 +46,14 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 
 	_font = _res->getFont(12);
 
-	_frames.push_back(make_shared<ObjectInfoFrame>(Point(300, 200), Point(200, 90), _res, 
-                      std::string("Character Sheet"), _map->getPrimaryActor()->getState()));
+	_frames.push_back(make_shared<ObjectInfoFrame>(Point(300, 200), Point(200, 90), _res,
+		std::string("Character Sheet"), _map->getPrimaryActor()->getState()));
 
-	_frames.push_back(make_shared<ContainerFrame>(Point(300, 200), _res, std::string("Inventory"), 
-		              _map->getPrimaryActor()->getState()->getInventory() ));
+	_frames.push_back(make_shared<ContainerFrame>(Point(300, 200), _res, std::string("Inventory"),
+		_map->getPrimaryActor()->getState()->getInventory()));
 
 	_animation_speed = 100;
 	_animation_frame = 0;
-}
-
-ScreenCtl::~ScreenCtl() {
-	al_destroy_display(_display);
 }
 
 bool ScreenCtl::draw() {

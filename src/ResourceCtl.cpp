@@ -2,17 +2,22 @@
 
 ResourceCtl::ResourceCtl(shared_ptr<ConfigCtl> conf) {
 	_conf = conf;
-
-	loadObjectRecords();
-
-	_itemInfo.emplace(C_ITEM_WOOD, make_shared<ItemInfo>(C_ITEM_WOOD, Point(13, 12), Point(48, 48), 7));
-	_itemInfo.emplace(C_ITEM_BERRY_RED, make_shared<ItemInfo>(C_ITEM_BERRY_RED, Point(13, 12), Point(48, 48), 7));
-	_itemInfo.emplace(C_ITEM_BERRY_BLUE, make_shared<ItemInfo>(C_ITEM_BERRY_BLUE, Point(13, 12), Point(48, 48), 7));
-	_itemInfo.emplace(C_ITEM_STONE, make_shared<ItemInfo>(C_ITEM_STONE, Point(13, 12), Point(48, 48), 7));
 }
 
 ResourceCtl::~ResourceCtl() {
 
+}
+
+void ResourceCtl::loadResources() {
+	loadObjectRecords();
+	loadSprites();
+
+	int setID = getSpriteID("itemset_1x1");
+
+	_itemInfo.emplace(C_ITEM_WOOD, make_shared<ItemInfo>(C_ITEM_WOOD, Point(13, 12), Point(48, 48), setID));
+	_itemInfo.emplace(C_ITEM_BERRY_RED, make_shared<ItemInfo>(C_ITEM_BERRY_RED, Point(13, 12), Point(48, 48), setID));
+	_itemInfo.emplace(C_ITEM_BERRY_BLUE, make_shared<ItemInfo>(C_ITEM_BERRY_BLUE, Point(13, 12), Point(48, 48), setID));
+	_itemInfo.emplace(C_ITEM_STONE, make_shared<ItemInfo>(C_ITEM_STONE, Point(13, 12), Point(48, 48), setID));
 }
 
 void ResourceCtl::loadObjectRecords() {
