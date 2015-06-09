@@ -11,13 +11,7 @@ ResourceCtl::~ResourceCtl() {
 void ResourceCtl::loadResources() {
 	loadObjectRecords();
 	loadSprites();
-
-	int setID = getSpriteID("itemset_1x1");
-
-	_itemInfo.emplace(C_ITEM_WOOD, make_shared<ItemInfo>(C_ITEM_WOOD, Point(13, 12), Point(48, 48), setID));
-	_itemInfo.emplace(C_ITEM_BERRY_RED, make_shared<ItemInfo>(C_ITEM_BERRY_RED, Point(13, 12), Point(48, 48), setID));
-	_itemInfo.emplace(C_ITEM_BERRY_BLUE, make_shared<ItemInfo>(C_ITEM_BERRY_BLUE, Point(13, 12), Point(48, 48), setID));
-	_itemInfo.emplace(C_ITEM_STONE, make_shared<ItemInfo>(C_ITEM_STONE, Point(13, 12), Point(48, 48), setID));
+	loadItemRecords();
 }
 
 void ResourceCtl::loadObjectRecords() {
@@ -76,6 +70,32 @@ void ResourceCtl::loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonOb
 	}
 }
 
+void ResourceCtl::loadItemRecords() {
+	auto allItems = _conf->getCollection(C_CONFIG_ITEM, "items");
+
+	Point sprSize(48, 48);
+	Point offset(13, 12);
+	int itemID = 0;
+	int setID = getSpriteID("itemset_1x1");
+
+	for (auto itemInfo : allItems) {
+		auto record = std::dynamic_pointer_cast<JsonObject>(itemInfo.second);
+		if (record) {
+			bool status = true;
+			Point size = extractValue<Point>(record->getValue("size"), &status);
+			int spriteID = extractValue<int>(record->getValue("spriteID"), &status);
+			bool consumable = extractValue<bool>(record->getValue("consumable"), &status);
+
+			if (status) {
+				auto info = make_shared<ItemInfo>((ItemType)spriteID, sprSize, offset, setID);
+
+				_itemInfo.emplace(itemID, info);
+				itemID++;
+			}
+		}
+	}
+}
+
 
 // DO NOT LOAD BITMAPS (SPRITES) BEFORE CREATING DISPLAY
 void ResourceCtl::loadSprites() {
@@ -126,36 +146,6 @@ void ResourceCtl::loadSprites() {
 			}
 		}
 	}
-
-	/*
-	int id = 0;
-	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/cursor_sheet.png", 2, 2, Point(32, 32)));
-	_sprites.emplace(id++, make_shared<Sprite>(id, "res/grass.png"));
-
-	auto reet_size = getObjectInfo("reet")->sprSize();
-	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/reet_sheet.png", 2, 2, reet_size));
-
-	// 44x69, 11-0-11, 6 dirs, 8 frames, T-TR, R , RD, D-LD, L, TL
-	auto walk_size = getObjectInfo("actor")->sprSize();
-	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/f2_walk.png", 48, 8, walk_size));
-
-	auto hut_size = getObjectInfo("hut")->sprSize();
-	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/hut.png", 1, 1, hut_size));
-
-	auto hide_size = getObjectInfo("hide")->sprSize();
-	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/bear_hide.png", 1, 1, hide_size));
-
-	auto fire_size = getObjectInfo("fire")->sprSize();
-	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/fire.png", 1, 1, fire_size));
-
-	_sprites.emplace(id++, make_shared<SpriteSheet>(id, "res/itemset.png", 4, 4, Point(48,48)));
-
-	_sprites.emplace(id++, make_shared<Sprite>(id, "res/buttonG32.png"));
-	_sprites.emplace(id++, make_shared<Sprite>(id, "res/buttonR32.png"));
-
-	// fonts map, specified as a map
-	_arialFonts.emplace(12, make_shared<SpriteText>("res/arialbd.ttf", 12));
-	*/
 }
 
 
