@@ -346,8 +346,8 @@ void AppCtl::processUIElement(shared_ptr<UIElement> elem) {
 		} else {
 			// TODO: remove later on
 			// generate stuff for debugging purposes
-			int randomID = rand() % ITEM_ID_LAST;
-			inv->putItem(make_shared<Item>((ItemType)randomID), cell);
+			int randomID = rand() % _res->getItemCount();
+			inv->putItem(make_shared<Item>(randomID), cell);
 		}
 	}
 }

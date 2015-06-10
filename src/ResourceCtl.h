@@ -33,7 +33,10 @@ public:
 	int getObjectID(const char* name) const;
 	shared_ptr<ObjectInfo> getObjectInfo(const char* name) const;
 	shared_ptr<ObjectInfo> getObjectInfo(int type) const;
-	shared_ptr<ItemInfo> getItemInfo(ItemType t) const;
+	int getItemCount() const;
+	int getItemID(const char* name) const;
+	shared_ptr<ItemInfo> getItemInfo(const char* name) const;
+	shared_ptr<ItemInfo> getItemInfo(int type) const;
 	int getSpriteID(const char* name) const;
 	shared_ptr<Sprite> getSprite(int id) const;
 	shared_ptr<Sprite> getSprite(const char* name) const;
@@ -43,5 +46,5 @@ public:
 	std::string getActionName (ActionType id) const;
 	std::string getStatName(StatScoreID id) const;
 	std::string getSkillName(SkillScoreID id) const;
-	std::string getItemName(ItemType id) const;
+	std::string getItemName(int id) const;
 };

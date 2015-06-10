@@ -10,9 +10,9 @@
 class Inventory {
 	std::vector<shared_ptr<Item>> _items;
 
-	std::vector<shared_ptr<Item>>::iterator findItem(ItemType t);
+	std::vector<shared_ptr<Item>>::iterator findItemByType(int t);
 	std::vector<shared_ptr<Item>>::iterator findItem(int id);
-	std::vector<shared_ptr<Item>> findAllItems(ItemType t) const;
+	std::vector<shared_ptr<Item>> findAllItems(int t) const;
 
 	std::vector<int> _itemMasks; // init with -1
 	Rect _invArea; // for vector iterations
@@ -35,8 +35,8 @@ public:
 	bool resize(Point diff);
 	std::map<Point, shared_ptr<Item>, cmpPointsStrict> getItemList();
 
-	int getItemCount(ItemType t) const;
-	bool useItem(ItemType t);
+	int getItemCount(int t) const;
+	bool useItem(int t);
 	bool addItem(shared_ptr<Item> item);
 	
 	bool isFree(const Point& cell);
@@ -47,7 +47,7 @@ public:
 	bool putItem(shared_ptr<Item> item, const Point& cell); // iterate, check Fits, update masks
 	bool putItem(shared_ptr<Item> item, const Point& cell, const Point& size); // don't lookup size over and over
 	shared_ptr<Item> takeItem(int id);
-	bool useItems(ItemType t, int count); // search & remove, you better to do something with result
+	bool useItems(int t, int count); // search & remove, you better to do something with result
 	shared_ptr<Item> forceItem(shared_ptr<Item> item, const Point& cell); // counts items, if 0 -> return same id, if 1 -> return old, if 2+ -> -1
 
 	void debug() const;

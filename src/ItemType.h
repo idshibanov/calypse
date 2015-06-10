@@ -1,11 +1,3 @@
 #pragma once
 
 #define C_DEFAULT_QUALITY 10
-
-enum ItemType {
-	C_ITEM_WOOD = 0,
-	C_ITEM_BERRY_RED,
-	C_ITEM_BERRY_BLUE,
-	C_ITEM_STONE,
-	ITEM_ID_LAST
-};

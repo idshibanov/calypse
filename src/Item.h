@@ -5,15 +5,15 @@ class Item {
 	int _id;
 	static int lastID;
 	
-	ItemType _type;
+	int _type;
 	int _quality;
 public:
-	Item(ItemType type);
-	Item(ItemType type, int q);
+	Item(int type);
+	Item(int type, int q);
 	Item(const Item& rhs);
 	Item& operator=(const Item& rhs);
 	virtual ~Item();
 	int getID() const;
-	ItemType getType() const;
+	int getType() const;
 	int getQuality() const;
 };

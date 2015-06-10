@@ -40,15 +40,15 @@ void ActorState::recalcStats() {
 	_stats[C_STAT_CHA] = (_stats[C_STAT_INT] + _stats[C_STAT_WILL] + _stats[C_STAT_LUCK]) / 3;
 }
 
-int ActorState::getItemCount(ItemType id) const {
+int ActorState::getItemCount(int id) const {
 	return _inv->getItemCount(id);
 }
 
-bool ActorState::useItem(ItemType id) {
+bool ActorState::useItem(int id) {
 	return _inv->useItems(id, 3);
 }
 
-void ActorState::addItem(ItemType id) {
+void ActorState::addItem(int id) {
 	_inv->addItem(make_shared<Item>(id));
 }
 

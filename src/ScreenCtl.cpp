@@ -145,7 +145,7 @@ bool ScreenCtl::draw() {
 
 				auto itemSprite = _res->getSprite(itemInfo->spriteID());
 				auto itemSpriteSheet = std::dynamic_pointer_cast<SpriteSheet>(itemSprite);
-				itemSpriteSheet->drawScaled(coord, item.second->getType(), itemZoom);
+				itemSpriteSheet->drawScaled(coord, itemInfo->frame(), itemZoom);
 
 				_buffer.setElement(make_shared<ItemArea>(coord, itemSize, item.second, itemSpriteSheet));
 			}
@@ -248,7 +248,7 @@ bool ScreenCtl::draw() {
 			auto itInfo = _res->getItemInfo(_state->_selectedItem->getType());
 			auto itSpr = _res->getSpriteSheet(itInfo->spriteID());
 			if (itSpr) {
-				itSpr->draw(_mouse->getPos(), itInfo->type());
+				itSpr->draw(_mouse->getPos(), itInfo->frame());
 			} else {
 				cout << "ERROR: could not find item sprite #" << itInfo->spriteID() << endl;
 			}

@@ -47,7 +47,7 @@ shared_ptr<Item> Inventory::findItemByID(int id) {
 }
 
 
-std::vector<shared_ptr<Item>>::iterator Inventory::findItem(ItemType t) {
+std::vector<shared_ptr<Item>>::iterator Inventory::findItemByType(int t) {
 	for (auto it = _items.begin(); it != _items.end(); it++) {
 		if ((*it)->getType() == t) {
 			return it;
@@ -66,7 +66,7 @@ std::vector<shared_ptr<Item>>::iterator Inventory::findItem(int id) {
 }
 
 
-std::vector<shared_ptr<Item>> Inventory::findAllItems(ItemType t) const {
+std::vector<shared_ptr<Item>> Inventory::findAllItems(int t) const {
 	std::vector<shared_ptr<Item>> retval;
 
 	for (auto it : _items) {
@@ -77,12 +77,12 @@ std::vector<shared_ptr<Item>> Inventory::findAllItems(ItemType t) const {
 	return retval;
 }
 
-int Inventory::getItemCount(ItemType t) const {
+int Inventory::getItemCount(int t) const {
 	return findAllItems(t).size();
 }
 
-bool Inventory::useItem(ItemType t) {
-	auto it = findItem(t);
+bool Inventory::useItem(int t) {
+	auto it = findItemByType(t);
 	if (it != _items.end()) {
 		clearItem((*it)->getID());
 		_items.erase(it);
@@ -91,7 +91,7 @@ bool Inventory::useItem(ItemType t) {
 	return false;
 }
 
-bool Inventory::useItems(ItemType t, int amount) {
+bool Inventory::useItems(int t, int amount) {
 	auto found = findAllItems(t);
 	if (found.size() >= amount) {
 		for (int i = 0; i < amount; i++) {

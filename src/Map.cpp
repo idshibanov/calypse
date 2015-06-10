@@ -61,9 +61,6 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
 			}
 		}
 	}
-
-	_groundItems.emplace(Point(40, 40), make_shared<Item>(C_ITEM_STONE));
-	_groundItems.emplace(Point(48, 48), make_shared<Item>(C_ITEM_STONE));
 }
 
 short LocalMap::getTileType(const Point& mapPos) const {

@@ -82,14 +82,16 @@ void ResourceCtl::loadItemRecords() {
 		auto record = std::dynamic_pointer_cast<JsonObject>(itemInfo.second);
 		if (record) {
 			bool status = true;
+			std::string name = extractValue<std::string>(record->getValue("name"), &status);
 			Point size = extractValue<Point>(record->getValue("size"), &status);
-			int spriteID = extractValue<int>(record->getValue("spriteID"), &status);
+			int frame = extractValue<int>(record->getValue("frame"), &status);
 			bool consumable = extractValue<bool>(record->getValue("consumable"), &status);
 
 			if (status) {
-				auto info = make_shared<ItemInfo>((ItemType)spriteID, sprSize, offset, setID);
+				auto info = make_shared<ItemInfo>(itemID, name, size, sprSize, offset, setID, frame);
 
 				_itemInfo.emplace(itemID, info);
+				_itemLookup.emplace(itemInfo.first, itemID);
 				itemID++;
 			}
 		}
@@ -171,8 +173,27 @@ shared_ptr<ObjectInfo> ResourceCtl::getObjectInfo(int type) const {
 }
 
 
-shared_ptr<ItemInfo> ResourceCtl::getItemInfo(ItemType t) const {
-	auto ptr = _itemInfo.find(t);
+int ResourceCtl::getItemCount() const {
+	return _itemInfo.size();
+}
+
+
+int ResourceCtl::getItemID(const char* name) const {
+	auto it = _itemLookup.find(name);
+	if (it != _itemLookup.end()) {
+		return it->second;
+	}
+	return -1;
+}
+
+
+shared_ptr<ItemInfo> ResourceCtl::getItemInfo(const char* name) const {
+	return getItemInfo(getItemID(name));
+}
+
+
+shared_ptr<ItemInfo> ResourceCtl::getItemInfo(int type) const {
+	auto ptr = _itemInfo.find(type);
 	if (ptr != _itemInfo.end()) {
 		return ptr->second;
 	}
@@ -327,22 +348,11 @@ std::string ResourceCtl::getSkillName(SkillScoreID id) const {
 	return "ERR";
 }
 
-std::string ResourceCtl::getItemName(ItemType id) const {
-	switch (id) {
-	case C_ITEM_WOOD:
-		return "Log";
-		break;
-	case C_ITEM_BERRY_RED:
-		return "Red Berry";
-		break;
-	case C_ITEM_BERRY_BLUE:
-		return "Blue Berry";
-		break;
-	case C_ITEM_STONE:
-		return "Stone";
-		break;
-	default:
-		break;
+std::string ResourceCtl::getItemName(int id) const {
+	for (auto it : _itemLookup) {
+		if (it.second == id) {
+			return it.first;
+		}
 	}
 	return "ERR";
 }

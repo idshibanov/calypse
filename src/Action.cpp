@@ -198,17 +198,18 @@ void ObjectAction::start() {
 bool ObjectAction::update() {
 	if (_timer.check()) {
 		if (_state.check()) {
-			if (!_map.expired() && !_target.expired()) {
+			if (!_map.expired() && !_target.expired() && !_res.expired()) {
+				auto resCtl = _res.lock();
 				if (_type == ACTION_CUT) {
 					return _map.lock()->toggleObject(_target.lock()->getPos());
 				} else if (_type == ACTION_PICK_BRANCH) {
-					_actor.lock()->getState()->addItem(C_ITEM_WOOD);
+					_actor.lock()->getState()->addItem(resCtl->getItemID("wood"));
 					return true;
 				} else if (_type == ACTION_PICK_RED_BERRY) {
-					_actor.lock()->getState()->addItem(C_ITEM_BERRY_RED);
+					_actor.lock()->getState()->addItem(resCtl->getItemID("berryRed"));
 					return true;
 				} else if (_type == ACTION_PICK_BLUE_BERRY) {
-					_actor.lock()->getState()->addItem(C_ITEM_BERRY_BLUE);
+					_actor.lock()->getState()->addItem(resCtl->getItemID("berryBlue"));
 					return true;
 				} else if (_type == ACTION_DRAG && !_actor.expired()) {
 					_actor.lock()->pickUp(_target);
@@ -273,6 +274,7 @@ bool PointAction::update() {
 					_actor.lock()->drop(_targetPos);
 					return true;
 				} else if (_type == ACTION_PICK_ITEM && !_map.expired()) {
+
 					auto gItem = _map.lock()->getItem(_targetPos);
 					if (gItem) {
 						if (_actor.lock()->getState()->getInventory()->addItem(gItem)) {
@@ -280,12 +282,17 @@ bool PointAction::update() {
 						}
 					}
 				} else if (_type == ACTION_CRAFT_TREE && !_map.expired()) {
+
 					auto obj = make_shared<MapObject>(resCtl->getObjectID("reet"), _targetPos);
 					return _map.lock()->addObject(obj);
+
 				} else if (_type == ACTION_CRAFT_CAMPFIRE && !_map.expired()) {
+
 					auto actorState = _actor.lock()->getState();
-					cout << actorState->getItemCount(C_ITEM_WOOD) << " items left!" << endl;
-					if (actorState->useItem(C_ITEM_WOOD)) {
+					int type = resCtl->getItemID("wood");
+					cout << actorState->getItemCount(type) << " items left!" << endl;
+
+					if (actorState->useItem(type)) {
 						auto obj = make_shared<MapObject>(resCtl->getObjectID("fire"), _targetPos);
 						return _map.lock()->addObject(obj);
 					}

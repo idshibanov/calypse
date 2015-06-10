@@ -125,8 +125,10 @@ ObjectInfoFrame::ObjectInfoFrame(const Point& pos, const Point& size, shared_ptr
 		}
 
 		int offset = _titleHeight + (SKILL_SCORE_LAST + 1) * 15;
-		for (int i = 0; i < ITEM_ID_LAST; i++) {
-			_inventory[i] = make_shared<UILabel>(Point(100, offset + (i * 15)), this, font, _res->getItemName((ItemType)i));
+
+		int count = res->getItemCount();
+		for (int i = 0; i < count; i++) {
+			_inventory.push_back(make_shared<UILabel>(Point(100, offset + (i * 15)), this, font, _res->getItemName(i)));
 		}
 	}
 }
@@ -155,10 +157,9 @@ void ObjectInfoFrame::draw() {
 			}
 		}
 
-		for (int i = 0; i < ITEM_ID_LAST; i++) {
-			if (_inventory[i]) {
-				_inventory[i]->draw(std::to_string(_state->getItemCount((ItemType)i)));
-			}
+		for (auto it = _inventory.begin(); it < _inventory.end(); it++) {
+			int i = it - _inventory.begin();
+			(*it)->draw(std::to_string(_state->getItemCount(i)));
 		}
 	}
 }
@@ -194,6 +195,6 @@ void ContainerFrame::draw() {
 		auto itInfo = _res->getItemInfo(it.second->getType());
 		auto itemSprite = _res->getSprite(itInfo->spriteID());
 		auto itemSpriteSheet = std::dynamic_pointer_cast<SpriteSheet>(itemSprite);
-		itemSpriteSheet->drawScaled(_contArea->getPos() + it.first.mul(INVENTORY_ICON_SIZE), it.second->getType(), 1);
+		itemSpriteSheet->drawScaled(_contArea->getPos() + it.first.mul(INVENTORY_ICON_SIZE), itInfo->frame(), 1);
 	}
 }

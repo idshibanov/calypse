@@ -36,7 +36,7 @@ class ObjectInfoFrame : public UIFrame {
 	shared_ptr<ActorState> _state;
 	shared_ptr<UILabel> _statLabels[STAT_SCORE_LAST];
 	shared_ptr<UILabel> _skillLabels[SKILL_SCORE_LAST];
-	shared_ptr<UILabel> _inventory[ITEM_ID_LAST];
+	std::vector<shared_ptr<UILabel>> _inventory;
 public:
 	ObjectInfoFrame(const Point& pos, const Point& size, shared_ptr<ResourceCtl> res,
 		            const std::string& title, shared_ptr<ActorState> state);

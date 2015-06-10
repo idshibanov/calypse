@@ -5,25 +5,25 @@
         "wood": {
             "name": "Wood pile",
             "size": "1,1",
-            "spriteID": 0,
+            "frame": 0,
             "consumable": false
         },
         "berryRed": {
             "name": "Raspberry",
             "size": "1,1",
-            "spriteID": 1,
+            "frame": 1,
             "consumable": true
         },
         "berryBlue": {
             "name": "Blueberry",
             "size": "1,1",
-            "spriteID": 2,
+            "frame": 2,
             "consumable": true
         },
         "stone": {
             "name": "Stone",
             "size": "1,1",
-            "spriteID": 3,
+            "frame": 3,
             "consumable": false
         },
     }
