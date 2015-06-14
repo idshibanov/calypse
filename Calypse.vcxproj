@@ -61,6 +61,7 @@
     <ClInclude Include="src\Keyboard.h" />
     <ClInclude Include="src\ObjectArea.h" />
     <ClInclude Include="src\ObjectState.h" />
+    <ClInclude Include="src\Screen.h" />
     <ClInclude Include="src\ScreenArea.h" />
     <ClInclude Include="src\ScreenBuffer.h" />
     <ClInclude Include="src\Action.h" />
