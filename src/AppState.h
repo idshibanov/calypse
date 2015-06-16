@@ -20,6 +20,7 @@ struct AppState {
 	int _appSpeed;
 
 	// state
+	bool _isMapScreen;
 	ActionType _selectedAction;
 	int _selectedObject;
 	UIFrame* _selectedFrame;

@@ -2,11 +2,18 @@
 #include "Frame.h"
 
 class Screen {
+	bool _isMapScreen;
+
+	shared_ptr<Sprite> _background;
+	ALLEGRO_COLOR _backColor;
+
 	std::vector<shared_ptr<UIFrame>> _frames;
-	std::vector<shared_ptr<UIButton>> _options;
-	shared_ptr<CarouselMenu> _menu;
+	std::vector<shared_ptr<UIElement>> _elements;
 public:
-	Screen();
+	Screen(const JsonObject& entry);
 	virtual ~Screen();
-	void draw();
+	const std::vector<shared_ptr<UIFrame>>& getFrames() const;
+	const std::vector<shared_ptr<UIElement>>& getElements() const;
+	bool isMapScreen() const;
+	void draw(const Point& displaySize);
 };

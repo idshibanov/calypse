@@ -9,6 +9,7 @@
 #include "Map.h"
 #include "ResourceCtl.h"
 #include "ScreenBuffer.h"
+#include "Screen.h"
 
 #define TD_DISPLAY_WIDTH 800
 #define TD_DISPLAY_HEIGHT 600
@@ -27,6 +28,10 @@ class ScreenCtl {
 	shared_ptr<Camera> _cam;
 	shared_ptr<Mouse> _mouse;
 	shared_ptr<AppState> _state;
+
+	std::vector<shared_ptr<Screen>> _screens;
+	std::vector<shared_ptr<Screen>>::iterator _curScreen;
+	std::map<std::string, int> _screenLookup;
 
 	std::vector<shared_ptr<UIFrame>> _frames;
 	std::vector<shared_ptr<UIButton>> _options;
@@ -53,6 +58,7 @@ public:
 	ScreenCtl(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<Camera>, shared_ptr<Mouse>, shared_ptr<AppState>);
 	~ScreenCtl();
 	void loadScreen();
+	bool switchScreen(const std::string& name);
 	bool draw();
 	void redraw(bool cameraMoved = false);
 	void update();

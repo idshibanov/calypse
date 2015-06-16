@@ -56,6 +56,19 @@ void ScreenCtl::loadScreen() {
 	_animation_frame = 0;
 }
 
+
+bool ScreenCtl::switchScreen(const std::string& name) {
+	auto it = _screenLookup.find(name);
+	if (it != _screenLookup.end()) {
+		if (_screens.size() < it->second) {
+			_curScreen = _screens.begin() + it->second;
+			return true;
+		}
+	}
+	return false;
+}
+
+
 bool ScreenCtl::draw() {
 	bool retval = false;
 	if (_render || _lastTimestamp < _state->_appTime) {
@@ -253,6 +266,10 @@ bool ScreenCtl::draw() {
 				cout << "ERROR: could not find item sprite #" << itInfo->spriteID() << endl;
 			}
 		}
+
+		Screen* etc = new Screen(JsonObject());
+		etc->draw(Point(800,600));
+		delete etc;
 
 		auto cur = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite("cursor"));
 		cur->draw(_mouse->getPos(), _mouse->getSprite());

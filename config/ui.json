@@ -1,0 +1,30 @@
+{
+    "version": 1.0,
+    "type": "Interface",
+    "screens": {
+        "main": {
+            "name": "Map screen",
+			"map": true,
+            "backSprite": 0,
+            "backColor": "",
+			"frames" : [],
+			"elements" : [],
+        },
+        "menu": {
+            "name": "Main menu",
+			"map": false,
+            "backSprite": 0,
+            "backColor": "",
+			"frames" : [],
+			"elements" : [],
+        },
+        "startup": {
+            "name": "Startup screen",
+			"map": false,
+            "backSprite": 0,
+            "backColor": "",
+			"frames" : [],
+			"elements" : [],
+        },
+	},
+}

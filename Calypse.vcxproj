@@ -35,6 +35,7 @@
     </ClCompile>
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\ResourceCtl.cpp" />
+    <ClCompile Include="src\Screen.cpp" />
     <ClCompile Include="src\ScreenArea.cpp" />
     <ClCompile Include="src\ScreenBuffer.cpp" />
     <ClCompile Include="src\ScreenCtl.cpp" />

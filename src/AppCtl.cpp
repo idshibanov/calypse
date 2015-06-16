@@ -47,6 +47,7 @@ AppCtl::AppCtl() {
 	_state->_drawMasks = false;
 	_state->_drawUIAreas = false;
 
+	_state->_isMapScreen = false;
 	_state->_selectedAction = ACTION_NONE;
 	_state->_selectedObject = -1;
 	_state->_selectedFrame = nullptr;
