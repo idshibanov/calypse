@@ -8,16 +8,6 @@
 ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, shared_ptr<Camera> cam, 
 	                  shared_ptr<Mouse> mouse, shared_ptr<AppState> stats)
 					  : frame_t(ANIMATION_TICKS) {
-	//al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
-	//al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_REQUIRE);
-	//al_set_new_display_flags(ALLEGRO_NOFRAME);
-
-	_display = al_create_display(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
-	al_hide_mouse_cursor(_display);
-
-	// load sprites only after setting up display
-	res->loadResources();
-	//res->loadSprites();
 
 	_screenWidth = TD_DISPLAY_WIDTH;
 	_screenHeight = TD_DISPLAY_HEIGHT;
@@ -33,7 +23,7 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 }
 
 ScreenCtl::~ScreenCtl() {
-	al_destroy_display(_display);
+
 }
 
 void ScreenCtl::loadScreen() {
@@ -74,10 +64,60 @@ bool ScreenCtl::draw() {
 	if (_render || _lastTimestamp < _state->_appTime) {
 		_buffer.reset();
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
+
+		for (auto fr : _frames) {
+			if (fr->isVisible()) {
+				fr->draw();
+				_buffer.setElement(fr);
+			}
+		}
+
+
+		if (_state->_drawUIAreas) {
+			auto bufferItems = _buffer.getAllAreas();
+			for (auto it : bufferItems) {
+				al_draw_rectangle(it->getPos()._x, it->getPos()._y, it->getMax()._x, it->getMax()._y, al_map_rgb(238, 33, 238), 2);
+			}
+		}
+		
+		if (_state->_drawStats) {
+			std::string timeSTR("App time: " + std::to_string(_state->_appTime));
+			std::string cpsSTR("Cycles per second: " + std::to_string(_state->_CPS));
+			std::string fpsSTR("Frames per second: " + std::to_string(_state->_FPS));
+			std::string spdSTR("Animation speed: " + std::to_string(static_cast<int>(_animation_speed)) + "%");
+			_font->draw(timeSTR, Point(5, 5), color);
+			_font->draw(cpsSTR, Point(5, 30), color);
+			_font->draw(fpsSTR, Point(5, 55), color);
+			_font->draw(spdSTR, Point(5, 80), color);
+		}
+
+		// Almost last: mouse cursor and selected item
+		if (_state->_selectedItem) {
+			auto itInfo = _res->getItemInfo(_state->_selectedItem->getType());
+			auto itSpr = _res->getSpriteSheet(itInfo->spriteID());
+			if (itSpr) {
+				itSpr->draw(_mouse->getPos(), itInfo->frame());
+			} else {
+				cout << "ERROR: could not find item sprite #" << itInfo->spriteID() << endl;
+			}
+		}
+
+		auto cur = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite("cursor"));
+		cur->draw(_mouse->getPos(), _mouse->getSprite());
+
+		_lastTimestamp = _state->_appTime;
+		_render = false;
+		retval = true;
+	}
+
+	return retval;
+}
+
+
+void ScreenCtl::drawMap() {
+	if ((*_curScreen)->isMapScreen()) {
+		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
 		ALLEGRO_COLOR obj_color = al_map_rgb(155, 155, 255);
-		// map size
-		unsigned rowmax = _map->getRowMax();
-		unsigned colmax = _map->getColMax();
 		Point isoTileSize(_tileSize._x * 2, _tileSize._y);
 
 		// Map tiles
@@ -220,66 +260,14 @@ bool ScreenCtl::draw() {
 
 		if (_actor->isWorking()) {
 			Point coord = convertMapCoords(_actor->getPos());
-			_font->draw(std::to_string(_actor->getProgress()), coord.modAdd(25,0) + _res->getObjectInfo(_actor->getType())->offset(), color);
+			_font->draw(std::to_string(_actor->getProgress()), coord.modAdd(25, 0) + _res->getObjectInfo(_actor->getType())->offset(), color);
 		}
 
 		for (auto button : _options) {
 			button->draw();
 			_buffer.setElement(button);
 		}
-
-		for (auto fr : _frames) {
-			if (fr->isVisible()) {
-				fr->draw();
-				_buffer.setElement(fr);
-			}
-		}
-
-
-		if (_state->_drawUIAreas) {
-			auto bufferItems = _buffer.getAllAreas();
-			for (auto it : bufferItems) {
-				al_draw_rectangle(it->getPos()._x, it->getPos()._y, it->getMax()._x, it->getMax()._y, al_map_rgb(238, 33, 238), 2);
-			}
-		}
-		
-		if (_state->_drawStats) {
-			std::string timeSTR("App time: " + std::to_string(_state->_appTime));
-			std::string cpsSTR("Cycles per second: " + std::to_string(_state->_CPS));
-			std::string fpsSTR("Frames per second: " + std::to_string(_state->_FPS));
-			std::string spdSTR("Animation speed: " + std::to_string(static_cast<int>(_animation_speed)) + "%");
-			std::string frameSTR("Animation frame #" + std::to_string(_actor->getSprite()));
-			_font->draw(timeSTR, Point(5, 5), color);
-			_font->draw(cpsSTR, Point(5, 30), color);
-			_font->draw(fpsSTR, Point(5, 55), color);
-			_font->draw(spdSTR, Point(5, 80), color);
-			_font->draw(frameSTR, Point(5, 105), color);
-		}
-
-		// Almost last: mouse cursor and selected item
-		if (_state->_selectedItem) {
-			auto itInfo = _res->getItemInfo(_state->_selectedItem->getType());
-			auto itSpr = _res->getSpriteSheet(itInfo->spriteID());
-			if (itSpr) {
-				itSpr->draw(_mouse->getPos(), itInfo->frame());
-			} else {
-				cout << "ERROR: could not find item sprite #" << itInfo->spriteID() << endl;
-			}
-		}
-
-		Screen* etc = new Screen(JsonObject());
-		etc->draw(Point(800,600));
-		delete etc;
-
-		auto cur = std::dynamic_pointer_cast<SpriteSheet>(_res->getSprite("cursor"));
-		cur->draw(_mouse->getPos(), _mouse->getSprite());
-
-		_lastTimestamp = _state->_appTime;
-		_render = false;
-		retval = true;
 	}
-
-	return retval;
 }
 
 

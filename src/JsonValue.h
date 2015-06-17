@@ -26,7 +26,7 @@ public:
 	JsonValue& operator= (const JsonValue& rhs);
 	virtual ~JsonValue();
 	JsonValueType getType() const;
-	virtual void print(std::ostream& out) const;
+	virtual void print(std::ostream& out, int tabs = 0) const;
 	friend std::ostream& operator<<(std::ostream& str, const JsonValue& v);
 };
 
@@ -43,7 +43,7 @@ public:
 	void determineType();
 	void setValue(const T& val);
 	T getValue() const;
-	virtual void print(std::ostream& out) const;
+	virtual void print(std::ostream& out, int tabs = 0) const;
 	friend std::ostream& operator<<(std::ostream& out, const JsonTValue<T>& v);
 };
 
@@ -60,6 +60,6 @@ public:
 	shared_ptr<JsonValue> getValue(const std::string& name) const;
 	shared_ptr<JsonValue> getValue(const char* name) const;
 	const std::map<std::string, shared_ptr<JsonValue>>& getContents() const;
-	virtual void print(std::ostream& out) const;
+	virtual void print(std::ostream& out, int tabs = 0) const;
 	friend std::ostream& operator<<(std::ostream& str, const JsonObject& v);
 };

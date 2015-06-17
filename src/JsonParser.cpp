@@ -1,3 +1,4 @@
+#include <allegro5\allegro5.h>
 #include <sstream>
 
 #include "Main.h"
@@ -318,8 +319,47 @@ Point extractValue<Point>(shared_ptr<JsonValue> v, bool* status) {
 	return Point();
 }
 
+template <>
+ALLEGRO_COLOR extractValue<ALLEGRO_COLOR>(shared_ptr<JsonValue> v, bool* status) {
+	auto val = std::dynamic_pointer_cast<JsonTValue<std::string>>(v);
+	if (val) {
+		auto str = val->getValue();
+		size_t n = std::count(str.begin(), str.end(), ',');
+		if (n == 2  || n == 3) {
+			try {
+				size_t spos = 0;
+				size_t epos = str.find(',');
+				int red = std::stoi(str.substr(spos, epos));
+
+				spos = epos + 1;
+				epos = str.find(',', spos);
+				int green = std::stoi(str.substr(spos, epos));
+
+				if (n == 2) {
+					int blue = std::stoi(str.substr(epos + 1));
+					return al_map_rgb(red, green, blue);
+				} else {
+					spos = epos + 1;
+					epos = str.find(',', spos);
+					int blue = std::stoi(str.substr(spos, epos));
+					int alpha = std::stoi(str.substr(epos + 1));
+					return al_map_rgba(red, green, blue, alpha);
+				}
+			}
+			catch (...) {
+				// stoi failed, either overflow or illegal characters
+			}
+		}
+	}
+	if (status) {
+		*status = false;
+	}
+	return al_map_rgb(0,0,0);
+}
+
 template bool extractValue<bool>(shared_ptr<JsonValue> v, bool* status);
 template int extractValue<int>(shared_ptr<JsonValue> v, bool* status);
 template double extractValue<double>(shared_ptr<JsonValue> v, bool* status);
 template std::string extractValue<std::string>(shared_ptr<JsonValue> v, bool* status);
 template Point extractValue<Point>(shared_ptr<JsonValue> v, bool* status);
+template ALLEGRO_COLOR extractValue<ALLEGRO_COLOR>(shared_ptr<JsonValue> v, bool* status);

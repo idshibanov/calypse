@@ -7,14 +7,26 @@
 			"map": true,
             "backSprite": 0,
             "backColor": "",
-			"frames" : [],
+			"frames" : [
+				{
+					"type": "ObjectInfo",
+					"pos": "300,200",
+					"size": "200,90",
+					"title": "Character Sheet",
+				},
+				{
+					"type": "Container",
+					"pos": "300,200",
+					"title": "Inventory",
+				}
+			],
 			"elements" : [],
         },
         "menu": {
             "name": "Main menu",
 			"map": false,
             "backSprite": 0,
-            "backColor": "",
+            "backColor": "12,41,17",
 			"frames" : [],
 			"elements" : [],
         },
@@ -22,7 +34,7 @@
             "name": "Startup screen",
 			"map": false,
             "backSprite": 0,
-            "backColor": "",
+            "backColor": "12,41,17",
 			"frames" : [],
 			"elements" : [],
         },

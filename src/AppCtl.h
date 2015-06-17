@@ -12,6 +12,8 @@
 
 class AppCtl {
 	ScreenCtl* _screen;
+
+	ALLEGRO_DISPLAY* _display;
 	ALLEGRO_EVENT_QUEUE* _eventQueue;
 	ALLEGRO_TIMER* _timer;
 

@@ -26,7 +26,7 @@ JsonValueType JsonValue::getType() const {
 	return _type;
 }
 
-void JsonValue::print(std::ostream& out) const {
+void JsonValue::print(std::ostream& out, int tabs) const {
 	out << "null";
 }
 
@@ -94,18 +94,19 @@ T JsonTValue<T>::getValue() const {
 }
 
 template<typename T>
-void JsonTValue<T>::print(std::ostream& out) const {
+void JsonTValue<T>::print(std::ostream& out, int tabs) const {
 	out << _value;
 }
 
-void JsonTValue<std::string>::print(std::ostream& out) const {
+void JsonTValue<std::string>::print(std::ostream& out, int tabs) const {
 	out << '"' << _value << '"';
 }
 
-void JsonTValue<std::vector<shared_ptr<JsonValue>>>::print(std::ostream& out) const {
+void JsonTValue<std::vector<shared_ptr<JsonValue>>>::print(std::ostream& out, int tabs) const {
 	out << '[';
 	for (auto v : _value) {
-		out << (*v) << ',';
+		(*v).print(out, tabs);
+		out << ',';
 	}
 	out << ']';
 }
@@ -171,12 +172,15 @@ const std::map<std::string, shared_ptr<JsonValue>>& JsonObject::getContents() co
 	return _values;
 }
 
-void JsonObject::print(std::ostream& out) const {
+void JsonObject::print(std::ostream& out, int tabs) const {
 	out << '{' << endl;
+	std::string whitespace(tabs, '\t');
 	for (auto pair : _values) {
-		out << "\t\"" << pair.first << "\" : " << (*pair.second) << "," << endl;
+		out << whitespace << "\t\"" << pair.first << "\" : ";
+		(*pair.second).print(out, tabs+1);
+		out << "," << endl;
 	}
-	out << '}';
+	out << whitespace << '}';
 }
 
 std::ostream& operator<<(std::ostream& out, const JsonObject& v) {

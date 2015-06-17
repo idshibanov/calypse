@@ -9,6 +9,8 @@ class Screen {
 
 	std::vector<shared_ptr<UIFrame>> _frames;
 	std::vector<shared_ptr<UIElement>> _elements;
+
+	bool _addFrame(shared_ptr<JsonObject> entry);
 public:
 	Screen(const JsonObject& entry);
 	virtual ~Screen();

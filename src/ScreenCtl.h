@@ -19,7 +19,6 @@
 #define GROUND_ITEMS_FACTOR 2
 
 class ScreenCtl {
-	ALLEGRO_DISPLAY* _display;
 	ScreenBuffer _buffer;
 	shared_ptr<SpriteText> _font;
 
@@ -60,6 +59,7 @@ public:
 	void loadScreen();
 	bool switchScreen(const std::string& name);
 	bool draw();
+	void drawMap();
 	void redraw(bool cameraMoved = false);
 	void update();
 	void updateTimers();

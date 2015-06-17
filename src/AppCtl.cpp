@@ -12,6 +12,17 @@ AppCtl::AppCtl() {
 	_res = make_shared<ResourceCtl>(_config);
 	_map = make_shared<LocalMap>(_res);
 
+	//al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
+	//al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_REQUIRE);
+	//al_set_new_display_flags(ALLEGRO_NOFRAME);
+
+	_display = al_create_display(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
+	al_hide_mouse_cursor(_display);
+
+	// load sprites only after setting up display
+	_res->loadResources();
+	//_res->loadSprites();
+
 	_state = make_shared<AppState>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 	_mouse = make_shared<Mouse>();
@@ -58,6 +69,7 @@ AppCtl::AppCtl() {
 AppCtl::~AppCtl() {
 	al_destroy_timer(_timer);
 	al_destroy_event_queue(_eventQueue);
+	al_destroy_display(_display);
 	delete _screen;
 	delete _keys;
 }

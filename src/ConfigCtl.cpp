@@ -6,6 +6,7 @@
 ConfigCtl::ConfigCtl() {
 	loadFile("config/app.json", _app);
 	loadFile("config/res.json", _res);
+	loadFile("config/ui.json", _ui);
 	loadFile("config/obj.json", _obj);
 	loadFile("config/item.json", _item);
 }
@@ -36,6 +37,9 @@ shared_ptr<JsonValue> ConfigCtl::getSetting(ConfigCategory cat, const std::strin
 		break;
 	case C_CONFIG_RESOURCE:
 		return _res.getValue(param);
+		break;
+	case C_CONFIG_UI:
+		return _ui.getValue(param);
 		break;
 	case C_CONFIG_OBJECT:
 		return _obj.getValue(param);

@@ -87,6 +87,7 @@
     <None Include="config\item.json" />
     <None Include="config\obj.json" />
     <None Include="config\res.json" />
+    <None Include="config\ui.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{42BD2E34-4DBE-4CCC-B40A-BA6E530BAABA}</ProjectGuid>

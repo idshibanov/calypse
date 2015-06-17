@@ -6,7 +6,7 @@ Application resources/assets are not included, using placeholders for now.
 
 ### Controls
 
-0-9 key are quick actions. Hardcoded for now, will be replaced with action bar.
+0-9 keys are quick actions. Hardcoded for now, will be replaced with action bar.
 
 F keys are for debugging so far.
 
