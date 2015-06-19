@@ -285,19 +285,16 @@ shared_ptr<JsonValue> parseObject(const std::string& src) {
 
 
 template<typename T>
-T extractValue(shared_ptr<JsonValue> v, bool* status) {
+T extractWithDefault(shared_ptr<JsonValue> v, T defValue) {
 	shared_ptr<JsonTValue<T>> ptr = std::dynamic_pointer_cast<JsonTValue<T>>(v);
 	if (ptr) {
 		return ptr->getValue();
 	}
-	if (status) {
-		*status = false;
-	}
 	return T();
 }
 
-template <>
-Point extractValue<Point>(shared_ptr<JsonValue> v, bool* status) {
+template<> 
+Point extractWithDefault<Point>(shared_ptr<JsonValue> v, Point defValue) {
 	auto val = std::dynamic_pointer_cast<JsonTValue<std::string>>(v);
 	if (val) {
 		auto str = val->getValue();
@@ -313,19 +310,16 @@ Point extractValue<Point>(shared_ptr<JsonValue> v, bool* status) {
 			}
 		}
 	}
-	if (status) {
-		*status = false;
-	}
-	return Point();
+	return defValue;
 }
 
-template <>
-ALLEGRO_COLOR extractValue<ALLEGRO_COLOR>(shared_ptr<JsonValue> v, bool* status) {
+template<> 
+ALLEGRO_COLOR extractWithDefault<ALLEGRO_COLOR>(shared_ptr<JsonValue> v, ALLEGRO_COLOR defValue) {
 	auto val = std::dynamic_pointer_cast<JsonTValue<std::string>>(v);
 	if (val) {
 		auto str = val->getValue();
 		size_t n = std::count(str.begin(), str.end(), ',');
-		if (n == 2  || n == 3) {
+		if (n == 2 || n == 3) {
 			try {
 				size_t spos = 0;
 				size_t epos = str.find(',');
@@ -351,10 +345,38 @@ ALLEGRO_COLOR extractValue<ALLEGRO_COLOR>(shared_ptr<JsonValue> v, bool* status)
 			}
 		}
 	}
+	return defValue;
+}
+
+
+template<typename T>
+T extractValue(shared_ptr<JsonValue> v, bool* status) {
+	shared_ptr<JsonTValue<T>> ptr = std::dynamic_pointer_cast<JsonTValue<T>>(v);
+	if (ptr) {
+		return ptr->getValue();
+	}
 	if (status) {
 		*status = false;
 	}
-	return al_map_rgb(0,0,0);
+	return T();
+}
+
+template <>
+Point extractValue<Point>(shared_ptr<JsonValue> v, bool* status) {
+	Point tmp = extractWithDefault<Point>(v, Point());
+	if (status && tmp._x == 0 && tmp._y == 0) {
+		*status = false;
+	}
+	return tmp;
+}
+
+template <>
+ALLEGRO_COLOR extractValue<ALLEGRO_COLOR>(shared_ptr<JsonValue> v, bool* status) {
+	ALLEGRO_COLOR tmp = extractWithDefault<ALLEGRO_COLOR>(v, al_map_rgb(0, 0, 0));
+	if (status && tmp.r == 0 && tmp.g == 0 && tmp.b == 0) {
+		*status = false;
+	}
+	return tmp;
 }
 
 template bool extractValue<bool>(shared_ptr<JsonValue> v, bool* status);
@@ -363,3 +385,10 @@ template double extractValue<double>(shared_ptr<JsonValue> v, bool* status);
 template std::string extractValue<std::string>(shared_ptr<JsonValue> v, bool* status);
 template Point extractValue<Point>(shared_ptr<JsonValue> v, bool* status);
 template ALLEGRO_COLOR extractValue<ALLEGRO_COLOR>(shared_ptr<JsonValue> v, bool* status);
+
+template bool extractWithDefault<bool>(shared_ptr<JsonValue> v, bool defValue);
+template int extractWithDefault<int>(shared_ptr<JsonValue> v, int defValue);
+template double extractWithDefault<double>(shared_ptr<JsonValue> v, double defValue);
+template std::string extractWithDefault<std::string>(shared_ptr<JsonValue> v, std::string defValue);
+template Point extractWithDefault<Point>(shared_ptr<JsonValue> v, Point defValue);
+template ALLEGRO_COLOR extractWithDefault<ALLEGRO_COLOR>(shared_ptr<JsonValue> v, ALLEGRO_COLOR defValue);

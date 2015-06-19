@@ -64,6 +64,15 @@ AppCtl::AppCtl() {
 	_state->_selectedFrame = nullptr;
 	_keys = new bool[CALYPSE_KEYS_LAST];
 	for (int i = 0; i < CALYPSE_KEYS_LAST; i++) _keys[i] = false;
+
+	auto vec = _config->getCollection(C_CONFIG_UI, "screens");
+	for (auto sInfo : vec) {
+		cout << sInfo.first << endl;
+		auto sObj = std::dynamic_pointer_cast<JsonObject>(sInfo.second);
+		if (sObj) {
+			auto sV = make_shared<Screen>(_res, *sObj);
+		}
+	}
 }
 
 AppCtl::~AppCtl() {

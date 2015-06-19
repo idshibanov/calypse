@@ -7,6 +7,25 @@
 			"map": true,
             "backSprite": 0,
             "backColor": "",
+			"elements" : [
+				{
+					"type": "Label",
+					"pos": "10,20",
+					"fontSize": 12,
+					"text": "Lorem ipsum",
+				},
+				{
+					"type": "Button",
+					"pos": "44,15",
+					"size": "80,60",
+					"action": 0,
+					"sprite": 0,
+					"spriteOn": 1,
+					"active": true,
+					"visible": true,
+					"state": false,
+				}
+			],
 			"frames" : [
 				{
 					"type": "ObjectInfo",
@@ -18,9 +37,33 @@
 					"type": "Container",
 					"pos": "300,200",
 					"title": "Inventory",
-				}
+				},
+				{
+					"type": "Frame",
+					"pos": "140,300",
+					"size": "200,90",
+					"title": "Test Sheet",
+					"elements" : [
+						{
+							"type": "Label",
+							"pos": "10,20",
+							"fontSize": 12,
+							"text": "Lorem ipsum",
+						},
+						{
+							"type": "Button",
+							"pos": "44,15",
+							"size": "80,60",
+							"action": 0,
+							"sprite": 0,
+							"spriteOn": 1,
+							"active": true,
+							"visible": true,
+							"state": false,
+						}
+					],
+				},
 			],
-			"elements" : [],
         },
         "menu": {
             "name": "Main menu",

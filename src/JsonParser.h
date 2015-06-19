@@ -25,5 +25,9 @@ shared_ptr<JsonValue> parseString(std::istringstream& is);
 shared_ptr<JsonValue> parseArray(const std::string& src);
 shared_ptr<JsonValue> parseObject(const std::string& src);
 
+
+template<typename T>
+T extractWithDefault(shared_ptr<JsonValue> v, T defValue);
+
 template<typename T>
 T extractValue(shared_ptr<JsonValue> v, bool* status = nullptr);
