@@ -8,24 +8,44 @@
 #include "Object.h"
 
 AppCtl::AppCtl() {
+	_state = make_shared<AppState>();
 	_config = make_shared<ConfigCtl>();
 	_res = make_shared<ResourceCtl>(_config);
 	_map = make_shared<LocalMap>(_res);
+
+	auto set = _config->getSetting(C_CONFIG_APP, "resolution");
+	_state->_resolution = extractWithDefault<Point>(set, Point(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT));
 
 	//al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
 	//al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_REQUIRE);
 	//al_set_new_display_flags(ALLEGRO_NOFRAME);
 
-	_display = al_create_display(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT);
+	_display = al_create_display(_state->_resolution._x, _state->_resolution._y);
 	al_hide_mouse_cursor(_display);
 
 	// load sprites only after setting up display
 	_res->loadResources();
 	//_res->loadSprites();
 
-	_state = make_shared<AppState>();
 	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 	_mouse = make_shared<Mouse>();
+
+	_state->_appSpeed = 100;
+	_state->_FPS = 0;
+	_state->_CPS = 0;
+	_state->_drawStats = false;
+	_state->_drawGrid = false;
+	_state->_drawCoords = false;
+	_state->_drawMasks = false;
+	_state->_drawUIAreas = false;
+
+	_state->_curScreen = nullptr;
+	_state->_selectedAction = ACTION_NONE;
+	_state->_selectedObject = -1;
+	_state->_selectedFrame = nullptr;
+	_keys = new bool[CALYPSE_KEYS_LAST];
+	for (int i = 0; i < CALYPSE_KEYS_LAST; i++) _keys[i] = false;
+
 
 	_screen = new ScreenCtl(_res, _map, _camera, _mouse, _state);
 
@@ -33,8 +53,18 @@ AppCtl::AppCtl() {
 	_events = make_shared<EventService>(_res, _map, _pFinder, _state);
 	_map->generate(_pFinder, _events);
 
-
-	_screen->loadScreen();
+	int sID = 0;
+	auto vec = _config->getCollection(C_CONFIG_UI, "screens");
+	for (auto sInfo : vec) {
+		auto sObj = std::dynamic_pointer_cast<JsonObject>(sInfo.second);
+		if (sObj) {
+			_screenMap.emplace(sID, make_shared<Screen>(_res, *sObj));
+			_screenLookup.emplace(sInfo.first, sID);
+			sID++;
+		}
+	}
+	switchScreen("main");
+	_screen->reloadScreen();
 
 	_eventQueue = al_create_event_queue();
 	_timer = al_create_timer(1.0 / CLOCK_SPEED);
@@ -48,31 +78,6 @@ AppCtl::AppCtl() {
 	_cycles = 0;
 	_render_frames = 0;
 	_animation_frame = 0;
-
-	_state->_appSpeed = 100;
-	_state->_FPS = 0;
-	_state->_CPS = 0;
-	_state->_drawStats = false;
-	_state->_drawGrid = false;
-	_state->_drawCoords = false;
-	_state->_drawMasks = false;
-	_state->_drawUIAreas = false;
-
-	_state->_isMapScreen = false;
-	_state->_selectedAction = ACTION_NONE;
-	_state->_selectedObject = -1;
-	_state->_selectedFrame = nullptr;
-	_keys = new bool[CALYPSE_KEYS_LAST];
-	for (int i = 0; i < CALYPSE_KEYS_LAST; i++) _keys[i] = false;
-
-	auto vec = _config->getCollection(C_CONFIG_UI, "screens");
-	for (auto sInfo : vec) {
-		cout << sInfo.first << endl;
-		auto sObj = std::dynamic_pointer_cast<JsonObject>(sInfo.second);
-		if (sObj) {
-			auto sV = make_shared<Screen>(_res, *sObj);
-		}
-	}
 }
 
 AppCtl::~AppCtl() {
@@ -244,6 +249,19 @@ void AppCtl::controlLoop() {
 			}
 		}
 	}
+}
+
+
+bool AppCtl::switchScreen(const std::string& name) {
+	auto it = _screenLookup.find(name);
+	if (it != _screenLookup.end()) {
+		auto scr = _screenMap.find(it->second);
+		if (scr != _screenMap.end()) {
+			_state->_curScreen = scr->second;
+			return true;
+		}
+	}
+	return false;
 }
 
 

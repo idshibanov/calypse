@@ -26,6 +26,9 @@ class AppCtl {
 	shared_ptr<Mouse> _mouse;
 	shared_ptr<AppState> _state;
 
+	std::map<int, shared_ptr<Screen>> _screenMap;
+	std::map<std::string, int> _screenLookup;
+
 	bool _isRunning;
 	bool _render;
 	float _gameTime;
@@ -44,6 +47,7 @@ public:
 	void render();
 	void update();
 	void controlLoop();
+	bool switchScreen(const std::string& name);
 	void processMouseAction();
 	void processUIElement(shared_ptr<UIElement> elem);
 	void selectAction(ActionType t);

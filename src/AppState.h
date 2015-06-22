@@ -1,9 +1,11 @@
 #pragma once
 #include "ActionType.h"
+#include "Point.h"
 #include "Main.h"
 
 class UIFrame;
 class Item;
+class Screen;
 
 struct AppState {
 	// statistics
@@ -12,6 +14,8 @@ struct AppState {
 	int _FPS;
 
 	// settings
+	Point _resolution;
+
 	bool _drawStats;
 	bool _drawGrid;
 	bool _drawCoords;
@@ -20,7 +24,7 @@ struct AppState {
 	int _appSpeed;
 
 	// state
-	bool _isMapScreen;
+	shared_ptr<Screen> _curScreen;
 	ActionType _selectedAction;
 	int _selectedObject;
 	UIFrame* _selectedFrame;

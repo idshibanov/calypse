@@ -2,7 +2,7 @@
     "version": 1.0,
     "type": "Application",
 	"mode" : "window",
-	"resolution" : "800,600",
+	"resolution" : "1000x300",
 	"mapSize" : "40,40",
 	"tileSize" : "32,32",
 }

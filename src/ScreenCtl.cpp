@@ -9,8 +9,6 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	                  shared_ptr<Mouse> mouse, shared_ptr<AppState> stats)
 					  : frame_t(ANIMATION_TICKS) {
 
-	_screenWidth = TD_DISPLAY_WIDTH;
-	_screenHeight = TD_DISPLAY_HEIGHT;
 	_tileWidth = TD_TILESIZE_X;
 	_tileHeight = TD_TILESIZE_Y;
 	_tileSize.set(_tileWidth, _tileHeight);
@@ -20,50 +18,45 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_cam = cam;
 	_mouse = mouse;
 	_state = stats;
+
+	_font = _res->getFont(12);
+	_lastTimestamp = _state->_appTime;
+
+	_zoom = 1.0;
+	_animation_speed = 100;
+	_animation_frame = 0;
+
+	_render = true;
 }
 
 ScreenCtl::~ScreenCtl() {
 
 }
 
-void ScreenCtl::loadScreen() {
+void ScreenCtl::reloadScreen() {
 	_render = true;
-	_lastTimestamp = _state->_appTime;
 
-	_zoom = 1.0;
+	if (_state->_curScreen && _state->_curScreen->isMapScreen()) {
+		_menu = make_shared<CarouselMenu>(Point(300, 200), Point(100, 100), nullptr);
 
-	_menu = make_shared<CarouselMenu>(Point(300, 200), Point(100, 100), nullptr);
+		_frames.push_back(make_shared<ObjectInfoFrame>(Point(300, 200), Point(200, 90), _res,
+			std::string("Character Sheet"), _map->getPrimaryActor()->getState()));
 
-	_font = _res->getFont(12);
+		_frames.push_back(make_shared<ContainerFrame>(Point(300, 200), _res, std::string("Inventory"),
+			_map->getPrimaryActor()->getState()->getInventory()));
 
-	_frames.push_back(make_shared<ObjectInfoFrame>(Point(300, 200), Point(200, 90), _res,
-		std::string("Character Sheet"), _map->getPrimaryActor()->getState()));
-
-	_frames.push_back(make_shared<ContainerFrame>(Point(300, 200), _res, std::string("Inventory"),
-		_map->getPrimaryActor()->getState()->getInventory()));
-
-	_animation_speed = 100;
-	_animation_frame = 0;
-}
-
-
-bool ScreenCtl::switchScreen(const std::string& name) {
-	auto it = _screenLookup.find(name);
-	if (it != _screenLookup.end()) {
-		if (_screens.size() < it->second) {
-			_curScreen = _screens.begin() + it->second;
-			return true;
-		}
 	}
-	return false;
 }
 
 
 bool ScreenCtl::draw() {
 	bool retval = false;
-	if (_render || _lastTimestamp < _state->_appTime) {
+	if (_state->_curScreen  && (_render || _lastTimestamp < _state->_appTime)) {
 		_buffer.reset();
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
+
+		_state->_curScreen->draw(_state->_resolution);
+		drawMap();
 
 		for (auto fr : _frames) {
 			if (fr->isVisible()) {
@@ -115,7 +108,7 @@ bool ScreenCtl::draw() {
 
 
 void ScreenCtl::drawMap() {
-	if ((*_curScreen)->isMapScreen()) {
+	if (_state->_curScreen->isMapScreen()) {
 		ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
 		ALLEGRO_COLOR obj_color = al_map_rgb(155, 155, 255);
 		Point isoTileSize(_tileSize._x * 2, _tileSize._y);
@@ -285,9 +278,9 @@ void ScreenCtl::update() {
 	_offset.set(0, 0);
 
 	// offset after which we shift the tiles
-	int maxOffset = (_screenWidth / 2 + _screenHeight) / 2;
+	int maxOffset = (_state->_resolution._x / 2 + _state->_resolution._y) / 2;
 
-	_screenOffset.set(_screenWidth / 2 - _tileWidth, _screenHeight / 2);
+	_screenOffset.set(_state->_resolution._x / 2 - _tileWidth, _state->_resolution._y / 2);
 	_tileSize.set(_tileWidth, _tileHeight);
 	_offset -= camPos;
 
@@ -304,7 +297,7 @@ void ScreenCtl::update() {
 
 	// calculate last tile to render, based on current offset
 	_lastTile = _offset;
-	_lastTile.modInv().modAdd(_screenWidth + maxOffset, _screenHeight + maxOffset);
+	_lastTile.modInv().modAdd(_state->_resolution._x + maxOffset, _state->_resolution._y + maxOffset);
 	_lastTile = _firstTile + (_lastTile / _tileSize);
 	if (colmax < _lastTile._x) _lastTile._x = colmax;
 	if (rowmax < _lastTile._y) _lastTile._y = rowmax;
@@ -320,7 +313,7 @@ void ScreenCtl::updateTimers() {
 		if (_animation_frame > 47) _animation_frame = 0;
 		frame_t.relaunch();
 	}
-	_menu->update();
+	if (_menu) _menu->update();
 }
 
 

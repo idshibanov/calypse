@@ -28,10 +28,6 @@ class ScreenCtl {
 	shared_ptr<Mouse> _mouse;
 	shared_ptr<AppState> _state;
 
-	std::vector<shared_ptr<Screen>> _screens;
-	std::vector<shared_ptr<Screen>>::iterator _curScreen;
-	std::map<std::string, int> _screenLookup;
-
 	std::vector<shared_ptr<UIFrame>> _frames;
 	std::vector<shared_ptr<UIButton>> _options;
 	shared_ptr<CarouselMenu> _menu;
@@ -39,8 +35,6 @@ class ScreenCtl {
 	bool _render;
 	int _lastTimestamp;
 
-	unsigned _screenWidth;
-	unsigned _screenHeight;
 	int _tileWidth;
 	int _tileHeight;
 	Point _screenOffset;
@@ -56,8 +50,7 @@ class ScreenCtl {
 public:
 	ScreenCtl(shared_ptr<ResourceCtl>, shared_ptr<LocalMap>, shared_ptr<Camera>, shared_ptr<Mouse>, shared_ptr<AppState>);
 	~ScreenCtl();
-	void loadScreen();
-	bool switchScreen(const std::string& name);
+	void reloadScreen();
 	bool draw();
 	void drawMap();
 	void redraw(bool cameraMoved = false);

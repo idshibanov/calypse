@@ -258,7 +258,10 @@ shared_ptr<JsonValue> parseArray(const std::string& src) {
 		std::vector<shared_ptr<JsonValue>> holder;
 			
 		for (auto value : tokens) {
-			holder.push_back(parseValue(value));
+			auto vPtr = parseValue(value);
+			if (vPtr) {
+				holder.push_back(vPtr);
+			}
 		}
 		return make_shared<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(holder);
 	}
@@ -290,7 +293,7 @@ T extractWithDefault(shared_ptr<JsonValue> v, T defValue) {
 	if (ptr) {
 		return ptr->getValue();
 	}
-	return T();
+	return defValue;
 }
 
 template<> 
@@ -299,6 +302,10 @@ Point extractWithDefault<Point>(shared_ptr<JsonValue> v, Point defValue) {
 	if (val) {
 		auto str = val->getValue();
 		size_t pos = str.find(',');
+		if (pos == std::string::npos) {
+			pos = str.find('x');
+		}
+
 		if (pos != std::string::npos) {
 			try {
 				int first = std::stoi(str.substr(0, pos));
