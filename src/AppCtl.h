@@ -12,24 +12,25 @@
 
 class AppCtl {
 	ScreenCtl* _screen;
+	shared_ptr<AppState> _state;
+	shared_ptr<ConfigCtl> _config;
+	shared_ptr<ResourceCtl> _res;
 
 	ALLEGRO_DISPLAY* _display;
 	ALLEGRO_EVENT_QUEUE* _eventQueue;
 	ALLEGRO_TIMER* _timer;
 
-	shared_ptr<ConfigCtl> _config;
-	shared_ptr<ResourceCtl> _res;
+	shared_ptr<Mouse> _mouse;
 	shared_ptr<LocalMap> _map;
 	shared_ptr<AStarSearch> _pFinder;
 	shared_ptr<EventService> _events;
 	shared_ptr<Camera> _camera;
-	shared_ptr<Mouse> _mouse;
-	shared_ptr<AppState> _state;
-
+	
 	std::map<int, shared_ptr<Screen>> _screenMap;
 	std::map<std::string, int> _screenLookup;
 
 	bool _isRunning;
+	bool _mapIsActive;
 	bool _render;
 	float _gameTime;
 	int _render_frames;
@@ -44,11 +45,16 @@ class AppCtl {
 public:
 	AppCtl();
 	~AppCtl();
+	void loadInstance();
+	void offload();
 	void render();
 	void update();
 	void controlLoop();
 	bool switchScreen(const std::string& name);
 	void processMouseAction();
+	void processLeftClick(const Point& clickPos);
+	void processRightClick(const Point& clickPos);
+	void processMapElement();
 	void processUIElement(shared_ptr<UIElement> elem);
 	void selectAction(ActionType t);
 	void selectItem(shared_ptr<Item> it);

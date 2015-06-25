@@ -2,7 +2,8 @@
     "version": 1.0,
     "type": "Application",
 	"mode" : "window",
-	"resolution" : "1000x300",
-	"mapSize" : "40,40",
-	"tileSize" : "32,32",
+	"resolution" : "1024x768",
+	"mapSize" : "50x50",
+	"tileSize" : "32x32",
+	"startup" : "menu",
 }

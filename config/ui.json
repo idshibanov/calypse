@@ -6,7 +6,7 @@
             "name": "Map screen",
 			"map": true,
             "backSprite": 0,
-            "backColor": "",
+            "backColor": "0,0,0",
 			"elements" : [
 				{
 					"type": "Label",
@@ -38,6 +38,14 @@
 					"pos": "300,200",
 					"title": "Inventory",
 				},
+			],
+        },
+        "menu": {
+            "name": "Main menu",
+			"map": false,
+            "backSprite": 0,
+            "backColor": "12,41,17",
+			"frames" : [
 				{
 					"type": "Frame",
 					"pos": "140,300",
@@ -64,13 +72,6 @@
 					],
 				},
 			],
-        },
-        "menu": {
-            "name": "Main menu",
-			"map": false,
-            "backSprite": 0,
-            "backColor": "12,41,17",
-			"frames" : [],
 			"elements" : [],
         },
         "startup": {

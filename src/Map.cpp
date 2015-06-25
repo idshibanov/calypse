@@ -7,6 +7,8 @@
 
 LocalMap::LocalMap(shared_ptr<ResourceCtl> res) : _objects(res, TD_MAP_COLS * TILE_MASK) {
 	_res = res;
+	_ready = false;
+	_actor = nullptr;
 }
 
 LocalMap::~LocalMap(){
@@ -53,14 +55,27 @@ void LocalMap::generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev) {
 			for (int k = 0; k < objMaxDensity; k++){
 				randOffset = rand() % 100;
 				Point objPos((col + (randOffset % 10)) * TILE_MASK, (row + (randOffset / 10)) * TILE_MASK);
-				/*
+				
 				cout << "OBJ: " << col + (randOffset % 10) << "," << row + (randOffset / 10);
 				cout << "  >> " << objPos._x << "," << objPos._y << " Prio: " << objPos.toRenderPriority() << endl;
-				*/
+				
 				_objects.setObject(make_shared<MapObject>(reetID, objPos));
 			}
 		}
 	}
+	_ready = true;
+}
+
+void LocalMap::offload() {
+	_ready = false;
+	_actor = nullptr;
+	_objects.clear();
+	_tiles.clear();
+	_groundItems.clear();
+}
+
+bool LocalMap::isReady() const {
+	return _ready;
 }
 
 short LocalMap::getTileType(const Point& mapPos) const {
@@ -108,7 +123,7 @@ bool LocalMap::addObject(shared_ptr<MapObject> obj) {
 }
 
 
-std::multimap<Point, shared_ptr<Item>>::iterator LocalMap::findItem(const Point& pos) {
+std::multimap<Point, shared_ptr<Item>>::iterator LocalMap::_findItem(const Point& pos) {
 	return _groundItems.find(pos);
 }
 
@@ -133,7 +148,7 @@ void LocalMap::putItem(const Point& pos, shared_ptr<Item> item) {
 
 shared_ptr<Item> LocalMap::grabItem(const Point& pos) {
 	shared_ptr<Item> retval;
-	auto it = findItem(pos);
+	auto it = _findItem(pos);
 	if (it != _groundItems.end()) {
 		retval = it->second;
 		_groundItems.erase(it);
@@ -144,7 +159,7 @@ shared_ptr<Item> LocalMap::grabItem(const Point& pos) {
 
 shared_ptr<Item> LocalMap::getItem(const Point& pos) {
 	shared_ptr<Item> retval;
-	auto it = findItem(pos);
+	auto it = _findItem(pos);
 	if (it != _groundItems.end()) {
 		retval = it->second;
 		return retval;

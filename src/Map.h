@@ -28,12 +28,13 @@ class LocalMap {
 	shared_ptr<Actor> _actor;
 
 	// state
+	bool _ready;
 	unsigned int _rowmax;
 	unsigned int _colmax;
 	int _xmax;
 
 	// private methods
-	std::multimap<Point, shared_ptr<Item>>::iterator findItem(const Point& pos);
+	std::multimap<Point, shared_ptr<Item>>::iterator _findItem(const Point& pos);
 
 	// forbidden to copy
 	LocalMap(const LocalMap&) = delete;
@@ -42,6 +43,8 @@ public:
 	LocalMap(shared_ptr<ResourceCtl> res);
 	~LocalMap();
 	void generate(weak_ptr<AStarSearch> pf, weak_ptr<EventService> ev);
+	void offload();
+	bool isReady() const;
 
 	// Map-related methods
 	short getTileType(const Point& mapPos) const;

@@ -58,7 +58,8 @@ bool ScreenCtl::draw() {
 		_state->_curScreen->draw(_state->_resolution);
 		drawMap();
 
-		for (auto fr : _frames) {
+		auto frames = _state->_curScreen->getFrames();
+		for (auto fr : frames) {
 			if (fr->isVisible()) {
 				fr->draw();
 				_buffer.setElement(fr);
@@ -115,6 +116,7 @@ void ScreenCtl::drawMap() {
 
 		// Map tiles
 		auto grass = _res->getSprite("grass").get();
+		//al_hold_bitmap_drawing(true);
 		for (int row = _firstTile._y; row < _lastTile._y; row++) {
 			for (int col = _firstTile._x; col < _lastTile._x; col++) {
 				Point coord(col, row);
@@ -122,9 +124,7 @@ void ScreenCtl::drawMap() {
 				coord = coord.toIso() + _screenOffset;
 
 				// loop drawing sub bitmaps must be the same parent
-				//al_hold_bitmap_drawing(true);
 				grass->drawScaled(coord, isoTileSize);
-				//al_hold_bitmap_drawing(false);
 
 				if (_state->_drawCoords) {
 					std::string tileCoords(std::to_string(col) + ", " + std::to_string(row));
@@ -132,6 +132,7 @@ void ScreenCtl::drawMap() {
 				}
 			}
 		}
+		//al_hold_bitmap_drawing(false);
 
 		if (_state->_drawGrid) {
 			for (int row = _firstTile._y; row < _lastTile._y; row++) {
@@ -272,36 +273,38 @@ void ScreenCtl::redraw(bool cameraMoved) {
 
 
 void ScreenCtl::update() {
-	// camera position
-	Point camPos = _cam->getPos();
-	// map rendering offset, based on camera position
-	_offset.set(0, 0);
+	if (_state->_curScreen->isMapScreen()) {
 
-	// offset after which we shift the tiles
-	int maxOffset = (_state->_resolution._x / 2 + _state->_resolution._y) / 2;
+		// camera position
+		Point camPos = _cam->getPos();
+		// map rendering offset, based on camera position
+		_offset.set(0, 0);
 
-	_screenOffset.set(_state->_resolution._x / 2 - _tileWidth, _state->_resolution._y / 2);
-	_tileSize.set(_tileWidth, _tileHeight);
-	_offset -= camPos;
+		// offset after which we shift the tiles
+		int maxOffset = (_state->_resolution._x / 2 + _state->_resolution._y) / 2;
 
-	if (camPos._x > maxOffset + _tileSize._x) {
-		_firstTile._x = (camPos._x - maxOffset) / _tileSize._x;
+		_screenOffset.set(_state->_resolution._x / 2 - _tileWidth, _state->_resolution._y / 2);
+		_tileSize.set(_tileWidth, _tileHeight);
+		_offset -= camPos;
+
+		if (camPos._x > maxOffset + _tileSize._x) {
+			_firstTile._x = (camPos._x - maxOffset) / _tileSize._x;
+		}
+		if (camPos._y > maxOffset + _tileSize._y) {
+			_firstTile._y = (camPos._y - maxOffset) / _tileSize._y;
+		}
+		_offset += (_firstTile * _tileSize);
+
+		unsigned rowmax = _map->getRowMax();
+		unsigned colmax = _map->getColMax();
+
+		// calculate last tile to render, based on current offset
+		_lastTile = _offset;
+		_lastTile.modInv().modAdd(_state->_resolution._x + maxOffset, _state->_resolution._y + maxOffset);
+		_lastTile = _firstTile + (_lastTile / _tileSize);
+		if (colmax < _lastTile._x) _lastTile._x = colmax;
+		if (rowmax < _lastTile._y) _lastTile._y = rowmax;
 	}
-	if (camPos._y > maxOffset + _tileSize._y) {
-		_firstTile._y = (camPos._y - maxOffset) / _tileSize._y;
-	}
-	_offset += (_firstTile * _tileSize);
-
-	unsigned rowmax = _map->getRowMax();
-	unsigned colmax = _map->getColMax();
-
-	// calculate last tile to render, based on current offset
-	_lastTile = _offset;
-	_lastTile.modInv().modAdd(_state->_resolution._x + maxOffset, _state->_resolution._y + maxOffset);
-	_lastTile = _firstTile + (_lastTile / _tileSize);
-	if (colmax < _lastTile._x) _lastTile._x = colmax;
-	if (rowmax < _lastTile._y) _lastTile._y = rowmax;
-
 	_render = true;
 }
 

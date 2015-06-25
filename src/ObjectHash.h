@@ -24,6 +24,7 @@ class ObjectHash {
 public:
 	ObjectHash(shared_ptr<ResourceCtl>, int size);
 	~ObjectHash();
+	void clear();
 	bool setObject(shared_ptr<MapObject> obj);
 	bool setObject(const Point& pos, shared_ptr<MapObject> obj);
 	bool toggleObject(const Point& pos);

@@ -12,6 +12,11 @@ ObjectHash::~ObjectHash() {
 
 }
 
+void ObjectHash::clear() {
+	_objects.clear();
+	_mask.clear();
+	_actors.clear();
+}
 
 bool ObjectHash::setObject(shared_ptr<MapObject> obj) {
 	auto objInfo = _res->getObjectInfo(obj->getType());

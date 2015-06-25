@@ -11,10 +11,19 @@ AppCtl::AppCtl() {
 	_state = make_shared<AppState>();
 	_config = make_shared<ConfigCtl>();
 	_res = make_shared<ResourceCtl>(_config);
-	_map = make_shared<LocalMap>(_res);
+	_mouse = make_shared<Mouse>();
 
-	auto set = _config->getSetting(C_CONFIG_APP, "resolution");
-	_state->_resolution = extractWithDefault<Point>(set, Point(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT));
+	auto tmpVal = _config->getSetting(C_CONFIG_APP, "resolution");
+	_state->_resolution = extractWithDefault<Point>(tmpVal, Point(TD_DISPLAY_WIDTH, TD_DISPLAY_HEIGHT));
+
+	tmpVal = _config->getSetting(C_CONFIG_APP, "mapSize");
+	auto mapSize = extractWithDefault<Point>(tmpVal, Point(TD_MAP_COLS, TD_MAP_ROWS));
+
+	tmpVal = _config->getSetting(C_CONFIG_APP, "tileSize");
+	auto tileSize = extractWithDefault<Point>(tmpVal, Point(TD_TILESIZE_X, TD_TILESIZE_Y));
+
+	tmpVal = _config->getSetting(C_CONFIG_APP, "startup");
+	auto startupScr = extractWithDefault<std::string>(tmpVal, "menu");
 
 	//al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
 	//al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_REQUIRE);
@@ -25,10 +34,6 @@ AppCtl::AppCtl() {
 
 	// load sprites only after setting up display
 	_res->loadResources();
-	//_res->loadSprites();
-
-	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
-	_mouse = make_shared<Mouse>();
 
 	_state->_appSpeed = 100;
 	_state->_FPS = 0;
@@ -46,12 +51,10 @@ AppCtl::AppCtl() {
 	_keys = new bool[CALYPSE_KEYS_LAST];
 	for (int i = 0; i < CALYPSE_KEYS_LAST; i++) _keys[i] = false;
 
+	_map = make_shared<LocalMap>(_res);
+	_camera = make_shared<Camera>(TD_MAP_COLS*TD_TILESIZE_X, TD_MAP_ROWS*TD_TILESIZE_Y);
 
 	_screen = new ScreenCtl(_res, _map, _camera, _mouse, _state);
-
-	_pFinder = std::make_shared<AStarSearch>(_map);
-	_events = make_shared<EventService>(_res, _map, _pFinder, _state);
-	_map->generate(_pFinder, _events);
 
 	int sID = 0;
 	auto vec = _config->getCollection(C_CONFIG_UI, "screens");
@@ -63,7 +66,7 @@ AppCtl::AppCtl() {
 			sID++;
 		}
 	}
-	switchScreen("main");
+	switchScreen(startupScr);
 	_screen->reloadScreen();
 
 	_eventQueue = al_create_event_queue();
@@ -88,29 +91,41 @@ AppCtl::~AppCtl() {
 	delete _keys;
 }
 
+void AppCtl::loadInstance() {
+	_pFinder = std::make_shared<AStarSearch>(_map);
+	_events = make_shared<EventService>(_res, _map, _pFinder, _state);
+	_map->generate(_pFinder, _events);
+}
+
+void AppCtl::offload() {
+	_map->offload();
+}
+
 void AppCtl::render() {
 
 }
 
 void AppCtl::update() {
-	unsigned dist = 2;
-	if (_keys[SHIFT]) dist *= 3;
+	if (_mapIsActive) {
+		unsigned dist = 2;
+		if (_keys[SHIFT]) dist *= 3;
 
-	if (_keys[LEFT]) {
-		_camera->move(1, dist);
-	} else if (_keys[RIGHT]) {
-		_camera->move(2, dist);
-	}
-	if (_keys[UP]) {
-		_camera->move(3, dist);
-	} else if (_keys[DOWN]) {
-		_camera->move(4, dist);
-	}
+		if (_keys[LEFT]) {
+			_camera->move(1, dist);
+		} else if (_keys[RIGHT]) {
+			_camera->move(2, dist);
+		}
+		if (_keys[UP]) {
+			_camera->move(3, dist);
+		} else if (_keys[DOWN]) {
+			_camera->move(4, dist);
+		}
 
-	if (_camera->isUpdated()) {
-		_screen->redraw(true);
+		if (_camera->isUpdated()) {
+			_screen->redraw(true);
+		}
+		_map->update();
 	}
-	_map->update();
 }
 
 void AppCtl::controlLoop() {
@@ -139,6 +154,12 @@ void AppCtl::controlLoop() {
 				break;
 			case ALLEGRO_KEY_DOWN:
 				_keys[DOWN] = true;
+				break;
+			case ALLEGRO_KEY_Q:
+				switchScreen("main");
+				break;
+			case ALLEGRO_KEY_E:
+				switchScreen("menu");
 				break;
 			case ALLEGRO_KEY_C:
 				_screen->toggleInfoScreen();
@@ -258,6 +279,14 @@ bool AppCtl::switchScreen(const std::string& name) {
 		auto scr = _screenMap.find(it->second);
 		if (scr != _screenMap.end()) {
 			_state->_curScreen = scr->second;
+			if (!_mapIsActive && scr->second->isMapScreen()) {
+				loadInstance();
+				_mapIsActive = true;
+			} else if (_mapIsActive) {
+				offload();
+				_mapIsActive = false;
+			}
+			_screen->reloadScreen();
 			return true;
 		}
 	}
@@ -266,76 +295,91 @@ bool AppCtl::switchScreen(const std::string& name) {
 
 
 void AppCtl::processMouseAction() {
+	Point clickPos = _screen->convertCoords(_mouse->getPos());
+
+	if (_mouse->getButton() == MOUSE_BUTTON_LEFT) {
+		processLeftClick(clickPos);
+	} else if (_mouse->getButton() == MOUSE_BUTTON_RIGHT) {
+		processRightClick(clickPos);
+	}
+}
+
+void AppCtl::processLeftClick(const Point& clickPos) {
 	Point absPos = _mouse->getPos();
-	Point clickPos = _screen->convertCoords(absPos);
+	auto elem = _screen->processAction(absPos);
 	auto actor = _map->getPrimaryActor();
 
-	auto elem = _screen->processAction(absPos);
-	cout << endl << "Click on: " << absPos._x << "," << absPos._y << endl;
-	if (_mouse->getButton() == MOUSE_BUTTON_LEFT) {
-		if (_state->_selectedAction > ACTION_NONE) {
+	if (_mapIsActive && _state->_selectedAction > ACTION_NONE) {
+		Point mapClick = clickPos.div(SUBTILE_MASK).mul(SUBTILE_MASK);
+		if (mapClick > 0) {
+			Point mvTarget = _pFinder->findAdjacent(actor->getPos(), Rect(mapClick, Point(10, 10)));
+			auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, mvTarget, _pFinder);
+
+			auto act2 = make_shared<PointAction>(_state->_selectedAction, _res, actor, 15, 8, clickPos, _map);
+			act1->chainAction(act2);
+
+			actor->setAction(act1);
+		}
+	} else if (elem) {
+		if (elem->getType() == AREA_TYPE_FRAME) {
+			auto selFrame = std::dynamic_pointer_cast<UIFrame>(elem);
+			_state->_selectedFrame = selFrame.get();
+		} else if (elem->getType() == AREA_TYPE_ELEMENT) {
+			auto uiEl = std::dynamic_pointer_cast<UIElement>(elem);
+			processUIElement(uiEl);
+		} else if (_mapIsActive && elem->getType() == AREA_TYPE_ITEM) {
+			/*
+			auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
+
+			auto gItem = _map->getItem(gItemArea->_item->getID());
+			if (gItem) {
+			if (actor->getState()->getInventory()->addItem(gItem)) {
+			_map->removeItem(gItem->getID());
+			}
+			}
+			*/
+			auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
 			Point mapClick = clickPos.div(SUBTILE_MASK).mul(SUBTILE_MASK);
 			if (mapClick > 0) {
 				Point mvTarget = _pFinder->findAdjacent(actor->getPos(), Rect(mapClick, Point(10, 10)));
 				auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, mvTarget, _pFinder);
 
-				auto act2 = make_shared<PointAction>(_state->_selectedAction, _res, actor, 15, 8, clickPos, _map);
+				auto act2 = make_shared<ItemAction>(ACTION_PICK_ITEM, _res, actor, 10, 1, gItemArea->_item, _map);
 				act1->chainAction(act2);
 
 				actor->setAction(act1);
 			}
-		} else if (elem) {
-			if (elem->getType() == AREA_TYPE_FRAME) {
-				auto selFrame = std::dynamic_pointer_cast<UIFrame>(elem);
-				_state->_selectedFrame = selFrame.get();
-			} else if (elem->getType() == AREA_TYPE_ELEMENT) {
-				auto uiEl = std::dynamic_pointer_cast<UIElement>(elem);
-				processUIElement(uiEl);
-			} else if (elem->getType() == AREA_TYPE_ITEM) {
-				/*
-				auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
+		} else if (elem->getType() == AREA_TYPE_OBJECT) {
+			auto obj_ptr = std::dynamic_pointer_cast<ObjectArea>(elem);
+			auto obj = obj_ptr->_obj;
+			auto subAreas = obj_ptr->getSubArea(absPos);
 
-				auto gItem = _map->getItem(gItemArea->_item->getID());
-				if (gItem) {
-				if (actor->getState()->getInventory()->addItem(gItem)) {
-				_map->removeItem(gItem->getID());
-				}
-				}
-				*/
-				auto gItemArea = std::dynamic_pointer_cast<ItemArea>(elem);
-				Point mapClick = clickPos.div(SUBTILE_MASK).mul(SUBTILE_MASK);
-				if (mapClick > 0) {
-					Point mvTarget = _pFinder->findAdjacent(actor->getPos(), Rect(mapClick, Point(10, 10)));
-					auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, mvTarget, _pFinder);
-
-					auto act2 = make_shared<ItemAction>(ACTION_PICK_ITEM, _res, actor, 10, 1, gItemArea->_item, _map);
-					act1->chainAction(act2);
-
-					actor->setAction(act1);
-				}
-			} else if (elem->getType() == AREA_TYPE_OBJECT) {
-				auto obj_ptr = std::dynamic_pointer_cast<ObjectArea>(elem);
-				auto obj = obj_ptr->_obj;
-				auto subAreas = obj_ptr->getSubArea(absPos);
-
-				if (subAreas) {
-					_state->_selectedObject = obj->getID();
-					_screen->displayOptions(obj->getPos(), subAreas);
-				} else {
-					//_events->process(obj, ACTION_DRAG);
-				}
-			}
-		} else if (_state->_selectedItem) {
-			_map->putItem(actor->getPos(), _state->_selectedItem);
-			selectItem(nullptr);
-		} else {
-			cout << clickPos._x << "," << clickPos._y << endl;
-			if (clickPos > 0) {
-				auto act = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, clickPos, _pFinder);
-				actor->setAction(act);
+			if (subAreas) {
+				_state->_selectedObject = obj->getID();
+				_screen->displayOptions(obj->getPos(), subAreas);
+			} else {
+				//_events->process(obj, ACTION_DRAG);
 			}
 		}
-	} else if (_mouse->getButton() == MOUSE_BUTTON_RIGHT) {
+	} else {
+		if (_mapIsActive) {
+			if (_state->_selectedItem) {
+				_map->putItem(actor->getPos(), _state->_selectedItem);
+				selectItem(nullptr);
+			} else {
+				cout << clickPos._x << "," << clickPos._y << endl;
+				if (clickPos > 0) {
+					auto act = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, clickPos, _pFinder);
+					actor->setAction(act);
+				}
+			}
+		}
+	}
+}
+
+void AppCtl::processRightClick(const Point& clickPos) {
+	if (_mapIsActive) {
+		auto actor = _map->getPrimaryActor();
 		if (_state->_selectedAction > ACTION_NONE) {
 			_state->_selectedAction = ACTION_NONE;
 		} else if (clickPos._x > 0 && clickPos._y > 0 && actor->isHolding()) {
@@ -350,6 +394,7 @@ void AppCtl::processMouseAction() {
 			}
 		}
 	}
+
 }
 
 void AppCtl::processUIElement(shared_ptr<UIElement> elem) {
@@ -363,14 +408,14 @@ void AppCtl::processUIElement(shared_ptr<UIElement> elem) {
 					if (actionID == ACTION_CLOSE_PARENT) {
 						parentFrame->setVisible(false);
 					}
-				} else {
+				} else if (_mapIsActive) {
 					_screen->hideOptions();
 					_events->process((ActionType)actionID);
 				}
 			}
 			button->launchTimer();
 		}
-	} else if (elem->getElementType() == UIELEMENT_TYPE_CONTAINER) {
+	} else if (elem->getElementType() == UIELEMENT_TYPE_CONTAINER && _mapIsActive) {
 		auto container = std::dynamic_pointer_cast<ContainerArea>(elem);
 
 		Point cell = container->getCell(_mouse->getPos());
