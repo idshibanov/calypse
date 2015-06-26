@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AppCtl.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\ConfigCtl.cpp" />
     <ClCompile Include="src\Element.cpp" />
     <ClCompile Include="src\EventService.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="src\AppState.h" />
     <ClInclude Include="src\ConfigCtl.h" />
     <ClInclude Include="src\Element.h" />
+    <ClInclude Include="src\ElementStyle.h" />
     <ClInclude Include="src\EventService.h" />
     <ClInclude Include="src\Frame.h" />
     <ClInclude Include="src\Inventory.h" />

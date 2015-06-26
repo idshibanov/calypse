@@ -296,7 +296,7 @@ bool AppCtl::switchScreen(const std::string& name) {
 
 void AppCtl::processMouseAction() {
 	Point clickPos = _screen->convertCoords(_mouse->getPos());
-
+	
 	if (_mouse->getButton() == MOUSE_BUTTON_LEFT) {
 		processLeftClick(clickPos);
 	} else if (_mouse->getButton() == MOUSE_BUTTON_RIGHT) {

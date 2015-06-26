@@ -26,6 +26,8 @@ ScreenCtl::ScreenCtl (shared_ptr<ResourceCtl> res, shared_ptr<LocalMap> map, sha
 	_animation_speed = 100;
 	_animation_frame = 0;
 
+	_menu = make_shared<CarouselMenu>(Point(300, 200), Point(100, 100), nullptr);
+
 	_render = true;
 }
 
@@ -35,9 +37,9 @@ ScreenCtl::~ScreenCtl() {
 
 void ScreenCtl::reloadScreen() {
 	_render = true;
+	_frames.clear();
 
 	if (_state->_curScreen && _state->_curScreen->isMapScreen()) {
-		_menu = make_shared<CarouselMenu>(Point(300, 200), Point(100, 100), nullptr);
 
 		_frames.push_back(make_shared<ObjectInfoFrame>(Point(300, 200), Point(200, 90), _res,
 			std::string("Character Sheet"), _map->getPrimaryActor()->getState()));
@@ -258,8 +260,17 @@ void ScreenCtl::drawMap() {
 		}
 
 		for (auto button : _options) {
-			button->draw();
-			_buffer.setElement(button);
+			if (button->isVisible()) {
+				button->draw();
+				_buffer.setElement(button);
+			}
+		}
+
+		for (auto fr : _frames) {
+			if (fr->isVisible()) {
+				fr->draw();
+				_buffer.setElement(fr);
+			}
 		}
 	}
 }
@@ -432,9 +443,13 @@ void ScreenCtl::zoomOut() {
 }
 
 void ScreenCtl::toggleInfoScreen() {
-	_frames[0]->setVisible(!_frames[0]->isVisible());
+	if (_frames[0]) {
+		_frames[0]->setVisible(!_frames[0]->isVisible());
+	}
 }
 
 void ScreenCtl::toggleInventory() {
-	_frames[1]->setVisible(!_frames[1]->isVisible());
+	if (_frames[1]) {
+		_frames[1]->setVisible(!_frames[1]->isVisible());
+	}
 }
