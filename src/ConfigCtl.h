@@ -5,6 +5,7 @@ enum ConfigCategory {
 	C_CONFIG_APP = 0,
 	C_CONFIG_RESOURCE,
 	C_CONFIG_UI,
+	C_CONFIG_ACTION,
 	C_CONFIG_OBJECT,
 	C_CONFIG_ITEM,
 	C_CONFIG_CATEGORY_LAST
@@ -15,6 +16,7 @@ class ConfigCtl {
 	JsonObject _app;
 	JsonObject _res;
 	JsonObject _ui;
+	JsonObject _action;
 	JsonObject _obj;
 	JsonObject _item;
 

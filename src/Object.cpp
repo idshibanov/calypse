@@ -125,7 +125,7 @@ void Actor::setYPos(int y) {
 }
 
 void Actor::setAction(shared_ptr<Action> act) {
-	/*
+	/*  Action chaining:
 	if (_action) {
 		_action->chainAction(act);
 	} else {

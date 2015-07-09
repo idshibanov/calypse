@@ -23,7 +23,7 @@ Point Camera::getPos() {
 	return Point(_xpos, _ypos);
 }
 
-void Camera::move(unsigned dir, unsigned dist = 4) {
+void Camera::move(unsigned dir, unsigned dist) {
 	switch (dir){
 	case 1:
 		_xpos -= dist;

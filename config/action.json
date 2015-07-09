@@ -1,0 +1,26 @@
+{
+    "version": 1.0,
+    "type": "ActionInfo",
+    "actions": {
+        "gather": {
+            "name": "Gather",
+			"type" : "ObjectAction",
+            "ticks": 8,
+            "steps": 8,
+            "arguments": ["param"],
+        },
+        "gatherMulti": {
+            "name": "Gather",
+			"type" : "ObjectAction",
+            "ticks": 8,
+            "steps": 8,
+            "arguments": ["param", "quantity"],
+        },
+        "move": {
+            "name": "Move here",
+			"type" : "MoveAction",
+            "ticks": 8,
+            "steps": 8,
+        },
+    }
+}

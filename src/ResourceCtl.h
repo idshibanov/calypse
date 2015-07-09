@@ -13,12 +13,14 @@
 
 class ResourceCtl {
 	shared_ptr<ConfigCtl> _conf;
+	std::map<std::string, int> _actionLookup;
 	std::map<std::string, int> _objectLookup;
 	std::map<std::string, int> _itemLookup;
 	std::map<std::string, int> _spriteLookup;
 
 	std::map<int, shared_ptr<ObjectInfo>> _info;
 	std::map<int, shared_ptr<ItemInfo>> _itemInfo;
+
 	std::map<int, shared_ptr<Sprite>> _sprites;
 	std::map<int, shared_ptr<SpriteText>> _arialFonts;
 
@@ -43,7 +45,9 @@ public:
 	shared_ptr<SpriteSheet> getSpriteSheet(int id) const;
 	shared_ptr<SpriteSheet> getSpriteSheet(const char* name) const;
 	shared_ptr<SpriteText> getFont(int size);
-	std::string getActionName (ActionType id) const;
+	void loadActions();
+	int getActionID(const char* name) const;
+	std::string getActionName (int id) const;
 	std::string getStatName(StatScoreID id) const;
 	std::string getSkillName(SkillScoreID id) const;
 	std::string getItemName(int id) const;

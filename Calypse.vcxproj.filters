@@ -238,5 +238,8 @@
     <None Include="config\ui.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="config\action.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

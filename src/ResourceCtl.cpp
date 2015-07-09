@@ -9,6 +9,7 @@ ResourceCtl::~ResourceCtl() {
 }
 
 void ResourceCtl::loadResources() {
+	loadActions();
 	loadObjectRecords();
 	loadSprites();
 	loadItemRecords();
@@ -143,8 +144,37 @@ void ResourceCtl::loadSprites() {
 						sprID++;
 					}
 				} else {
-					cout << "ERR: can't recognize sprite type '" << type << "'" << endl;
+					cout  << "ERR: can't recognize sprite type '" << type << "'" << endl;
 				}
+			}
+		}
+	}
+}
+
+
+void ResourceCtl::loadActions() {
+	auto allActions = _conf->getCollection(C_CONFIG_ACTION, "actions");
+	int actID = 0;
+
+	for (auto actInfo : allActions) {
+		auto record = std::dynamic_pointer_cast<JsonObject>(actInfo.second);
+		if (record) {
+			bool status = true;
+			std::string name = extractValue<std::string>(record->getValue("name"), &status);
+			std::string type = extractValue<std::string>(record->getValue("type"), &status);
+			int ticks = extractValue<int>(record->getValue("ticks"), &status);
+			int steps = extractValue<int>(record->getValue("steps"), &status);
+
+			if (status) {
+				if (type.compare("Sprite") == 0) {
+
+				} else if (type.compare("SpriteSheet") == 0) {
+
+				} else {
+					cout << "ERR: can't recognize action type '" << type << "'" << endl;
+				}
+				_actionLookup.emplace(actInfo.first, actID);
+				actID++;
 			}
 		}
 	}
@@ -255,7 +285,7 @@ shared_ptr<SpriteText> ResourceCtl::getFont(int size) {
 }
 
 
-std::string ResourceCtl::getActionName(ActionType id) const {
+std::string ResourceCtl::getActionName(int id) const {
 	switch (id) {
 	case ACTION_MOVE:
 		return "Move here";

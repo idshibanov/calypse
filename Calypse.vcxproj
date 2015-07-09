@@ -85,6 +85,7 @@
     <ClInclude Include="src\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config\action.json" />
     <None Include="config\app.json" />
     <None Include="config\item.json" />
     <None Include="config\obj.json" />
