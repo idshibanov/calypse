@@ -171,13 +171,13 @@ void AppCtl::controlLoop() {
 				selectAction(ACTION_NONE);
 				break;
 			case ALLEGRO_KEY_1:
-				selectAction(ACTION_DRAG);
+				selectAction("carry");
 				break;
 			case ALLEGRO_KEY_2:
-				selectAction(ACTION_CRAFT_CAMPFIRE);
+				selectAction("craftFire");
 				break;
 			case ALLEGRO_KEY_3:
-				selectAction(ACTION_CRAFT_TREE);
+				selectAction("craftReet");
 				break;
 			case ALLEGRO_KEY_F8:
 				_state->_drawMasks = !_state->_drawMasks;
@@ -438,15 +438,19 @@ void AppCtl::processUIElement(shared_ptr<UIElement> elem) {
 }
 
 
-void AppCtl::selectAction(ActionType t) {
+void AppCtl::selectAction(int actID) {
 	if (!_state->_selectedItem) {
-		if (t == ACTION_DRAG) {
+		if (actID == _res->getActionID("carry")) {
 			_mouse->setSprite(1);
 		} else {
 			_mouse->setSprite(0);
 		}
-		_state->_selectedAction = t;
+		_state->_selectedAction = actID;
 	}
+}
+
+void AppCtl::selectAction(const char* command) {
+	selectAction(_res->getActionID(command));
 }
 
 void AppCtl::selectItem(shared_ptr<Item> it) {

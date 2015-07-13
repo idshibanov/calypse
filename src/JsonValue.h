@@ -60,6 +60,7 @@ public:
 	shared_ptr<JsonValue> getValue(const std::string& name) const;
 	shared_ptr<JsonValue> getValue(const char* name) const;
 	const std::map<std::string, shared_ptr<JsonValue>>& getContents() const;
+	void iterate(std::function<void(std::string&, shared_ptr<JsonValue>)> f);
 	virtual void print(std::ostream& out, int tabs = 0) const;
 	friend std::ostream& operator<<(std::ostream& str, const JsonObject& v);
 };

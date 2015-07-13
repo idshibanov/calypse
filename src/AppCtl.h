@@ -56,6 +56,7 @@ public:
 	void processRightClick(const Point& clickPos);
 	void processMapElement();
 	void processUIElement(shared_ptr<UIElement> elem);
-	void selectAction(ActionType t);
+	void selectAction(int actID);
+	void selectAction(const char* command);
 	void selectItem(shared_ptr<Item> it);
 };

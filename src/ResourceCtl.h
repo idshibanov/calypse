@@ -7,6 +7,7 @@
 #include "Sprite.h"
 
 #define INVENTORY_ICON_SIZE 48
+#define ACTION_NONE -1
 
 // Resource controller that will eventually handle gradual loading
 // Configuration files (JSON) are being implemented

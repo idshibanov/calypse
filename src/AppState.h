@@ -25,7 +25,7 @@ struct AppState {
 
 	// state
 	shared_ptr<Screen> _curScreen;
-	ActionType _selectedAction;
+	int _selectedAction;
 	int _selectedObject;
 	UIFrame* _selectedFrame;
 	shared_ptr<Item> _selectedItem;

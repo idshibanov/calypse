@@ -200,18 +200,20 @@ bool ObjectAction::update() {
 		if (_state.check()) {
 			if (!_map.expired() && !_target.expired() && !_res.expired()) {
 				auto resCtl = _res.lock();
-				if (_type == ACTION_CUT) {
+				if (_type == ACTION_ABS_CUT) {
 					return _map.lock()->toggleObject(_target.lock()->getPos());
-				} else if (_type == ACTION_PICK_BRANCH) {
+				} else if (_type == ACTION_ABS_GATHER) {
 					_actor.lock()->getState()->addItem(resCtl->getItemID("wood"));
 					return true;
-				} else if (_type == ACTION_PICK_RED_BERRY) {
+				/*
+				} else if (_type == ACTION_ABS_GATHER) {
 					_actor.lock()->getState()->addItem(resCtl->getItemID("berryRed"));
 					return true;
-				} else if (_type == ACTION_PICK_BLUE_BERRY) {
+				} else if (_type == ACTION_ABS_GATHER) {
 					_actor.lock()->getState()->addItem(resCtl->getItemID("berryBlue"));
 					return true;
-				} else if (_type == ACTION_DRAG && !_actor.expired()) {
+				*/
+				} else if (_type == ACTION_ABS_CARRY && !_actor.expired()) {
 					_actor.lock()->pickUp(_target);
 					_target.lock()->dragged(true);
 					return true;
@@ -270,23 +272,15 @@ bool PointAction::update() {
 		if (_state.check()) {
 			if (!_actor.expired() && !_res.expired()) {
 				auto resCtl = _res.lock();
-				if (_type == ACTION_DROP) {
+				if (_type == ACTION_ABS_DROP) {
 					_actor.lock()->drop(_targetPos);
 					return true;
-				} else if (_type == ACTION_PICK_ITEM && !_map.expired()) {
-
-					auto gItem = _map.lock()->getItem(_targetPos);
-					if (gItem) {
-						if (_actor.lock()->getState()->getInventory()->addItem(gItem)) {
-							_map.lock()->removeItem(gItem->getID());
-						}
-					}
-				} else if (_type == ACTION_CRAFT_TREE && !_map.expired()) {
+				} else if (_type == ACTION_ABS_CRAFT && !_map.expired()) {
 
 					auto obj = make_shared<MapObject>(resCtl->getObjectID("reet"), _targetPos);
 					return _map.lock()->addObject(obj);
 
-				} else if (_type == ACTION_CRAFT_CAMPFIRE && !_map.expired()) {
+				} else if (_type == ACTION_ABS_CRAFT && !_map.expired()) {
 
 					auto actorState = _actor.lock()->getState();
 					int type = resCtl->getItemID("wood");
@@ -346,7 +340,7 @@ bool ItemAction::update() {
 	if (_timer.check()) {
 		if (_state.check()) {
 			if (!_actor.expired() && !_map.expired()) {
-				if (_type == ACTION_PICK_ITEM) {
+				if (_type == ACTION_ABS_PICK) {
 					auto gItem = _map.lock()->getItem(_target->getID());
 					if (gItem) {
 						if (_actor.lock()->getState()->getInventory()->addItem(gItem)) {
