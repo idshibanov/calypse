@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ActionInfo.cpp" />
     <ClCompile Include="src\AppCtl.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\ConfigCtl.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ActionInfo.h" />
     <ClInclude Include="src\ActionType.h" />
     <ClInclude Include="src\AppCtl.h" />
     <ClInclude Include="src\AppState.h" />

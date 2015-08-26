@@ -1,13 +1,15 @@
 #pragma once
 #include <string>
 
+#include "ActionType.h"
+
 class ActionInfo {
-	int _type;
+	ActionAbstractType _type;
 	std::string _name;
 	int _timer;
 	int _cycles;
 public:
-	ActionInfo(int, const std::string&, int, int);
+	ActionInfo(ActionAbstractType, const std::string&, int, int);
 	ActionInfo(const ActionInfo&);
 	virtual ~ActionInfo();
 	ActionInfo& operator=(const ActionInfo&);

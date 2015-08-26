@@ -4,6 +4,7 @@
 #include "ConfigCtl.h"
 #include "ObjectInfo.h"
 #include "ItemInfo.h"
+#include "ActionInfo.h"
 #include "Sprite.h"
 
 #define INVENTORY_ICON_SIZE 48
@@ -21,12 +22,14 @@ class ResourceCtl {
 
 	std::map<int, shared_ptr<ObjectInfo>> _info;
 	std::map<int, shared_ptr<ItemInfo>> _itemInfo;
+	std::map<int, shared_ptr<ActionInfo>> _actionInfo;
 
 	std::map<int, shared_ptr<Sprite>> _sprites;
 	std::map<int, shared_ptr<SpriteText>> _arialFonts;
 
 	void loadObjectRecords();
 	void loadItemRecords();
+	void loadActions();
 	void loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonObject> actArea);
 public:
 	ResourceCtl(shared_ptr<ConfigCtl> conf);
@@ -46,9 +49,9 @@ public:
 	shared_ptr<SpriteSheet> getSpriteSheet(int id) const;
 	shared_ptr<SpriteSheet> getSpriteSheet(const char* name) const;
 	shared_ptr<SpriteText> getFont(int size);
-	void loadActions();
 	int getActionID(const char* name) const;
-	std::string getActionName (int id) const;
+	shared_ptr<ActionInfo> getActionInfo(const char* name) const;
+	shared_ptr<ActionInfo> getActionInfo(int id) const;
 	std::string getStatName(StatScoreID id) const;
 	std::string getSkillName(SkillScoreID id) const;
 	std::string getItemName(int id) const;

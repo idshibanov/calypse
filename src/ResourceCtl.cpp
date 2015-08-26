@@ -61,7 +61,7 @@ void ResourceCtl::loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonOb
 			auto actionArr = arrPtr->getValue();
 			for (auto action : actionArr) {
 				int actID = extractValue<int>(action);
-				if (actID > ACTION_NONE && actID < ACTION_LAST) {
+				if (_actionInfo.find(actID) != _actionInfo.end()) {
 					act_map->_acts.push_back((ActionType)actID);
 				}
 			}
@@ -161,18 +161,13 @@ void ResourceCtl::loadActions() {
 		if (record) {
 			bool status = true;
 			std::string name = extractValue<std::string>(record->getValue("name"), &status);
-			std::string type = extractValue<std::string>(record->getValue("type"), &status);
+			int typeID = extractValue<int>(record->getValue("typeID"), &status);
 			int ticks = extractValue<int>(record->getValue("ticks"), &status);
 			int steps = extractValue<int>(record->getValue("steps"), &status);
 
-			if (status) {
-				if (type.compare("Sprite") == 0) {
-
-				} else if (type.compare("SpriteSheet") == 0) {
-
-				} else {
-					cout << "ERR: can't recognize action type '" << type << "'" << endl;
-				}
+			if (status && typeID >= 0 && typeID < ACTION_ABSTRACT_LAST) {
+				auto aiRecord = make_shared<ActionInfo>(ActionAbstractType(typeID), name, ticks, steps);
+				_actionInfo.emplace(actID, aiRecord);
 				_actionLookup.emplace(actInfo.first, actID);
 				actID++;
 			}
@@ -285,37 +280,27 @@ shared_ptr<SpriteText> ResourceCtl::getFont(int size) {
 }
 
 
-std::string ResourceCtl::getActionName(int id) const {
-	switch (id) {
-	case ACTION_MOVE:
-		return "Move here";
-		break;
-	case ACTION_CUT:
-		return "Cut the tree";
-		break;
-	case ACTION_DRAG:
-		return "Pick up the object";
-		break;
-	case ACTION_DROP:
-		return "Drop the object";
-		break;
-	case ACTION_CRAFT_TREE:
-		return "Plant the tree";
-		break;
-	case ACTION_PICK_BRANCH:
-		return "Pick branch";
-		break;
-	case ACTION_PICK_RED_BERRY:
-		return "Pick raspberry";
-		break;
-	case ACTION_PICK_BLUE_BERRY:
-		return "Pick blueberry";
-		break;
-	default:
-		break;
-	}
-	return "ERR";
+shared_ptr<ActionInfo> ResourceCtl::getActionInfo(const char* name) const {
+	return getActionInfo(getActionID(name));
 }
+
+
+shared_ptr<ActionInfo> ResourceCtl::getActionInfo(int id) const {
+	auto ptr = _actionInfo.find(id);
+	if (ptr != _actionInfo.end()) {
+		return ptr->second;
+	}
+	return nullptr;
+}
+
+int ResourceCtl::getActionID(const char* name) const {
+	auto it = _actionLookup.find(name);
+	if (it != _actionLookup.end()) {
+		return it->second;
+	}
+	return -1;
+}
+
 
 std::string ResourceCtl::getStatName(StatScoreID id) const {
 	switch (id) {

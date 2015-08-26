@@ -1,7 +1,7 @@
 #include "ActionInfo.h"
 
 
-ActionInfo::ActionInfo(int type, const std::string& name, int timer, int cycles) {
+ActionInfo::ActionInfo(ActionAbstractType type, const std::string& name, int timer, int cycles) {
 	_type = type;
 	_name = name;
 	_timer = timer;
