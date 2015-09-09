@@ -23,7 +23,10 @@
                 {
                     "pos": "0,0",
                     "size": "64,92",
-                    "actions": [ 8, 9, 10, 11 ]
+                    "actions": [
+						{ "type" : "gather", "paramItem" : "berryBlue" },
+						{ "type" : "gatherMulti", "paramItem" : "berryRed", "quantity" : 5 },
+	                ]
                 }
             ]
         },

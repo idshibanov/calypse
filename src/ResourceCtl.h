@@ -4,6 +4,7 @@
 #include "ConfigCtl.h"
 #include "ObjectInfo.h"
 #include "ItemInfo.h"
+#include "ActionTemplate.h"
 #include "ActionInfo.h"
 #include "Sprite.h"
 
@@ -15,10 +16,12 @@
 
 class ResourceCtl {
 	shared_ptr<ConfigCtl> _conf;
-	std::map<std::string, int> _actionLookup;
 	std::map<std::string, int> _objectLookup;
 	std::map<std::string, int> _itemLookup;
 	std::map<std::string, int> _spriteLookup;
+	std::map<std::string, int> _actionLookup;
+	std::map<std::string, shared_ptr<ActionTemplate>> _actionTemplates;
+	int _lastAct;
 
 	std::map<int, shared_ptr<ObjectInfo>> _info;
 	std::map<int, shared_ptr<ItemInfo>> _itemInfo;
@@ -27,15 +30,16 @@ class ResourceCtl {
 	std::map<int, shared_ptr<Sprite>> _sprites;
 	std::map<int, shared_ptr<SpriteText>> _arialFonts;
 
-	void loadObjectRecords();
-	void loadItemRecords();
-	void loadActions();
-	void loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonObject> actArea);
+	void _loadObjectRecords();
+	void _loadItemRecords();
+	void _loadSprites();
+	void _loadActionTemplates();
+	int _loadAction(shared_ptr<JsonObject> actRecord);
+	void _loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonObject> actArea);
 public:
 	ResourceCtl(shared_ptr<ConfigCtl> conf);
 	~ResourceCtl();
 	void loadResources();
-	void loadSprites();
 	int getObjectID(const char* name) const;
 	shared_ptr<ObjectInfo> getObjectInfo(const char* name) const;
 	shared_ptr<ObjectInfo> getObjectInfo(int type) const;
@@ -52,6 +56,7 @@ public:
 	int getActionID(const char* name) const;
 	shared_ptr<ActionInfo> getActionInfo(const char* name) const;
 	shared_ptr<ActionInfo> getActionInfo(int id) const;
+	ActionAbstractType matchActionAbstract(std::string& name) const;
 	std::string getStatName(StatScoreID id) const;
 	std::string getSkillName(SkillScoreID id) const;
 	std::string getItemName(int id) const;

@@ -203,6 +203,7 @@ bool ObjectAction::update() {
 				if (_type == ACTION_ABS_CUT) {
 					return _map.lock()->toggleObject(_target.lock()->getPos());
 				} else if (_type == ACTION_ABS_GATHER) {
+					// int _itemParam;
 					_actor.lock()->getState()->addItem(resCtl->getItemID("wood"));
 					return true;
 				/*

@@ -1,24 +1,24 @@
 {
     "version": 1.0,
-    "type": "ActionInfo",
+    "type": "ActionTemplate",
     "actions": {
         "gather": {
             "name": "Gather",
-			"type" : "ObjectAction",
+			"logicType" : "ACTION_ABS_GATHER",
             "ticks": 8,
             "steps": 8,
-            "arguments": ["param"],
+            "arguments": ["paramItem"],
         },
         "gatherMulti": {
             "name": "Gather",
-			"type" : "ObjectAction",
+			"logicType" : "ACTION_ABS_GATHER",
             "ticks": 8,
             "steps": 8,
-            "arguments": ["param", "quantity"],
+            "arguments": ["paramItem", "quantity"],
         },
         "move": {
             "name": "Move here",
-			"type" : "MoveAction",
+			"logicType" : "ACTION_ABS_MOVE",
             "ticks": 8,
             "steps": 8,
         },

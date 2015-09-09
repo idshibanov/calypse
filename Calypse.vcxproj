@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ActionInfo.cpp" />
+    <ClCompile Include="src\ActionTemplate.cpp" />
     <ClCompile Include="src\AppCtl.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\ConfigCtl.cpp" />
@@ -48,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ActionInfo.h" />
+    <ClInclude Include="src\ActionTemplate.h" />
     <ClInclude Include="src\ActionType.h" />
     <ClInclude Include="src\AppCtl.h" />
     <ClInclude Include="src\AppState.h" />

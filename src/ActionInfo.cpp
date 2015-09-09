@@ -1,11 +1,15 @@
 #include "ActionInfo.h"
 
 
-ActionInfo::ActionInfo(ActionAbstractType type, const std::string& name, int timer, int cycles) {
+ActionInfo::ActionInfo(ActionAbstractType type, const std::string& name, int timer, int cycles, 
+                       int item, int obj, int quantity) {
 	_type = type;
 	_name = name;
 	_timer = timer;
 	_cycles = cycles;
+	_itemParam = item;
+	_objParam = obj;
+	_quantity = quantity;
 }
 
 ActionInfo::ActionInfo(const ActionInfo& rhs) {

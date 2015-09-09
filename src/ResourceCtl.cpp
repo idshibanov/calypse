@@ -9,13 +9,14 @@ ResourceCtl::~ResourceCtl() {
 }
 
 void ResourceCtl::loadResources() {
-	loadActions();
-	loadObjectRecords();
-	loadSprites();
-	loadItemRecords();
+	_lastAct = 0;
+	_loadActionTemplates();
+	_loadObjectRecords();
+	_loadSprites();
+	_loadItemRecords();
 }
 
-void ResourceCtl::loadObjectRecords() {
+void ResourceCtl::_loadObjectRecords() {
 	auto allObjects = _conf->getCollection(C_CONFIG_OBJECT, "objects");
 
 	int objID = 0;
@@ -37,7 +38,7 @@ void ResourceCtl::loadObjectRecords() {
 				if (actPtr) {
 					auto actAreas = actPtr->getValue();
 					for (auto actArea : actAreas) {
-						loadActiveAreas(info, std::dynamic_pointer_cast<JsonObject>(actArea));
+						_loadActiveAreas(info, std::dynamic_pointer_cast<JsonObject>(actArea));
 					}
 				}
 
@@ -50,7 +51,7 @@ void ResourceCtl::loadObjectRecords() {
 }
 
 
-void ResourceCtl::loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonObject> actArea) {
+void ResourceCtl::_loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonObject> actArea) {
 	if (actArea) {
 		auto arrPtr = std::dynamic_pointer_cast<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(actArea->getValue("actions"));
 		if (arrPtr) {
@@ -60,7 +61,7 @@ void ResourceCtl::loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonOb
 			auto act_map = make_shared<ObjectActionArea>();
 			auto actionArr = arrPtr->getValue();
 			for (auto action : actionArr) {
-				int actID = extractValue<int>(action);
+				int actID = _loadAction(std::dynamic_pointer_cast<JsonObject>(action));
 				if (_actionInfo.find(actID) != _actionInfo.end()) {
 					act_map->_acts.push_back((ActionType)actID);
 				}
@@ -71,7 +72,7 @@ void ResourceCtl::loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonOb
 	}
 }
 
-void ResourceCtl::loadItemRecords() {
+void ResourceCtl::_loadItemRecords() {
 	auto allItems = _conf->getCollection(C_CONFIG_ITEM, "items");
 
 	Point sprSize(48, 48);
@@ -101,7 +102,7 @@ void ResourceCtl::loadItemRecords() {
 
 
 // DO NOT LOAD BITMAPS (SPRITES) BEFORE CREATING DISPLAY
-void ResourceCtl::loadSprites() {
+void ResourceCtl::_loadSprites() {
 	// clear it in case we are reloading (new display is created)
 	_sprites.clear();
 	_spriteLookup.clear();
@@ -152,27 +153,89 @@ void ResourceCtl::loadSprites() {
 }
 
 
-void ResourceCtl::loadActions() {
+void ResourceCtl::_loadActionTemplates() {
 	auto allActions = _conf->getCollection(C_CONFIG_ACTION, "actions");
-	int actID = 0;
 
-	for (auto actInfo : allActions) {
-		auto record = std::dynamic_pointer_cast<JsonObject>(actInfo.second);
+	for (auto actT : allActions) {
+		auto record = std::dynamic_pointer_cast<JsonObject>(actT.second);
 		if (record) {
 			bool status = true;
 			std::string name = extractValue<std::string>(record->getValue("name"), &status);
-			int typeID = extractValue<int>(record->getValue("typeID"), &status);
+			std::string logicName = extractValue<std::string>(record->getValue("logicType"), &status);
 			int ticks = extractValue<int>(record->getValue("ticks"), &status);
 			int steps = extractValue<int>(record->getValue("steps"), &status);
+			auto argPtr = std::dynamic_pointer_cast<JsonTValue<std::vector<shared_ptr<JsonValue>>>>(record->getValue("arguments"));
+			auto logicType = matchActionAbstract(logicName);
 
-			if (status && typeID >= 0 && typeID < ACTION_ABSTRACT_LAST) {
-				auto aiRecord = make_shared<ActionInfo>(ActionAbstractType(typeID), name, ticks, steps);
-				_actionInfo.emplace(actID, aiRecord);
-				_actionLookup.emplace(actInfo.first, actID);
-				actID++;
+			if (status && logicType != ACTION_ABSTRACT_LAST) {
+				std::vector<std::string> paramList;
+
+				if (argPtr) {
+					auto argList = argPtr->getValue();
+					for (auto arg : argList) {
+						std::string argument = extractValue<std::string>(arg, &status);
+						if (status) {
+							paramList.push_back(argument);
+						}
+					}
+				}
+
+				auto actTRecord = make_shared<ActionTemplate>(logicType, name, ticks, steps, paramList);
+				_actionTemplates.emplace(name, actTRecord);
 			}
 		}
 	}
+}
+
+
+int ResourceCtl::_loadAction(shared_ptr<JsonObject> actRecord) {
+	if (actRecord) {
+		bool status = true;
+		std::string type = extractValue<std::string>(actRecord->getValue("type"), &status);
+		std::string name = extractValue<std::string>(actRecord->getValue("name"), &status);
+
+		if (status) {
+			auto it = _actionTemplates.find(type);
+			if (it != _actionTemplates.end()) {
+				auto actTemp = it->second;
+				int objID, itemID, quantity;
+
+				for (auto arg = actTemp->params().begin(); status && arg != actTemp->params().end(); arg++) {
+
+					if ((*arg).compare("objParam") == 0) {
+						std::string objName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
+						objID = getObjectID(objName.c_str());
+						if (objID == -1) {
+							cout << "Object " << objName << " doesn't exist" << endl;
+							break;
+						}
+					} else if ((*arg).compare("itemParam") == 0) {
+						std::string itemName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
+						itemID = getItemID(itemName.c_str());
+						if (itemID == -1) {
+							cout << "Item " << itemName << " doesn't exist" << endl;
+							break;
+						}
+					} else if ((*arg).compare("quantity") == 0) {
+						quantity = extractValue<int>(actRecord->getValue((*arg)), &status);
+					} else {
+						cout << "ERR: Action argument " << (*arg) << " is not recognized" << endl;
+					}
+				}
+
+				if (status) {
+					auto actInfo = make_shared<ActionInfo>(actTemp->type(), actTemp->name(), actTemp->timer(),
+						                                   actTemp->cycles(), itemID, objID, quantity);
+					_actionInfo.emplace(_lastAct, actInfo);
+					_actionLookup.emplace(name, _lastAct);
+					return _lastAct++;
+				}
+			} else {
+				cout << "ERR: Template " << type << " doesn't exist" << endl;
+			}
+		}
+	}
+	return -1;
 }
 
 
@@ -299,6 +362,26 @@ int ResourceCtl::getActionID(const char* name) const {
 		return it->second;
 	}
 	return -1;
+}
+
+
+ActionAbstractType ResourceCtl::matchActionAbstract(std::string& name) const {
+	if (name.compare("ACTION_ABS_MOVE") == 0) {
+		return ACTION_ABS_MOVE;
+	} else if (name.compare("ACTION_ABS_GATHER") == 0) {
+		return ACTION_ABS_GATHER;
+	} else if (name.compare("ACTION_ABS_PICK") == 0) {
+		return ACTION_ABS_PICK;
+	} else if (name.compare("ACTION_ABS_CARRY") == 0) {
+		return ACTION_ABS_CARRY;
+	} else if (name.compare("ACTION_ABS_DROP") == 0) {
+		return ACTION_ABS_DROP;
+	} else if (name.compare("ACTION_ABS_CUT") == 0) {
+		return ACTION_ABS_CUT;
+	} else if (name.compare("ACTION_ABS_CRAFT") == 0) {
+		return ACTION_ABS_CRAFT;
+	}
+	return ACTION_ABSTRACT_LAST;
 }
 
 
