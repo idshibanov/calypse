@@ -192,46 +192,50 @@ int ResourceCtl::_loadAction(shared_ptr<JsonObject> actRecord) {
 	if (actRecord) {
 		bool status = true;
 		std::string type = extractValue<std::string>(actRecord->getValue("type"), &status);
-		std::string name = extractValue<std::string>(actRecord->getValue("name"), &status);
+		std::string cmd = extractValue<std::string>(actRecord->getValue("command"), &status);
 
 		if (status) {
-			auto it = _actionTemplates.find(type);
-			if (it != _actionTemplates.end()) {
-				auto actTemp = it->second;
-				int objID, itemID, quantity;
-
-				for (auto arg = actTemp->params().begin(); status && arg != actTemp->params().end(); arg++) {
-
-					if ((*arg).compare("objParam") == 0) {
-						std::string objName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
-						objID = getObjectID(objName.c_str());
-						if (objID == -1) {
-							cout << "Object " << objName << " doesn't exist" << endl;
-							break;
-						}
-					} else if ((*arg).compare("itemParam") == 0) {
-						std::string itemName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
-						itemID = getItemID(itemName.c_str());
-						if (itemID == -1) {
-							cout << "Item " << itemName << " doesn't exist" << endl;
-							break;
-						}
-					} else if ((*arg).compare("quantity") == 0) {
-						quantity = extractValue<int>(actRecord->getValue((*arg)), &status);
-					} else {
-						cout << "ERR: Action argument " << (*arg) << " is not recognized" << endl;
-					}
-				}
-
-				if (status) {
-					auto actInfo = make_shared<ActionInfo>(actTemp->type(), actTemp->name(), actTemp->timer(),
-						                                   actTemp->cycles(), itemID, objID, quantity);
-					_actionInfo.emplace(_lastAct, actInfo);
-					_actionLookup.emplace(name, _lastAct);
-					return _lastAct++;
-				}
+			if (_actionLookup.find(cmd) != _actionLookup.end()) {
+				cout << endl;
 			} else {
-				cout << "ERR: Template " << type << " doesn't exist" << endl;
+				auto it = _actionTemplates.find(type);
+				if (it != _actionTemplates.end()) {
+					auto actTemp = it->second;
+					int objID, itemID, quantity;
+
+					for (auto arg = actTemp->params().begin(); status && arg != actTemp->params().end(); arg++) {
+
+						if ((*arg).compare("objParam") == 0) {
+							std::string objName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
+							objID = getObjectID(objName.c_str());
+							if (objID == -1) {
+								cout << "Object " << objName << " doesn't exist" << endl;
+								break;
+							}
+						} else if ((*arg).compare("itemParam") == 0) {
+							std::string itemName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
+							itemID = getItemID(itemName.c_str());
+							if (itemID == -1) {
+								cout << "Item " << itemName << " doesn't exist" << endl;
+								break;
+							}
+						} else if ((*arg).compare("quantity") == 0) {
+							quantity = extractValue<int>(actRecord->getValue((*arg)), &status);
+						} else {
+							cout << "ERR: Action argument " << (*arg) << " is not recognized" << endl;
+						}
+					}
+
+					if (status) {
+						auto actInfo = make_shared<ActionInfo>(actTemp->type(), actTemp->name(), actTemp->cycles(),
+							actTemp->steps(), itemID, objID, quantity);
+						_actionInfo.emplace(_lastAct, actInfo);
+						_actionLookup.emplace(cmd, _lastAct);
+						return _lastAct++;
+					}
+				} else {
+					cout << "ERR: Template " << type << " doesn't exist" << endl;
+				}
 			}
 		}
 	}

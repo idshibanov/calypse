@@ -14,6 +14,11 @@
 // Resource controller that will eventually handle gradual loading
 // Configuration files (JSON) are being implemented
 
+// toResolve map - names and ids
+// resolveID function that will be fired when right object added
+// alternative - value map, updated when loaded
+// Info objects are pointed to map (record pushed/ptr passed when created)
+
 class ResourceCtl {
 	shared_ptr<ConfigCtl> _conf;
 	std::map<std::string, int> _objectLookup;
@@ -26,6 +31,7 @@ class ResourceCtl {
 	std::map<int, shared_ptr<ObjectInfo>> _info;
 	std::map<int, shared_ptr<ItemInfo>> _itemInfo;
 	std::map<int, shared_ptr<ActionInfo>> _actionInfo;
+
 
 	std::map<int, shared_ptr<Sprite>> _sprites;
 	std::map<int, shared_ptr<SpriteText>> _arialFonts;

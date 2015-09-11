@@ -2,10 +2,10 @@
 #include "Object.h"
 #include "Action.h"
 
-Action::Action(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor, int cycles, int steps)
-               : _timer(cycles), _state(steps) {
+Action::Action(shared_ptr<ActionInfo> info, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor)
+	           : _timer(info->cycles()), _state(info->steps()) {
+	_info = info;
 	_res = res;
-	_type = type;
 	_actor = actor;
 	// don't start the timer until action started
 	_timer.stop();
@@ -17,7 +17,7 @@ Action::~Action() {
 
 Action::Action(const Action& act) {
 	_res = act._res;
-	_type = act._type;
+	_info = act._info;
 	_actor = act._actor;
 	_timer = act._timer;
 	_state = act._state;
@@ -26,7 +26,7 @@ Action::Action(const Action& act) {
 
 Action& Action::operator= (const Action& act) {
 	_res = act._res;
-	_type = act._type;
+	_info = act._info;
 	_actor = act._actor;
 	_timer = act._timer;
 	_state = act._state;
@@ -53,15 +53,15 @@ int Action::getState() const {
 	return _state.getProgress();
 }
 
-ActionType Action::getType() const {
-	return _type;
+shared_ptr<ActionInfo> Action::getType() const {
+	return _info;
 }
 
 
 
-MoveAction::MoveAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor, int cycles, int steps,
+MoveAction::MoveAction(shared_ptr<ActionInfo> type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor,
 	                   const Point& pos, weak_ptr<AStarSearch> pf)
-                       : Action(type, res, actor, cycles, steps) {
+                       : Action(type, res, actor) {
 	_target = pos - (pos % 2);
 	_pf = pf;
 }
@@ -153,9 +153,9 @@ bool MoveAction::update() {
 
 
 
-ObjectAction::ObjectAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor, int cycles, int steps,
+ObjectAction::ObjectAction(shared_ptr<ActionInfo> type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor,
 	                       weak_ptr<MapObject> obj, weak_ptr<LocalMap> map)
-	                       : Action(type, res, actor, cycles, steps) {
+	                       : Action(type, res, actor) {
 	_target = obj;
 	_map = map;
 }
@@ -200,9 +200,9 @@ bool ObjectAction::update() {
 		if (_state.check()) {
 			if (!_map.expired() && !_target.expired() && !_res.expired()) {
 				auto resCtl = _res.lock();
-				if (_type == ACTION_ABS_CUT) {
+				if (_info->type() == ACTION_ABS_CUT) {
 					return _map.lock()->toggleObject(_target.lock()->getPos());
-				} else if (_type == ACTION_ABS_GATHER) {
+				} else if (_info->type() == ACTION_ABS_GATHER) {
 					// int _itemParam;
 					_actor.lock()->getState()->addItem(resCtl->getItemID("wood"));
 					return true;
@@ -214,7 +214,7 @@ bool ObjectAction::update() {
 					_actor.lock()->getState()->addItem(resCtl->getItemID("berryBlue"));
 					return true;
 				*/
-				} else if (_type == ACTION_ABS_CARRY && !_actor.expired()) {
+				} else if (_info->type() == ACTION_ABS_CARRY && !_actor.expired()) {
 					_actor.lock()->pickUp(_target);
 					_target.lock()->dragged(true);
 					return true;
@@ -229,9 +229,9 @@ bool ObjectAction::update() {
 
 
 
-PointAction::PointAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor, 
-	                     int cycles, int steps, const Point& pos, weak_ptr<LocalMap> map)
-	                     : Action(type, res, actor, cycles, steps) {
+PointAction::PointAction(shared_ptr<ActionInfo> type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor,
+	                     const Point& pos, weak_ptr<LocalMap> map)
+	                     : Action(type, res, actor) {
 	_targetPos = pos;
 	_map = map;
 }
@@ -273,15 +273,15 @@ bool PointAction::update() {
 		if (_state.check()) {
 			if (!_actor.expired() && !_res.expired()) {
 				auto resCtl = _res.lock();
-				if (_type == ACTION_ABS_DROP) {
+				if (_info->type() == ACTION_ABS_DROP) {
 					_actor.lock()->drop(_targetPos);
 					return true;
-				} else if (_type == ACTION_ABS_CRAFT && !_map.expired()) {
+				} else if (_info->type() == ACTION_ABS_CRAFT && !_map.expired()) {
 
 					auto obj = make_shared<MapObject>(resCtl->getObjectID("reet"), _targetPos);
 					return _map.lock()->addObject(obj);
 
-				} else if (_type == ACTION_ABS_CRAFT && !_map.expired()) {
+				} else if (_info->type() == ACTION_ABS_CRAFT && !_map.expired()) {
 
 					auto actorState = _actor.lock()->getState();
 					int type = resCtl->getItemID("wood");
@@ -304,9 +304,9 @@ bool PointAction::update() {
 
 
 
-ItemAction::ItemAction(ActionType type, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor,
-	                   int cycles, int steps, shared_ptr<Item> target, weak_ptr<LocalMap> map)
-	                   : Action(type, res, actor, cycles, steps) {
+ItemAction::ItemAction(shared_ptr<ActionInfo> info, weak_ptr<ResourceCtl> res, weak_ptr<Actor> actor,
+	                   shared_ptr<Item> target, weak_ptr<LocalMap> map)
+	                   : Action(info, res, actor) {
 	_target = target;
 	_map = map;
 }
@@ -341,7 +341,7 @@ bool ItemAction::update() {
 	if (_timer.check()) {
 		if (_state.check()) {
 			if (!_actor.expired() && !_map.expired()) {
-				if (_type == ACTION_ABS_PICK) {
+				if (_info->type() == ACTION_ABS_PICK) {
 					auto gItem = _map.lock()->getItem(_target->getID());
 					if (gItem) {
 						if (_actor.lock()->getState()->getInventory()->addItem(gItem)) {

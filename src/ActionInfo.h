@@ -6,8 +6,8 @@
 class ActionInfo {
 	ActionAbstractType _type;
 	std::string _name;
-	int _timer;
 	int _cycles;
+	int _steps;
 
 	int _itemParam;
 	int _objParam;
@@ -18,8 +18,8 @@ public:
 	virtual ~ActionInfo();
 	ActionInfo& operator=(const ActionInfo&);
 	int type() const;
-	int timer() const;
 	int cycles() const;
+	int steps() const;
 	std::string name() const;
 	int itemParam() const;
 	int objParam() const;

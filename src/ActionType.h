@@ -55,6 +55,7 @@ enum ActionAbstractType {
 	ACTION_ABS_DROP,    // place objects
 	ACTION_ABS_CUT,
 	ACTION_ABS_CRAFT,
+	ACTION_CLOSE_PARENT,
 	ACTION_ABSTRACT_LAST,
 };
 

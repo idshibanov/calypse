@@ -29,7 +29,7 @@ void EventService::process(shared_ptr<MapObject> obj, ActionType id) {
 	Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
 
 	if (target._x >= 0 && target._y >= 0) {
-		auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
+		auto act1 = make_shared<MoveAction>(_res->getActionInfo("move"), _res, actor, target, _pFinder);
 		if (_res->getObjectInfo(obj->getType())->liftable() && id == ACTION_DRAG) {
 			auto act2 = make_shared<ObjectAction>(ACTION_DRAG, _res, actor, 1, 1, obj, _map);
 			act1->chainAction(act2);
