@@ -31,7 +31,7 @@ ActionTemplate::~ActionTemplate() {
 
 }
 
-int ActionTemplate::type() const {
+ActionAbstractType ActionTemplate::type() const {
 	return _type;
 }
 

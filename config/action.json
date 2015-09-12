@@ -1,26 +1,90 @@
 {
     "version": 1.0,
     "type": "ActionTemplate",
-    "actions": {
+    "templates": {
+        "sleep": {
+            "logicType" : "ACTION_ABS_SLEEP",
+            "ticks": 8,
+            "steps": 1,
+        },
+        "move": {
+            "logicType" : "ACTION_ABS_MOVE",
+            "ticks": 8,
+            "steps": 8,
+        },
+        "carry": {
+            "logicType" : "ACTION_ABS_CARRY",
+            "ticks": 1,
+            "steps": 1,
+        },
+        "dropObject": {
+            "logicType" : "ACTION_ABS_DROP",
+            "ticks": 1,
+            "steps": 1,
+        },
+        "pickItem": {
+            "logicType" : "ACTION_ABS_PICK",
+            "ticks": 1,
+            "steps": 1,
+        },
         "gather": {
-            "name": "Gather",
-			"logicType" : "ACTION_ABS_GATHER",
+            "logicType" : "ACTION_ABS_GATHER",
             "ticks": 8,
             "steps": 8,
             "arguments": ["paramItem"],
         },
         "gatherMulti": {
-            "name": "Gather",
-			"logicType" : "ACTION_ABS_GATHER",
+            "logicType" : "ACTION_ABS_GATHER",
             "ticks": 8,
             "steps": 8,
             "arguments": ["paramItem", "quantity"],
         },
-        "move": {
-            "name": "Move here",
-			"logicType" : "ACTION_ABS_MOVE",
+        "cut": {
+            "logicType" : "ACTION_ABS_CUT",
+            "ticks": 12,
+            "steps": 8,
+        },
+        "craft": {
+            "logicType" : "ACTION_ABS_CRAFT",
             "ticks": 8,
             "steps": 8,
+            "arguments": ["paramItem", "quantity"],
+        },
+    },
+    "basicActions": {
+        "move": {
+			"type" : "move",
+            "command" : "move",
+			"desc" : "Move here",
+        },
+        "carry": {
+			"type" : "carry",
+            "command" : "carry",
+			"desc" : "Move here",
+        },
+        "dropObject": {
+			"type" : "dropObject",
+            "command" : "dropObject",
+			"desc" : "Move here",
+        },
+        "pickItem": {
+			"type" : "pickItem",
+            "command" : "pickItem",
+			"desc" : "Move here",
+        },
+        "craftReet": {
+			"type" : "craft",
+            "command" : "craftReet",
+			"desc" : "Move here",
+			"paramItem" : "wood",
+			"quantity" : "1",
+        },
+        "craftFire": {
+			"type" : "craft",
+            "command" : "craftFire",
+			"desc" : "Move here",
+			"paramItem" : "wood",
+			"quantity" : "3",
         },
     }
 }

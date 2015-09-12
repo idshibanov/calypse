@@ -11,6 +11,7 @@ ResourceCtl::~ResourceCtl() {
 void ResourceCtl::loadResources() {
 	_lastAct = 0;
 	_loadActionTemplates();
+	_loadDefaultActions();
 	_loadObjectRecords();
 	_loadSprites();
 	_loadItemRecords();
@@ -63,7 +64,7 @@ void ResourceCtl::_loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonO
 			for (auto action : actionArr) {
 				int actID = _loadAction(std::dynamic_pointer_cast<JsonObject>(action));
 				if (_actionInfo.find(actID) != _actionInfo.end()) {
-					act_map->_acts.push_back((ActionType)actID);
+					act_map->_acts.push_back(actID);
 				}
 			}
 			act_map->_area = Rect(pos, size);
@@ -154,13 +155,12 @@ void ResourceCtl::_loadSprites() {
 
 
 void ResourceCtl::_loadActionTemplates() {
-	auto allActions = _conf->getCollection(C_CONFIG_ACTION, "actions");
+	auto allActions = _conf->getCollection(C_CONFIG_ACTION, "templates");
 
 	for (auto actT : allActions) {
 		auto record = std::dynamic_pointer_cast<JsonObject>(actT.second);
 		if (record) {
 			bool status = true;
-			std::string name = extractValue<std::string>(record->getValue("name"), &status);
 			std::string logicName = extractValue<std::string>(record->getValue("logicType"), &status);
 			int ticks = extractValue<int>(record->getValue("ticks"), &status);
 			int steps = extractValue<int>(record->getValue("steps"), &status);
@@ -180,10 +180,19 @@ void ResourceCtl::_loadActionTemplates() {
 					}
 				}
 
-				auto actTRecord = make_shared<ActionTemplate>(logicType, name, ticks, steps, paramList);
-				_actionTemplates.emplace(name, actTRecord);
+				auto actTRecord = make_shared<ActionTemplate>(logicType, actT.first, ticks, steps, paramList);
+				_actionTemplates.emplace(actT.first, actTRecord);
 			}
 		}
+	}
+}
+
+
+void ResourceCtl::_loadDefaultActions() {
+	auto allActions = _conf->getCollection(C_CONFIG_ACTION, "basicActions");
+
+	for (auto actT : allActions) {
+		_loadAction(std::dynamic_pointer_cast<JsonObject>(actT.second));
 	}
 }
 
@@ -205,14 +214,14 @@ int ResourceCtl::_loadAction(shared_ptr<JsonObject> actRecord) {
 
 					for (auto arg = actTemp->params().begin(); status && arg != actTemp->params().end(); arg++) {
 
-						if ((*arg).compare("objParam") == 0) {
+						if ((*arg).compare("paramObj") == 0) {
 							std::string objName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
 							objID = getObjectID(objName.c_str());
 							if (objID == -1) {
 								cout << "Object " << objName << " doesn't exist" << endl;
 								break;
 							}
-						} else if ((*arg).compare("itemParam") == 0) {
+						} else if ((*arg).compare("paramItem") == 0) {
 							std::string itemName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
 							itemID = getItemID(itemName.c_str());
 							if (itemID == -1) {

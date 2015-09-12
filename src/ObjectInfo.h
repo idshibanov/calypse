@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include "ActionType.h"
+#include "ActionInfo.h"
 #include "ObjectState.h"
 #include "Point.h"
 
@@ -9,7 +9,7 @@ class ResourceCtl;
 
 struct ObjectActionArea {
 	Rect _area;
-	std::vector<ActionType> _acts;
+	std::vector<int> _acts;
 };
 
 // Will be extended soon with derived classes.

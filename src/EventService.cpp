@@ -16,25 +16,23 @@ EventService::~EventService() {
 
 }
 
-void EventService::process(ActionType id) {
-	if (id >= ACTION_CUT && id <= ACTION_PICK_BLUE_BERRY) {
-		auto obj = _map->getObject(_state->_selectedObject);
-		process(obj, id);
-	}
+void EventService::process(shared_ptr<ActionInfo> act) {
+	auto obj = _map->getObject(_state->_selectedObject);
+	process(obj, act);
 }
 
-void EventService::process(shared_ptr<MapObject> obj, ActionType id) {
+void EventService::process(shared_ptr<MapObject> obj, shared_ptr<ActionInfo> act) {
 	auto actor = _map->getPrimaryActor();
 	Rect objArea(obj->getPos(), _res->getObjectInfo(obj->getType())->mapSize());
 	Point target = _pFinder->findAdjacent(actor->getPos(), objArea);
 
 	if (target._x >= 0 && target._y >= 0) {
 		auto act1 = make_shared<MoveAction>(_res->getActionInfo("move"), _res, actor, target, _pFinder);
-		if (_res->getObjectInfo(obj->getType())->liftable() && id == ACTION_DRAG) {
-			auto act2 = make_shared<ObjectAction>(ACTION_DRAG, _res, actor, 1, 1, obj, _map);
+		if (act->type() == ACTION_ABS_CARRY && _res->getObjectInfo(obj->getType())->liftable()) {
+			auto act2 = make_shared<ObjectAction>(act, _res, actor, obj, _map);
 			act1->chainAction(act2);
 		} else {
-			auto act2 = make_shared<ObjectAction>(id, _res, actor, 20, 8, obj, _map);
+			auto act2 = make_shared<ObjectAction>(act, _res, actor, obj, _map);
 			act1->chainAction(act2);
 		}
 		actor->setAction(act1);
@@ -49,7 +47,7 @@ void EventService::spawnAction(int actID) {
 		int modY = rand() % 11 - 5;
 		pos.modAdd(modX * TILE_MASK, modY * TILE_MASK);
 
-		auto act = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, pos, _pFinder);
+		auto act = make_shared<MoveAction>(_res->getActionInfo("move"), _res, actor, pos, _pFinder);
 		actor->setAction(act);
 	}
 }

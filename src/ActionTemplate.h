@@ -15,7 +15,7 @@ public:
 	ActionTemplate(const ActionTemplate&);
 	virtual ~ActionTemplate();
 	ActionTemplate& operator=(const ActionTemplate&);
-	int type() const;
+	ActionAbstractType type() const;
 	int cycles() const;
 	int steps() const;
 	std::string name() const;

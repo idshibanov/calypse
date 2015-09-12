@@ -245,9 +245,9 @@ void ScreenCtl::drawMap() {
 
 		// Selected object (craft suggestion)
 
-		if (_state->_selectedAction == ACTION_CRAFT_TREE) {
+		if (_state->_selectedAction == _res->getActionID("craftReet")) {
 			drawSelectedObject(_res->getObjectInfo("reet"));
-		} else if (_state->_selectedAction == ACTION_CRAFT_CAMPFIRE) {
+		} else if (_state->_selectedAction == _res->getActionID("craftFire")) {
 			drawSelectedObject(_res->getObjectInfo("fire"));
 		}
 
@@ -358,7 +358,7 @@ void ScreenCtl::displayOptions(Point objPos, const shared_ptr<ObjectActionArea> 
 	convertMapCoords(objPos).modAdd(0,-20);
 	_menu->setPos(objPos);
 	for (auto it = options->_acts.begin(); it != options->_acts.end(); it++) {
-		auto newOption = make_shared<UIButton>(objPos, nullptr, *it, _font, _res->getActionName(*it), true, false);
+		auto newOption = make_shared<UIButton>(objPos, nullptr, *it, _font, _res->getActionInfo(*it)->name(), true, false);
 		newOption->setZlevel(90);
 
 		_options.push_back(newOption);

@@ -155,7 +155,7 @@ void Actor::update() {
 
 
 bool Actor::isWorking() const {
-	if (_action && _action->getType() != ACTION_MOVE) {
+	if (_action && _action->getType()->type() != ACTION_ABS_MOVE) {
 		return _action->isActive();
 	}
 	return false;

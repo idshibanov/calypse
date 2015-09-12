@@ -313,9 +313,9 @@ void AppCtl::processLeftClick(const Point& clickPos) {
 		Point mapClick = clickPos.div(SUBTILE_MASK).mul(SUBTILE_MASK);
 		if (mapClick > 0) {
 			Point mvTarget = _pFinder->findAdjacent(actor->getPos(), Rect(mapClick, Point(10, 10)));
-			auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, mvTarget, _pFinder);
+			auto act1 = make_shared<MoveAction>(_res->getActionInfo("move"), _res, actor, mvTarget, _pFinder);
 
-			auto act2 = make_shared<PointAction>(_state->_selectedAction, _res, actor, 15, 8, clickPos, _map);
+			auto act2 = make_shared<PointAction>(_res->getActionInfo(_state->_selectedAction), _res, actor, clickPos, _map);
 			act1->chainAction(act2);
 
 			actor->setAction(act1);
@@ -342,9 +342,9 @@ void AppCtl::processLeftClick(const Point& clickPos) {
 			Point mapClick = clickPos.div(SUBTILE_MASK).mul(SUBTILE_MASK);
 			if (mapClick > 0) {
 				Point mvTarget = _pFinder->findAdjacent(actor->getPos(), Rect(mapClick, Point(10, 10)));
-				auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, mvTarget, _pFinder);
+				auto act1 = make_shared<MoveAction>(_res->getActionInfo("move"), _res, actor, mvTarget, _pFinder);
 
-				auto act2 = make_shared<ItemAction>(ACTION_PICK_ITEM, _res, actor, 10, 1, gItemArea->_item, _map);
+				auto act2 = make_shared<ItemAction>(_res->getActionInfo("pickItem"), _res, actor, gItemArea->_item, _map);
 				act1->chainAction(act2);
 
 				actor->setAction(act1);
@@ -369,7 +369,7 @@ void AppCtl::processLeftClick(const Point& clickPos) {
 			} else {
 				cout << clickPos._x << "," << clickPos._y << endl;
 				if (clickPos > 0) {
-					auto act = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, clickPos, _pFinder);
+					auto act = make_shared<MoveAction>(_res->getActionInfo("move"), _res, actor, clickPos, _pFinder);
 					actor->setAction(act);
 				}
 			}
@@ -387,8 +387,8 @@ void AppCtl::processRightClick(const Point& clickPos) {
 			Point target = _pFinder->findAdjacent(actor->getPos(), clickArea);
 
 			if (target._x >= 0 && target._y >= 0) {
-				auto act1 = make_shared<MoveAction>(ACTION_MOVE, _res, actor, 8, 8, target, _pFinder);
-				auto act2 = make_shared<PointAction>(ACTION_DROP, _res, actor, 1, 1, clickPos, _map);
+				auto act1 = make_shared<MoveAction>(_res->getActionInfo("move"), _res, actor, target, _pFinder);
+				auto act2 = make_shared<PointAction>(_res->getActionInfo("dropObject"), _res, actor, clickPos, _map);
 				act1->chainAction(act2);
 				actor->setAction(act1);
 			}
@@ -402,16 +402,14 @@ void AppCtl::processUIElement(shared_ptr<UIElement> elem) {
 		auto button = std::dynamic_pointer_cast<UIButton>(elem);
 		if (button) {
 			int actionID = button->getActionID();
-			if (actionID > ACTION_NONE && actionID < ACTION_LAST) {
-				auto parentFrame = button->getParent();
-				if (parentFrame) {
-					if (actionID == ACTION_CLOSE_PARENT) {
-						parentFrame->setVisible(false);
-					}
-				} else if (_mapIsActive) {
-					_screen->hideOptions();
-					_events->process((ActionType)actionID);
+			auto parentFrame = button->getParent();
+			if (parentFrame) {
+				if (actionID == ACTION_CLOSE_PARENT) {
+					parentFrame->setVisible(false);
 				}
+			} else if (_mapIsActive) {
+				_screen->hideOptions();
+				_events->process(_res->getActionInfo(actionID));
 			}
 			button->launchTimer();
 		}

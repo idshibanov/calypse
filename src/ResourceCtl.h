@@ -40,6 +40,7 @@ class ResourceCtl {
 	void _loadItemRecords();
 	void _loadSprites();
 	void _loadActionTemplates();
+	void _loadDefaultActions();
 	int _loadAction(shared_ptr<JsonObject> actRecord);
 	void _loadActiveAreas(shared_ptr<ObjectInfo> info, shared_ptr<JsonObject> actArea);
 public:
