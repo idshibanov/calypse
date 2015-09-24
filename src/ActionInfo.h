@@ -3,6 +3,8 @@
 
 #include "ActionType.h"
 
+class ResourceCtl;
+
 class ActionInfo {
 	ActionAbstractType _type;
 	std::string _name;
@@ -12,6 +14,8 @@ class ActionInfo {
 	int _itemParam;
 	int _objParam;
 	int _quantity;
+
+	friend class ResourceCtl;
 public:
 	ActionInfo(ActionAbstractType, const std::string&, int, int, int = -1, int = -1, int = -1);
 	ActionInfo(const ActionInfo&);

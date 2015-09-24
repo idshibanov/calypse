@@ -77,14 +77,14 @@
             "command" : "craftReet",
 			"desc" : "Move here",
 			"paramItem" : "wood",
-			"quantity" : "1",
+			"quantity" : 1,
         },
         "craftFire": {
 			"type" : "craft",
             "command" : "craftFire",
 			"desc" : "Move here",
 			"paramItem" : "wood",
-			"quantity" : "3",
+			"quantity" : 3,
         },
     }
 }

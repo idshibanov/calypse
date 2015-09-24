@@ -19,6 +19,15 @@
 // alternative - value map, updated when loaded
 // Info objects are pointed to map (record pushed/ptr passed when created)
 
+class ResPromise {
+	ResPromise();
+public:
+	std::string _key;
+	const std::map<std::string, int>& _lookup;
+	int& _toResolve;
+	ResPromise(std::string k, const std::map<std::string, int>& l, int& r);
+};
+
 class ResourceCtl {
 	shared_ptr<ConfigCtl> _conf;
 	std::map<std::string, int> _objectLookup;
@@ -35,6 +44,12 @@ class ResourceCtl {
 
 	std::map<int, shared_ptr<Sprite>> _sprites;
 	std::map<int, shared_ptr<SpriteText>> _arialFonts;
+
+	std::vector<ResPromise> _promises;
+	void _makePromise(std::string key, const std::map<std::string, int>& lookup, int& val);
+	void _resolvePromises();
+
+	bool _confRecordExists(ConfigCategory cat, const std::string& param, const std::string& key) const;
 
 	void _loadObjectRecords();
 	void _loadItemRecords();

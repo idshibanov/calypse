@@ -168,6 +168,10 @@ shared_ptr<JsonValue> JsonObject::getValue(const char* name) const {
 	return getValue(std::string(name));
 }
 
+bool JsonObject::keyExists(std::string key) const {
+	return getValue(key) != nullptr;
+}
+
 const std::map<std::string, shared_ptr<JsonValue>>& JsonObject::getContents() const {
 	return _values;
 }

@@ -244,11 +244,12 @@ void ScreenCtl::drawMap() {
 		}
 
 		// Selected object (craft suggestion)
-
-		if (_state->_selectedAction == _res->getActionID("craftReet")) {
-			drawSelectedObject(_res->getObjectInfo("reet"));
-		} else if (_state->_selectedAction == _res->getActionID("craftFire")) {
-			drawSelectedObject(_res->getObjectInfo("fire"));
+		if (_state->_selectedAction != -1) {
+			if (_state->_selectedAction == _res->getActionID("craftReet")) {
+				drawSelectedObject(_res->getObjectInfo("reet"));
+			} else if (_state->_selectedAction == _res->getActionID("craftFire")) {
+				drawSelectedObject(_res->getObjectInfo("fire"));
+			}
 		}
 
 

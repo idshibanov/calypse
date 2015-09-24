@@ -1,11 +1,39 @@
 #include "ResourceCtl.h"
 
+#include <future>
+
+ResPromise::ResPromise(std::string k, const std::map<std::string, int>& l, int& r)
+                      : _key(k), _lookup(l), _toResolve(r) {
+}
+
 ResourceCtl::ResourceCtl(shared_ptr<ConfigCtl> conf) {
 	_conf = conf;
 }
 
 ResourceCtl::~ResourceCtl() {
 
+}
+
+bool ResourceCtl::_confRecordExists(ConfigCategory cat, const std::string& param, const std::string& key) const {
+	auto ref = _conf->getCollection(cat, param);
+	return ref.find(key) != ref.end();
+}
+
+void ResourceCtl::_makePromise(std::string key, const std::map<std::string, int>& lookup, int& val) {
+	ResPromise p(key, lookup, val);
+	_promises.push_back(p);
+}
+
+void ResourceCtl::_resolvePromises() {
+	for (auto p : _promises) {
+		if (p._toResolve == -1) {
+			auto val = p._lookup.find(p._key);
+			if (val != p._lookup.end()) {
+				p._toResolve = val->second;
+				cout << "resolved " << p._key << " ID: " << val->second << endl;
+			}
+		}
+	}
 }
 
 void ResourceCtl::loadResources() {
@@ -15,6 +43,8 @@ void ResourceCtl::loadResources() {
 	_loadObjectRecords();
 	_loadSprites();
 	_loadItemRecords();
+
+	_resolvePromises();
 }
 
 void ResourceCtl::_loadObjectRecords() {
@@ -210,34 +240,47 @@ int ResourceCtl::_loadAction(shared_ptr<JsonObject> actRecord) {
 				auto it = _actionTemplates.find(type);
 				if (it != _actionTemplates.end()) {
 					auto actTemp = it->second;
-					int objID, itemID, quantity;
+					int objID = -1;
+					int itemID = -1;
+					int quantity = -1;
 
+					// primary lookup and validation
 					for (auto arg = actTemp->params().begin(); status && arg != actTemp->params().end(); arg++) {
 
 						if ((*arg).compare("paramObj") == 0) {
 							std::string objName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
-							objID = getObjectID(objName.c_str());
-							if (objID == -1) {
+							if (status && !_confRecordExists(C_CONFIG_OBJECT, "objects", objName)) {
 								cout << "Object " << objName << " doesn't exist" << endl;
-								break;
+								status = false;
+							} else {
+								objID = getActionID(objName.c_str());
 							}
 						} else if ((*arg).compare("paramItem") == 0) {
 							std::string itemName = extractValue<std::string>(actRecord->getValue((*arg)), &status);
-							itemID = getItemID(itemName.c_str());
-							if (itemID == -1) {
+							if (status && !_confRecordExists(C_CONFIG_ITEM, "items", itemName)) {
 								cout << "Item " << itemName << " doesn't exist" << endl;
-								break;
+								status = false;
 							}
 						} else if ((*arg).compare("quantity") == 0) {
 							quantity = extractValue<int>(actRecord->getValue((*arg)), &status);
 						} else {
 							cout << "ERR: Action argument " << (*arg) << " is not recognized" << endl;
+							status = false;
 						}
 					}
 
 					if (status) {
 						auto actInfo = make_shared<ActionInfo>(actTemp->type(), actTemp->name(), actTemp->cycles(),
 							actTemp->steps(), itemID, objID, quantity);
+
+						for (auto arg = actTemp->params().begin(); arg != actTemp->params().end(); arg++) {
+							std::string key = extractValue<std::string>(actRecord->getValue((*arg)), &status);
+							if ((*arg).compare("paramObj") == 0 && objID == -1) {
+								_makePromise(key, _objectLookup, actInfo->_objParam);
+							} else if ((*arg).compare("paramItem") == 0 && itemID == -1) {
+								_makePromise(key, _itemLookup, actInfo->_itemParam);
+							}
+						}
 						_actionInfo.emplace(_lastAct, actInfo);
 						_actionLookup.emplace(cmd, _lastAct);
 						return _lastAct++;
@@ -467,3 +510,4 @@ std::string ResourceCtl::getItemName(int id) const {
 	}
 	return "ERR";
 }
+
