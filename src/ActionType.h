@@ -59,10 +59,6 @@ enum ActionAbstractType {
 	ACTION_ABSTRACT_LAST,
 };
 
-enum ActionType {
-
-};
-
 /*
 enum ActionType {
 	ACTION_NONE,

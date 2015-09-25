@@ -203,17 +203,11 @@ bool ObjectAction::update() {
 				if (_info->type() == ACTION_ABS_CUT) {
 					return _map.lock()->toggleObject(_target.lock()->getPos());
 				} else if (_info->type() == ACTION_ABS_GATHER) {
-					// int _itemParam;
-					_actor.lock()->getState()->addItem(resCtl->getItemID("wood"));
+					int itemID = _info->itemParam();
+					if (itemID != -1) {
+						_actor.lock()->getState()->addItem(itemID);
+					}
 					return true;
-				/*
-				} else if (_type == ACTION_ABS_GATHER) {
-					_actor.lock()->getState()->addItem(resCtl->getItemID("berryRed"));
-					return true;
-				} else if (_type == ACTION_ABS_GATHER) {
-					_actor.lock()->getState()->addItem(resCtl->getItemID("berryBlue"));
-					return true;
-				*/
 				} else if (_info->type() == ACTION_ABS_CARRY && !_actor.expired()) {
 					_actor.lock()->pickUp(_target);
 					_target.lock()->dragged(true);
@@ -284,12 +278,14 @@ bool PointAction::update() {
 				} else if (_info->type() == ACTION_ABS_CRAFT && !_map.expired()) {
 
 					auto actorState = _actor.lock()->getState();
-					int type = resCtl->getItemID("wood");
-					cout << actorState->getItemCount(type) << " items left!" << endl;
+					int type = _info->itemParam();
+					if (type != -1) {
+						cout << actorState->getItemCount(type) << " items left!" << endl;
 
-					if (actorState->useItem(type)) {
-						auto obj = make_shared<MapObject>(resCtl->getObjectID("fire"), _targetPos);
-						return _map.lock()->addObject(obj);
+						if (actorState->useItem(type)) {
+							auto obj = make_shared<MapObject>(resCtl->getObjectID("fire"), _targetPos);
+							return _map.lock()->addObject(obj);
+						}
 					}
 					return false;
 				}

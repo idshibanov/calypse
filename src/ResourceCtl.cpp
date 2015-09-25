@@ -1,10 +1,10 @@
 #include "ResourceCtl.h"
 
-#include <future>
 
 ResPromise::ResPromise(std::string k, const std::map<std::string, int>& l, int& r)
                       : _key(k), _lookup(l), _toResolve(r) {
 }
+
 
 ResourceCtl::ResourceCtl(shared_ptr<ConfigCtl> conf) {
 	_conf = conf;
